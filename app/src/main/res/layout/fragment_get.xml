@@ -56,7 +56,7 @@
                 android:layout_height="52dp"
                 android:completionThreshold="1"
                 android:dropDownVerticalOffset="6dp"
-                android:hint="Search YouTube or paste a link"
+                android:hint="Search or paste a link"
                 android:imeOptions="actionGo"
                 android:inputType="textUri"
                 android:maxLines="1"

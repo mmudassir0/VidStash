@@ -215,6 +215,7 @@
         <item name="trackThickness">5dp</item>
         <item name="indicatorColor">@color/brand_red</item>
         <item name="trackColor">@color/surface_3</item>
+        <item name="trackStopIndicatorSize">0dp</item>
     </style>
 
     <style name="Widget.App.PopupMenu" parent="Widget.Material3.PopupMenu">
