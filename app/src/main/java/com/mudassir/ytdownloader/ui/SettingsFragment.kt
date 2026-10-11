@@ -2,6 +2,11 @@ package com.mudassir.ytdownloader.ui
 
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
@@ -19,6 +24,7 @@ import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.color.MaterialColors
+import com.mudassir.ytdownloader.Backup
 import com.mudassir.ytdownloader.Queue
 import com.mudassir.ytdownloader.R
 import com.mudassir.ytdownloader.Settings
@@ -32,8 +38,24 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private var card: ViewSettingsHeaderBinding? = null
 
+    private val exportFile = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        if (uri != null) runBackup(uri)
+    }
+    private val importFile = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) confirmRestore(uri)
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+        findPreference<Preference>("backup_export")?.setOnPreferenceClickListener {
+            val day = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(java.util.Date())
+            exportFile.launch("YTDownloader-backup-$day.json")
+            true
+        }
+        findPreference<Preference>("backup_import")?.setOnPreferenceClickListener {
+            importFile.launch(arrayOf("application/json", "text/plain", "application/octet-stream"))
+            true
+        }
         findPreference<Preference>(Settings.K_CLEAR_HISTORY)?.setOnPreferenceClickListener {
             Settings(requireContext()).recentSearches = emptyList()
             Toast.makeText(requireContext(), "Search history cleared", Toast.LENGTH_SHORT).show()
@@ -54,9 +76,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         super.onViewCreated(view, savedInstanceState)
         listView.clipToPadding = false
         listView.setPadding(0, 0, 0, resources.getDimensionPixelSize(R.dimen.list_bottom_space))
-        val ctx = requireContext()
-        val info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
-        card?.versionText?.text = "Version ${info.versionName} · build ${Updater.installedBuild(ctx)}"
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 UpdateManager.state.collect { renderUpdate(it) }
@@ -73,6 +92,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     private fun renderUpdate(state: UpdateManager.State) {
         val b = card ?: return
         val ctx = context ?: return
+        val info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
+        b.versionText.text = "Version ${info.versionName} · build ${Updater.installedBuild(ctx)}"
         val red = ContextCompat.getColor(ctx, R.color.brand_red)
         val normal = MaterialColors.getColor(b.statusText, com.google.android.material.R.attr.colorOnSurface)
 
@@ -158,6 +179,68 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 if (r != null) main("Try again", R.drawable.ic_retry) { UpdateManager.downloadAndInstall(ctx, r) }
                 else main("Try again", R.drawable.ic_retry) { UpdateManager.check(ctx) }
             }
+        }
+    }
+
+    // ---------- backup ----------
+
+    private fun runBackup(uri: Uri) {
+        val ctx = requireContext().applicationContext
+        lifecycleScope.launch {
+            val result = runCatching {
+                withContext(Dispatchers.IO) {
+                    val json = Backup.export(ctx)
+                    ctx.contentResolver.openOutputStream(uri, "wt")!!.use { it.write(json.toByteArray()) }
+                }
+            }
+            Toast.makeText(
+                ctx,
+                result.fold({ "Backup saved" }, { "Backup failed: ${it.message}" }),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun confirmRestore(uri: Uri) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Restore this backup?")
+            .setMessage(
+                "Playlists and downloads from the backup are added to what you have now. " +
+                    "Your settings are replaced by the ones in the backup."
+            )
+            .setPositiveButton("Restore") { _, _ -> runRestore(uri) }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun runRestore(uri: Uri) {
+        val ctx = requireContext().applicationContext
+        lifecycleScope.launch {
+            val result = runCatching {
+                withContext(Dispatchers.IO) {
+                    val text = ctx.contentResolver.openInputStream(uri)!!.use { it.readBytes().decodeToString() }
+                    Backup.restore(ctx, text)
+                }
+            }
+            val msg = result.fold(
+                { r ->
+                    buildList {
+                        add("Restored ${r.playlists} synced list(s) and ${r.files} file(s)")
+                        if (r.queued > 0) add("${r.queued} download(s) back in the queue")
+                        if (r.missing > 0) add("${r.missing} file(s) not on this phone were skipped")
+                    }.joinToString(". ") + "."
+                },
+                { "Couldn't restore: ${it.message}" }
+            )
+            if (!isAdded) return@launch
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(if (result.isSuccess) "Backup restored" else "Restore failed")
+                .setMessage(msg)
+                .setPositiveButton("OK", null)
+                .show()
+            // Show restored settings (switches, lists) right away.
+            onCreatePreferences(null, null)
+            renderUpdate(UpdateManager.state.value)
         }
     }
 

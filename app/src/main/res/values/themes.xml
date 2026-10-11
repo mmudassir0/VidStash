@@ -60,6 +60,33 @@
 
     <style name="Theme.YTDownloader" parent="Base.Theme.YTDownloader" />
 
+    <!-- Quick download sheet: transparent window over the app you shared from -->
+    <style name="Theme.YTDownloader.Translucent" parent="Theme.YTDownloader">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheet</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.App.BottomSheet</item>
+    </style>
+
+    <style name="Widget.App.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/surface_1</item>
+        <item name="shapeAppearance">@style/Shape.App.SheetTop</item>
+    </style>
+
+    <style name="Shape.App.SheetTop" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">28dp</item>
+        <item name="cornerSizeTopRight">28dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
     <!-- Player: always dark, whatever the phone setting. -->
     <style name="Theme.YTDownloader.Player" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/brand_red</item>

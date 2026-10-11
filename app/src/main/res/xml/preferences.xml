@@ -94,6 +94,19 @@
             app:title="Auto-sync playlists" />
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="Backup" app:iconSpaceReserved="false">
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="backup_export"
+            app:summary="Download list, synced playlists, settings, search history and watch positions"
+            app:title="Back up to a file" />
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="backup_import"
+            app:summary="Bring a backup back, e.g. after reinstalling or on a new phone"
+            app:title="Restore from a file" />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="App" app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             app:defaultValue="true"

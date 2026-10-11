@@ -34,6 +34,8 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
     private val downloader = ItemDownloader(ctx)
     private val saved = AtomicInteger(0)
     private val failed = AtomicInteger(0)
+    /** Items saved during this run, in order, for the "Play" button on the finished notification. */
+    private val savedIds = java.util.Collections.synchronizedList(mutableListOf<String>())
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
@@ -78,6 +80,7 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
             try {
                 job.await()
                 saved.incrementAndGet()
+                savedIds += item.id
             } catch (e: CancellationException) {
                 if (!isActive) throw e // runner stopped: the finally in doWork re-queues it
                 // Only this item was cancelled: skipped (or removed) from the Downloads screen.
@@ -177,9 +180,25 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
                 }
             )
             .setContentText(text)
-            .setContentIntent(App.openApp(applicationContext, MainActivity.TAB_DOWNLOADS))
+            .setContentIntent(App.openApp(applicationContext, if (f == 0 && !paused) MainActivity.TAB_LIBRARY else MainActivity.TAB_DOWNLOADS))
             .setAutoCancel(true)
         if (paused) b.addAction(android.R.drawable.ic_media_play, "Resume", control(Queue.ACTION_RESUME))
+
+        // Play straight from the notification.
+        val done = savedIds.toList().mapNotNull { Store.get(it) }.filter { it.status == Status.DONE && it.fileUri != null }
+        if (done.isNotEmpty()) {
+            if (done.size == 1) {
+                b.setContentTitle("Saved: ${done[0].title}")
+                b.setContentText(listOfNotNull(done[0].folder, if (f > 0) "$f failed" else null).joinToString(" · ").ifEmpty { "Ready to watch offline" })
+            }
+            val play = PendingIntent.getActivity(
+                applicationContext, 3001,
+                PlayerActivity.intent(applicationContext, done, 0).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            b.addAction(android.R.drawable.ic_media_play, if (done.size == 1) "Play" else "Play all", play)
+            b.addAction(android.R.drawable.ic_menu_agenda, "Library", App.openApp(applicationContext, MainActivity.TAB_LIBRARY))
+        }
         nm.notify(NOTIF_DONE, b.build())
     }
 

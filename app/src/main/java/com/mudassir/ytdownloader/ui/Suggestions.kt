@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.ImageButton
+import android.widget.ImageView
+import androidx.core.view.isVisible
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.mudassir.ytdownloader.R
 import com.mudassir.ytdownloader.Settings
 import com.mudassir.ytdownloader.YouTube
@@ -17,7 +19,11 @@ import com.mudassir.ytdownloader.YouTube
  * Drop-down under the search box: matching recent searches first (clock icon),
  * then what YouTube suggests (search icon). Links get no suggestions.
  */
-class SuggestionAdapter(private val ctx: Context) : BaseAdapter(), Filterable {
+class SuggestionAdapter(
+    private val ctx: Context,
+    /** Called after a recent search is removed with its ✕ (e.g. to refresh other lists). */
+    private val onRemoved: () -> Unit = {}
+) : BaseAdapter(), Filterable {
 
     data class Suggestion(val text: String, val fromHistory: Boolean)
 
@@ -28,15 +34,19 @@ class SuggestionAdapter(private val ctx: Context) : BaseAdapter(), Filterable {
     override fun getItemId(position: Int) = position.toLong()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val v = convertView as? TextView ?: LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_dropdown_item_1line, parent, false) as TextView
+        val v = convertView ?: LayoutInflater.from(parent.context).inflate(R.layout.item_suggestion, parent, false)
         val s = items[position]
-        v.text = s.text
-        val icon = ContextCompat.getDrawable(ctx, if (s.fromHistory) R.drawable.ic_history else R.drawable.ic_search)
-        val size = (20 * ctx.resources.displayMetrics.density).toInt()
-        icon?.setBounds(0, 0, size, size)
-        v.setCompoundDrawablesRelative(icon, null, null, null)
-        v.compoundDrawablePadding = (16 * ctx.resources.displayMetrics.density).toInt()
+        v.findViewById<TextView>(R.id.text).text = s.text
+        v.findViewById<ImageView>(R.id.icon).setImageResource(if (s.fromHistory) R.drawable.ic_history else R.drawable.ic_search)
+        v.findViewById<ImageButton>(R.id.remove).apply {
+            isVisible = s.fromHistory
+            setOnClickListener {
+                Settings(ctx).removeSearch(s.text)
+                items = items.filterNot { it == s }
+                if (items.isEmpty()) notifyDataSetInvalidated() else notifyDataSetChanged()
+                onRemoved()
+            }
+        }
         return v
     }
 

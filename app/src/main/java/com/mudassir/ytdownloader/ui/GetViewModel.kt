@@ -177,21 +177,24 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
 
     // ---- downloads ----
 
-    fun downloadVideo(option: DownloadOption) {
+    /** [clip] = (start, end) in seconds to save only part of the video. */
+    fun downloadVideo(option: DownloadOption, clip: Pair<Long, Long>? = null) {
         val s = _state.value as? GetState.Video ?: return
         val d = s.details
         Queue.add(
             ctx, listOf(
                 DownloadItem(
                     url = s.url, title = d.title, thumbnail = d.thumbnail,
-                    durationSec = d.durationSec, uploader = d.uploader.ifBlank { null },
+                    durationSec = clip?.let { it.second - it.first } ?: d.durationSec,
+                    uploader = d.uploader.ifBlank { null },
+                    clipStartSec = clip?.first ?: -1, clipEndSec = clip?.second ?: -1,
                     maxHeight = if (option.kind == Kind.AUDIO) 0 else option.height,
                     // Pre-select the exact format chosen in the list.
                     videoItag = option.videoItag, audioItag = option.audioItag
                 )
             )
         )
-        _toast.value = "Added to downloads"
+        _toast.value = if (clip != null) "Added the section to downloads" else "Added to downloads"
     }
 
     /** Queues one video straight from a list (three-dots menu). [maxHeight] 0 = audio only. */
