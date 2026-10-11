@@ -64,6 +64,10 @@ class Settings(ctx: Context) {
         get() = p.getString(K_RECENT, "").orEmpty().split('\n').filter { it.isNotBlank() }
         set(v) = p.edit().putString(K_RECENT, v.take(MAX_RECENT).joinToString("\n")).apply()
 
+    fun removeSearch(q: String) {
+        recentSearches = recentSearches.filterNot { it == q }
+    }
+
     fun addSearch(q: String) {
         if (!searchHistory) return
         val t = q.trim().replace('\n', ' ')

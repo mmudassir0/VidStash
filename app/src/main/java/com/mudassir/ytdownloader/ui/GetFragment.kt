@@ -38,6 +38,7 @@ import android.os.Build
 import android.view.ViewTreeObserver
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mudassir.ytdownloader.R
 import kotlinx.coroutines.launch
 
@@ -119,7 +120,7 @@ class GetFragment : Fragment() {
         b.input.setOnEditorActionListener { _, id, _ ->
             if (id == EditorInfo.IME_ACTION_GO) { submit(); true } else false
         }
-        suggestions = SuggestionAdapter(requireContext())
+        suggestions = SuggestionAdapter(requireContext()) { if (vm.state.value is GetState.Idle) renderRecent() }
         b.input.setAdapter(suggestions)
         b.input.setOnItemClickListener { _, _, _, _ -> submit() }
         // Tapping the empty box shows recent searches.
@@ -198,7 +199,25 @@ class GetFragment : Fragment() {
                 isChipIconVisible = true
                 chipIconSize = resources.displayMetrics.density * 18
                 setOnClickListener { submitText(q) }
+                // The small ✕ removes just this search.
+                isCloseIconVisible = true
+                closeIconContentDescription = "Remove from history"
+                setOnCloseIconClickListener {
+                    Settings(requireContext()).removeSearch(q)
+                    renderRecent()
+                }
             })
+        }
+        b.clearRecentButton.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Clear search history?")
+                .setMessage("Your recent searches will be removed from this phone.")
+                .setPositiveButton("Clear") { _, _ ->
+                    Settings(requireContext()).recentSearches = emptyList()
+                    renderRecent()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
     }
 
@@ -259,6 +278,7 @@ class GetFragment : Fragment() {
         // Reset header pieces; each state turns on what it needs.
         h.card.isVisible = false
         h.formatRow.isVisible = false
+        h.clipRow.isVisible = false
         h.qualityRow.isVisible = false
         h.limitRow.isVisible = false
         h.selectRow.isVisible = false
@@ -297,9 +317,11 @@ class GetFragment : Fragment() {
             val wanted = Settings(requireContext()).defaultQuality
             val def = YouTube.pickBest(d.options, wanted)?.let { d.options.indexOf(it) }?.takeIf { it >= 0 } ?: 0
             h.formatSpinner.setSelection(def)
+            setupClip(d.durationSec)
             renderedList = d
         }
         h.formatRow.isVisible = true
+        h.clipRow.isVisible = d.durationSec > 1
         h.sizeText.isVisible = true
         h.downloadButton.isVisible = true
         h.downloadButton.text = "Download"
@@ -375,7 +397,12 @@ class GetFragment : Fragment() {
         when (val s = vm.state.value) {
             is GetState.Video -> {
                 val opt = s.details.options.getOrNull(h.formatSpinner.selectedItemPosition) ?: return
-                h.sizeText.text = sizeLine(opt.bytes, exact = true, free = free)
+                val clip = clipRange()
+                h.sizeText.text = if (clip != null && opt.bytes > 0 && s.details.durationSec > 0) {
+                    // Rough size of the section (the whole video is downloaded, then cut).
+                    val part = opt.bytes * (clip.second - clip.first) / s.details.durationSec
+                    "Section ≈ ${formatBytes(part)} (downloads ${formatBytes(opt.bytes)} first)   •   Free: ${formatBytes(free)}"
+                } else sizeLine(opt.bytes, exact = true, free = free)
             }
             is GetState.Videos -> {
                 val maxHeight = qualities[h.qualitySpinner.selectedItemPosition.coerceAtLeast(0)].second
@@ -414,7 +441,7 @@ class GetFragment : Fragment() {
         when (val s = vm.state.value) {
             is GetState.Video -> {
                 val opt = s.details.options.getOrNull(h.formatSpinner.selectedItemPosition) ?: return
-                vm.downloadVideo(opt)
+                vm.downloadVideo(opt, clipRange())
             }
             is GetState.Videos -> {
                 val maxHeight = qualities[h.qualitySpinner.selectedItemPosition.coerceAtLeast(0)].second
@@ -459,6 +486,81 @@ class GetFragment : Fragment() {
                 true
             }
         }.show()
+    }
+
+    // ---------- section (clip) ----------
+
+    private fun setupClip(durationSec: Long) {
+        h.clipSwitch.setOnCheckedChangeListener(null)
+        h.clipSwitch.isChecked = false
+        h.clipBox.isVisible = false
+        if (durationSec <= 1) return
+        val dur = durationSec.toFloat()
+        h.clipSlider.clearOnChangeListeners()
+        h.clipSlider.valueFrom = 0f
+        h.clipSlider.valueTo = dur
+        h.clipSlider.values = listOf(0f, dur)
+        h.clipSlider.setLabelFormatter { formatDuration(it.toLong()) }
+        h.clipSlider.addOnChangeListener { _, _, fromUser -> if (fromUser) showClipValues() }
+        h.clipSwitch.setOnCheckedChangeListener { _, on ->
+            h.clipBox.isVisible = on
+            updateSizeText()
+        }
+        val apply = { applyClipFields(durationSec) }
+        listOf(h.clipStart, h.clipEnd).forEach { field ->
+            field.setOnEditorActionListener { _, id, _ ->
+                if (id == EditorInfo.IME_ACTION_DONE) { apply(); hideKeyboard(field); true } else false
+            }
+            field.setOnFocusChangeListener { _, has -> if (!has) apply() }
+        }
+        showClipValues()
+    }
+
+    /** Slider → text fields and length line. */
+    private fun showClipValues() {
+        val (a, b2) = h.clipSlider.values.map { it.toLong() }.let { it[0] to it[1] }
+        if (!h.clipStart.hasFocus()) h.clipStart.setText(formatDuration(a))
+        if (!h.clipEnd.hasFocus()) h.clipEnd.setText(formatDuration(b2))
+        h.clipInfo.text = "Section length ${formatDuration(b2 - a)}. Drag the dots or type times like 1:20."
+        updateSizeText()
+    }
+
+    /** Text fields → slider (times like 80, 1:20 or 1:02:03). */
+    private fun applyClipFields(durationSec: Long) {
+        val start = parseTime(h.clipStart.text?.toString()) ?: h.clipSlider.values[0].toLong()
+        val end = parseTime(h.clipEnd.text?.toString()) ?: h.clipSlider.values[1].toLong()
+        val s = start.coerceIn(0, durationSec - 1)
+        val e = end.coerceIn(s + 1, durationSec)
+        h.clipSlider.values = listOf(s.toFloat(), e.toFloat())
+        h.clipStart.setText(formatDuration(s))
+        h.clipEnd.setText(formatDuration(e))
+        h.clipInfo.text = "Section length ${formatDuration(e - s)}. Drag the dots or type times like 1:20."
+        updateSizeText()
+    }
+
+    private fun parseTime(text: String?): Long? {
+        val parts = text?.trim()?.split(':')?.takeIf { it.isNotEmpty() && it.size <= 3 } ?: return null
+        var total = 0L
+        for (p in parts) total = total * 60 + (p.trim().toLongOrNull() ?: return null)
+        return total
+    }
+
+    /** The chosen section in seconds, or null to download the whole video. */
+    private fun clipRange(): Pair<Long, Long>? {
+        if (_b == null || !h.clipSwitch.isChecked || !h.clipRow.isVisible) return null
+        val v = h.clipSlider.values
+        val s = v[0].toLong()
+        val e = v[1].toLong()
+        if (e <= s) return null
+        val total = h.clipSlider.valueTo.toLong()
+        if (s == 0L && e >= total) return null // the whole video anyway
+        return s to e
+    }
+
+    private fun hideKeyboard(v: View) {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(v.windowToken, 0)
+        v.clearFocus()
     }
 
     // ---------- helpers ----------

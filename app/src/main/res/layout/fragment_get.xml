@@ -197,13 +197,29 @@
                         app:drawableTint="?attr/colorPrimary" />
                 </LinearLayout>
 
-                <TextView
+                <LinearLayout
                     android:id="@+id/recentTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    android:text="Recent searches"
-                    android:textAppearance="?attr/textAppearanceTitleMedium" />
+                    android:layout_marginTop="22dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Recent searches"
+                        android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/clearRecentButton"
+                        style="@style/Widget.App.Button.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="0dp"
+                        android:text="Clear all" />
+                </LinearLayout>
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/recentChips"

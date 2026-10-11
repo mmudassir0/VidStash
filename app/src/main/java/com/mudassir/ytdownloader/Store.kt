@@ -29,6 +29,9 @@ data class DownloadItem(
     val uploader: String? = null,
     /** Audio only: save as MP3 even if the default format is M4A. */
     val mp3: Boolean = false,
+    /** Only save this part of the video (seconds); -1 = whole video. */
+    val clipStartSec: Long = -1,
+    val clipEndSec: Long = -1,
     val status: Status = Status.QUEUED,
     val error: String? = null,
     val attempts: Int = 0,
@@ -44,11 +47,13 @@ data class DownloadItem(
     val finishedAt: Long = 0
 ) {
     val isActive get() = status == Status.QUEUED || status == Status.RUNNING
+    val isClip get() = clipStartSec >= 0 && clipEndSec > clipStartSec
 
     fun toJson(): JSONObject = JSONObject().apply {
         put("id", id); put("url", url); put("title", title); put("thumbnail", thumbnail)
         put("maxHeight", maxHeight); put("prefix", prefix); put("folder", folder)
         put("durationSec", durationSec); put("uploader", uploader); put("mp3", mp3)
+        put("clipStartSec", clipStartSec); put("clipEndSec", clipEndSec)
         put("status", status.name); put("error", error); put("attempts", attempts)
         put("fileUri", fileUri); put("fileName", fileName); put("mime", mime); put("bytes", bytes)
         put("videoItag", videoItag); put("audioItag", audioItag)
@@ -67,6 +72,8 @@ data class DownloadItem(
             durationSec = o.optLong("durationSec", -1),
             uploader = o.str("uploader"),
             mp3 = o.optBoolean("mp3", false),
+            clipStartSec = o.optLong("clipStartSec", -1),
+            clipEndSec = o.optLong("clipEndSec", -1),
             status = runCatching { Status.valueOf(o.getString("status")) }.getOrDefault(Status.QUEUED),
             error = o.str("error"),
             attempts = o.optInt("attempts", 0),
@@ -173,6 +180,33 @@ object Store {
         _items.value = _items.value.map { if (it.id == next.id) claimed else it }
         save()
         claimed
+    }
+
+    /** Everything saved, as JSON (for backups). */
+    fun snapshot(): JSONObject = synchronized(lock) {
+        JSONObject()
+            .put("items", JSONArray(_items.value.map { it.toJson() }))
+            .put("playlists", JSONArray(_playlists.value.map { it.toJson() }))
+    }
+
+    /**
+     * Adds items and playlists from a backup. Items already in the list are kept as they are;
+     * playlists with the same link are combined (videos seen in either count as seen).
+     * Returns the items that were added.
+     */
+    fun merge(items: List<DownloadItem>, playlists: List<SavedPlaylist>): List<DownloadItem> = synchronized(lock) {
+        val ids = _items.value.map { it.id }.toSet()
+        val uris = _items.value.mapNotNull { it.fileUri }.toSet()
+        val added = items.filter { it.id !in ids && (it.fileUri == null || it.fileUri !in uris) }
+        _items.value = _items.value + added
+        val byUrl = _playlists.value.associateBy { it.url }.toMutableMap()
+        playlists.forEach { p ->
+            val old = byUrl[p.url]
+            byUrl[p.url] = if (old == null) p else old.copy(seen = old.seen + p.seen, lastSync = maxOf(old.lastSync, p.lastSync))
+        }
+        _playlists.value = byUrl.values.toList()
+        save()
+        added
     }
 
     fun hasQueued() = _items.value.any { it.status == Status.QUEUED }

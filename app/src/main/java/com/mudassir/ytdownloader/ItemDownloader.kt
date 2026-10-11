@@ -41,7 +41,10 @@ class ItemDownloader(private val ctx: Context) {
         partial.mkdirs()
         item = updated(item.id) { it.copy(title = details.title, thumbnail = it.thumbnail ?: details.thumbnail) }
 
-        val baseName = Storage.sanitize(if (item.prefix != null) "${item.prefix} - ${details.title}" else details.title)
+        val clipLabel = if (item.isClip) " (${clipTime(item.clipStartSec)} to ${clipTime(item.clipEndSec)})" else ""
+        val baseName = Storage.sanitize(
+            (if (item.prefix != null) "${item.prefix} - ${details.title}" else details.title).take(100) + clipLabel
+        )
         val wantMp3 = opt.kind == Kind.AUDIO && (item.mp3 || settings.audioFormat == "mp3")
         var fileName = "$baseName.${if (wantMp3) "mp3" else opt.extension}"
         var mime = if (wantMp3) "audio/mpeg" else opt.mime
@@ -78,29 +81,48 @@ class ItemDownloader(private val ctx: Context) {
         }
 
         // ---- post-process ----
-        val cuts = if (wantCuts) SponsorBlock.segments(details.id) else emptyList()
+        // A section download keeps only [start, end): everything before and after is cut away.
+        val clipCuts = if (item.isClip) listOf(
+            Cut(0, item.clipStartSec * 1_000_000),
+            Cut(item.clipEndSec * 1_000_000, Long.MAX_VALUE)
+        ) else emptyList()
+        val sponsorCuts = if (wantCuts) runCatching { SponsorBlock.segments(details.id) }.getOrDefault(emptyList()) else emptyList()
+        val cuts = sponsorCuts + clipCuts
         var out = File(partial, "out.${opt.extension}")
         var mp3Note: String? = null
         out.delete()
         when (opt.kind) {
             Kind.MERGE -> {
-                meter.stage(if (cuts.isEmpty()) "Merging video + audio…" else "Merging, removing ${cuts.size} sponsor segment(s)…")
+                meter.stage(
+                    when {
+                        item.isClip -> "Merging and cutting your section…"
+                        cuts.isEmpty() -> "Merging video + audio…"
+                        else -> "Merging, removing ${cuts.size} sponsor segment(s)…"
+                    }
+                )
                 Remux.run(listOf(Remux.Source(v, "video/"), Remux.Source(a, "audio/")), out, webm, cuts)
             }
             Kind.SINGLE_VIDEO -> {
-                if (cuts.isNotEmpty() && opt.extension == "mp4") {
-                    meter.stage("Removing ${cuts.size} sponsor segment(s)…")
-                    Remux.run(listOf(Remux.Source(v, "video/"), Remux.Source(v, "audio/")), out, false, cuts)
+                if (item.isClip || (cuts.isNotEmpty() && opt.extension == "mp4")) {
+                    meter.stage(if (item.isClip) "Cutting your section…" else "Removing ${cuts.size} sponsor segment(s)…")
+                    Remux.run(listOf(Remux.Source(v, "video/"), Remux.Source(v, "audio/")), out, webm, cuts)
                 } else v.renameTo(out)
             }
             Kind.AUDIO -> {
                 // YouTube serves fragmented MP4; a plain MP4 seeks better and shows tags everywhere.
-                meter.stage(if (cuts.isEmpty()) "Preparing audio…" else "Removing ${cuts.size} sponsor segment(s)…")
+                meter.stage(
+                    when {
+                        item.isClip -> "Cutting your section…"
+                        cuts.isEmpty() -> "Preparing audio…"
+                        else -> "Removing ${cuts.size} sponsor segment(s)…"
+                    }
+                )
                 val remuxed = File(partial, "remux.m4a")
                 val audio = try {
                     Remux.run(listOf(Remux.Source(a, "audio/")), remuxed, false, cuts)
                     remuxed
                 } catch (e: Exception) {
+                    if (item.isClip) throw e // without remuxing the section can't be cut
                     a // keep the original if the phone can't remux it
                 }
                 val art = cover(details.id)
@@ -142,10 +164,12 @@ class ItemDownloader(private val ctx: Context) {
         meter.stage("Saving…")
         val uri = Storage.saveToDownloads(ctx, out, fileName, mime, item.folder)
 
-        if (opt.kind != Kind.AUDIO) saveSubtitles(details, baseName, item.folder)
+        // Subtitles would be out of sync with a cut-out section, so only for whole videos.
+        if (opt.kind != Kind.AUDIO && !item.isClip) saveSubtitles(details, baseName, item.folder)
 
         val note = listOfNotNull(
-            if (cuts.isNotEmpty()) "Removed ${cuts.size} sponsor segment(s)" else null,
+            if (item.isClip) "Section ${formatDuration(item.clipStartSec)}–${formatDuration(item.clipEndSec)}" else null,
+            if (sponsorCuts.isNotEmpty()) "Removed ${sponsorCuts.size} sponsor segment(s)" else null,
             mp3Note
         ).joinToString(" · ").ifEmpty { null }
         finish(item, uri.toString(), fileName, mime, out.length(), note)
@@ -190,6 +214,14 @@ class ItemDownloader(private val ctx: Context) {
     private fun updated(id: String, change: (DownloadItem) -> DownloadItem): DownloadItem {
         Store.update(id, change)
         return Store.get(id) ?: throw Fatal("Removed from queue")
+    }
+
+    /** "1m20s"-style time for file names (":" isn't allowed in them). */
+    private fun clipTime(sec: Long): String {
+        val h = sec / 3600
+        val m = (sec % 3600) / 60
+        val s = sec % 60
+        return if (h > 0) "%dh%02dm%02ds".format(h, m, s) else "%dm%02ds".format(m, s)
     }
 
     private fun partialDir(name: String) = File(ctx.filesDir, "partial/$name")
