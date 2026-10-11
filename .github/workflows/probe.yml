@@ -13,11 +13,12 @@ jobs:
         with: { distribution: temurin, java-version: 17 }
       - run: |
           exec > probe-out.txt 2>&1
-          curl -sSfLO https://repo1.maven.org/maven2/de/sciss/jump3r/1.0.5/jump3r-1.0.5.jar
-          unzip -l jump3r-1.0.5.jar | awk '{print $4}' | grep class | head -400
-          echo "=== jdeps"
-          jdeps -verbose:package jump3r-1.0.5.jar | grep -i "sound\|awt" | head -40
-          for c in de.sciss.jump3r.mp3.Lame de.sciss.jump3r.mp3.LameGlobalFlags de.sciss.jump3r.lowlevel.LameEncoder de.sciss.jump3r.mp3.MPEGMode; do echo "=== $c"; javap -cp jump3r-1.0.5.jar -public $c 2>&1 | head -80; done
+          curl -sSfLO https://repo1.maven.org/maven2/de/sciss/jump3r/1.0.5/jump3r-1.0.5-sources.jar
+          unzip -o -q jump3r-1.0.5-sources.jar -d src
+          find src -name LameEncoder.java -exec cat {} \;
+          echo "=== encode_buffer signatures"
+          grep -n "public.*lame_encode\|public.*int lame_encode_buffer" -r src | head -20
+          git rm -q --cached -r . >/dev/null 2>&1 || true
       - if: always()
         run: |
           git config user.name probe; git config user.email probe@example.com
