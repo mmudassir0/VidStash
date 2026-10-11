@@ -2,15 +2,23 @@ name: Probe
 on:
   push:
     branches: [probe/**]
+permissions:
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - run: |
+          exec > probe-out.txt 2>&1
           curl -sSfLO https://repo1.maven.org/maven2/de/sciss/jump3r/1.0.5/jump3r-1.0.5.jar
-          unzip -l jump3r-1.0.5.jar | awk '{print $4}' | grep class | head -100
+          unzip -l jump3r-1.0.5.jar | awk '{print $4}' | grep class | head -400
           echo "=== jdeps"
           jdeps -verbose:package jump3r-1.0.5.jar | grep -i "sound\|awt" | head -40
           for c in de.sciss.jump3r.mp3.Lame de.sciss.jump3r.mp3.LameGlobalFlags de.sciss.jump3r.lowlevel.LameEncoder de.sciss.jump3r.mp3.MPEGMode; do echo "=== $c"; javap -cp jump3r-1.0.5.jar -public $c 2>&1 | head -80; done
+      - if: always()
+        run: |
+          git config user.name probe; git config user.email probe@example.com
+          git add probe-out.txt; git commit -m "probe output"; git push
