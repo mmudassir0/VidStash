@@ -1,0 +1,16 @@
+name: Probe
+on:
+  push:
+    branches: [probe/**]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - run: |
+          curl -sSfLO https://repo1.maven.org/maven2/de/sciss/jump3r/1.0.5/jump3r-1.0.5.jar
+          unzip -l jump3r-1.0.5.jar | awk '{print $4}' | grep class | head -100
+          echo "=== jdeps"
+          jdeps -verbose:package jump3r-1.0.5.jar | grep -i "sound\|awt" | head -40
+          for c in de.sciss.jump3r.mp3.Lame de.sciss.jump3r.mp3.LameGlobalFlags de.sciss.jump3r.lowlevel.LameEncoder de.sciss.jump3r.mp3.MPEGMode; do echo "=== $c"; javap -cp jump3r-1.0.5.jar -public $c 2>&1 | head -80; done
