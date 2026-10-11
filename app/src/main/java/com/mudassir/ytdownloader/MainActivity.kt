@@ -7,12 +7,14 @@ import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -36,17 +38,26 @@ class MainActivity : AppCompatActivity() {
     private val tabs = listOf(R.id.nav_get, R.id.nav_downloads, R.id.nav_library, R.id.nav_settings)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Draw behind transparent system bars on every Android version (icons adapt to light/dark).
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        // Android 15 draws behind the status bar; keep content clear of it and of the keyboard.
+        // Android 15 draws behind the system bars; keep content clear of them and of the keyboard.
         ViewCompat.setOnApplyWindowInsetsListener(b.root) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-            v.setPadding(bars.left, bars.top, bars.right, ime.bottom)
+            val keyboardOpen = insets.isVisible(WindowInsetsCompat.Type.ime())
+            v.setPadding(bars.left, bars.top, bars.right, if (keyboardOpen) ime.bottom else 0)
+            // The floating bar sits above the gesture/nav bar, and hides while typing.
+            (b.navCard.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin = bars.bottom + dp(12)
+            b.navCard.requestLayout()
+            b.navCard.isVisible = !keyboardOpen
             insets
         }
+        // The bar is inside a card that already handles insets; don't pad it again.
+        ViewCompat.setOnApplyWindowInsetsListener(b.bottomNav) { _, _ -> WindowInsetsCompat.CONSUMED }
 
         requestNeededPermissions()
 
@@ -197,6 +208,8 @@ class MainActivity : AppCompatActivity() {
                 .onFailure { Toast.makeText(this@MainActivity, "Update failed: ${it.message}", Toast.LENGTH_LONG).show() }
         }
     }
+
+    private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
 
     companion object {
         const val EXTRA_TAB = "tab"

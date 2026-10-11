@@ -8,10 +8,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="20dp"
         android:paddingTop="16dp"
         android:text="Library"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+        android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
     <LinearLayout
         android:id="@+id/tabsRow"
@@ -20,7 +20,8 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp">
+        android:paddingTop="10dp"
+        android:paddingBottom="6dp">
 
         <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/tabs"
@@ -28,19 +29,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:checkedButton="@+id/filesTab"
+            app:singleSelection="true"
             app:selectionRequired="true"
-            app:singleSelection="true">
+>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/filesTab"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.App.Segment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Files" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/playlistsTab"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.App.Segment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Synced lists" />
@@ -48,10 +50,12 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/syncAllButton"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="@style/Widget.App.Button.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sync all"
+            app:icon="@drawable/ic_retry"
+            app:iconSize="18dp"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -72,19 +76,22 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/searchLayout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+                style="@style/Widget.App.SearchField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Search your files"
+                android:layout_marginTop="2dp"
                 app:endIconMode="clear_text"
                 app:startIconDrawable="@drawable/ic_search">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/searchInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
+                    android:hint="Search your files"
                     android:imeOptions="actionSearch"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
                     android:inputType="text"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -103,6 +110,7 @@
             android:id="@+id/folderScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:clipToPadding="false"
             android:paddingHorizontal="16dp"
             android:scrollbars="none">
@@ -120,9 +128,10 @@
             android:id="@+id/storageText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="4dp"
-            android:textAppearance="?attr/textAppearanceBodySmall" />
+            android:paddingHorizontal="20dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="6dp"
+            android:textAppearance="@style/TextAppearance.App.Meta" />
     </LinearLayout>
 
     <!-- Shown instead of the header while files are selected -->
@@ -130,7 +139,9 @@
         android:id="@+id/selectionBar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="?attr/colorSurfaceVariant"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="6dp"
+        android:background="@drawable/bg_panel"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="4dp"
@@ -192,6 +203,7 @@
         android:gravity="center"
         android:padding="32dp"
         android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -200,5 +212,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:paddingBottom="16dp" />
+        android:paddingTop="4dp"
+        android:paddingBottom="@dimen/list_bottom_space" />
 </LinearLayout>

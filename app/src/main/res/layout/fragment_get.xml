@@ -5,79 +5,213 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- Brand bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_logo" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:text="YT Downloader"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
+            android:textSize="21sp" />
+    </LinearLayout>
+
+    <!-- Search pill + paste -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingHorizontal="16dp"
-        android:paddingTop="16dp">
+        android:paddingTop="4dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
+            style="@style/Widget.App.SearchField"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Paste a link, or search YouTube"
-            app:endIconMode="clear_text"
+            android:layout_weight="1"
+            app:endIconContentDescription="Go"
+            app:endIconDrawable="@drawable/ic_arrow_forward"
+            app:endIconMode="custom"
             app:startIconDrawable="@drawable/ic_search">
 
             <!-- Suggests recent searches and YouTube search suggestions while typing -->
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/input"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="52dp"
                 android:completionThreshold="1"
+                android:dropDownVerticalOffset="6dp"
+                android:hint="Search YouTube or paste a link"
                 android:imeOptions="actionGo"
                 android:inputType="textUri"
-                android:maxLines="2" />
+                android:maxLines="1"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:popupBackground="@drawable/bg_popup"
+                android:textSize="15sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/pasteButton"
-                style="@style/Widget.Material3.Button.OutlinedButton.Icon"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
-                android:text="Paste"
-                app:icon="@drawable/ic_paste" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/goButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Go" />
-        </LinearLayout>
-
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:indeterminate="true"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/statusText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:visibility="gone" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pasteButton"
+            style="@style/Widget.App.Button.IconRound"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Paste link"
+            app:icon="@drawable/ic_paste" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/results"
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="12dp"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:visibility="gone" />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/results"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="@dimen/list_bottom_space" />
+
+        <!-- Shown before anything is searched -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/emptyState"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/list_bottom_space"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="36dp">
+
+                <FrameLayout
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_circle_soft">
+
+                    <ImageView
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_hero_download" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="Save videos to watch anywhere"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Search above, or paste a link to a video, playlist or channel. You can also tap Share in the YouTube app and pick YT Downloader."
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <!-- Three tips -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/bg_panel"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="14dp"
+                        android:gravity="center_vertical"
+                        android:text="Videos up to 4K, or audio as M4A / MP3"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        app:drawableStartCompat="@drawable/ic_download"
+                        app:drawableTint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:drawablePadding="14dp"
+                        android:gravity="center_vertical"
+                        android:text="Whole playlists and channels, and sync new uploads later"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        app:drawableStartCompat="@drawable/ic_playlist"
+                        app:drawableTint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:drawablePadding="14dp"
+                        android:gravity="center_vertical"
+                        android:text="Copy a link anywhere and the app offers to open it"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        app:drawableStartCompat="@drawable/ic_link"
+                        app:drawableTint="?attr/colorPrimary" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/recentTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:text="Recent searches"
+                    android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/recentChips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:chipSpacingVertical="4dp" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
 </LinearLayout>

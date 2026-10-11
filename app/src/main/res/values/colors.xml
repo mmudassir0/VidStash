@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Light mode. Dark mode values are in values-night/colors.xml. -->
+<resources>
+    <color name="brand_red">#FF0033</color>
+    <color name="brand_red_dark">#CC0029</color>
+    <color name="on_brand">#FFFFFF</color>
+
+    <color name="bg">#FFFFFF</color>
+    <color name="surface_1">#F4F4F4</color>
+    <color name="surface_2">#ECECEC</color>
+    <color name="surface_3">#E2E2E2</color>
+    <color name="on_bg">#0F0F0F</color>
+    <color name="on_bg_muted">#606060</color>
+    <color name="outline">#D6D6D6</color>
+    <color name="nav_bg">#FAFAFA</color>
+    <color name="red_container">#FFE1E7</color>
+    <color name="on_red_container">#8A0019</color>
+
+    <color name="badge_bg">#D9000000</color>
+    <color name="scrim_top">#00000000</color>
+    <color name="scrim_bottom">#E6000000</color>
+</resources>

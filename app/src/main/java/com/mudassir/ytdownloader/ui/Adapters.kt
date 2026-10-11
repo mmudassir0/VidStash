@@ -3,6 +3,9 @@ package com.mudassir.ytdownloader.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.mudassir.ytdownloader.VideoEntry
 import com.mudassir.ytdownloader.databinding.ItemVideoBinding
+import com.mudassir.ytdownloader.databinding.ItemVideoLargeBinding
 import com.mudassir.ytdownloader.formatDuration
 
 /** Wraps a single, already-inflated view (a header or footer) so it can sit in a ConcatAdapter. */
@@ -29,7 +33,10 @@ class SingleViewAdapter(private val view: View) : RecyclerView.Adapter<RecyclerV
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {}
 }
 
-/** Videos from a playlist, channel or search. Checkboxes show when [selectable]. */
+/**
+ * Videos from a playlist, channel or search. Search results use big cards ([large]);
+ * playlists and channels use compact rows with checkboxes ([selectable]).
+ */
 class VideoEntryAdapter(
     private val onClick: (VideoEntry) -> Unit,
     /** Three-dots button; gets the button so a menu can be anchored to it. */
@@ -40,40 +47,64 @@ class VideoEntryAdapter(
         set(v) {
             if (field != v) { field = v; notifyItemRangeChanged(0, itemCount) }
         }
+    var large = false
+        set(v) {
+            if (field != v) { field = v; notifyItemRangeChanged(0, itemCount) }
+        }
     var selected: Set<String> = emptySet()
         set(v) {
             if (field != v) { field = v; notifyItemRangeChanged(0, itemCount, PAYLOAD_CHECK) }
         }
 
-    class Holder(val b: ItemVideoBinding) : RecyclerView.ViewHolder(b.root)
+    /** Same views in both layouts. */
+    class Holder(
+        root: View,
+        val thumb: ImageView,
+        val duration: TextView,
+        val title: TextView,
+        val meta: TextView,
+        val check: CheckBox,
+        val more: View
+    ) : RecyclerView.ViewHolder(root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        Holder(ItemVideoBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun getItemViewType(position: Int) = if (large) TYPE_LARGE else TYPE_COMPACT
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
+        val inf = LayoutInflater.from(parent.context)
+        return if (viewType == TYPE_LARGE) {
+            val b = ItemVideoLargeBinding.inflate(inf, parent, false)
+            Holder(b.root, b.thumb, b.duration, b.title, b.meta, b.check, b.more)
+        } else {
+            val b = ItemVideoBinding.inflate(inf, parent, false)
+            Holder(b.root, b.thumb, b.duration, b.title, b.meta, b.check, b.more)
+        }
+    }
 
     override fun onBindViewHolder(holder: Holder, position: Int, payloads: MutableList<Any>) {
         if (payloads.contains(PAYLOAD_CHECK)) {
-            holder.b.check.isChecked = getItem(position).id in selected
+            holder.check.isChecked = getItem(position).id in selected
         } else super.onBindViewHolder(holder, position, payloads)
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val v = getItem(position)
-        val b = holder.b
-        b.title.text = v.title
-        b.meta.text = v.uploader
-        b.meta.isVisible = v.uploader.isNotBlank()
+        holder.title.text = v.title
+        holder.meta.text = v.uploader
+        holder.meta.isVisible = v.uploader.isNotBlank()
         // Live streams and unknown lengths come as 0 or -1: no badge then.
-        b.duration.text = if (v.durationSec > 0) formatDuration(v.durationSec) else ""
-        b.duration.isVisible = v.durationSec > 0
-        b.thumb.load(v.thumbnail) { crossfade(true) }
-        b.check.isVisible = selectable
-        b.check.isChecked = v.id in selected
-        b.root.setOnClickListener { onClick(v) }
-        b.more.setOnClickListener { onMore(v, it) }
+        holder.duration.text = if (v.durationSec > 0) formatDuration(v.durationSec) else ""
+        holder.duration.isVisible = v.durationSec > 0
+        holder.thumb.load(v.thumbnail) { crossfade(true) }
+        holder.check.isVisible = selectable
+        holder.check.isChecked = v.id in selected
+        holder.itemView.setOnClickListener { onClick(v) }
+        holder.more.setOnClickListener { onMore(v, it) }
     }
 
     companion object {
         private const val PAYLOAD_CHECK = "check"
+        private const val TYPE_COMPACT = 1
+        private const val TYPE_LARGE = 2
         private val DIFF = object : DiffUtil.ItemCallback<VideoEntry>() {
             override fun areItemsTheSame(a: VideoEntry, b: VideoEntry) = a.id == b.id
             override fun areContentsTheSame(a: VideoEntry, b: VideoEntry) = a == b

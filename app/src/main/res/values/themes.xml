@@ -1,15 +1,264 @@
 <resources>
-    <style name="Theme.YTDownloader" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#D32F2F</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorPrimaryContainer">#FFDAD6</item>
-        <item name="colorOnPrimaryContainer">#410002</item>
+    <!-- Dark-cinematic look: near-black (or white in light mode), YouTube red accent, rounded everything. -->
+    <style name="Base.Theme.YTDownloader" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_red</item>
+        <item name="colorOnPrimary">@color/on_brand</item>
+        <item name="colorPrimaryContainer">@color/red_container</item>
+        <item name="colorOnPrimaryContainer">@color/on_red_container</item>
+        <item name="colorPrimaryInverse">@color/brand_red</item>
+        <item name="colorSecondary">@color/brand_red</item>
+        <item name="colorOnSecondary">@color/on_brand</item>
+        <item name="colorSecondaryContainer">@color/surface_3</item>
+        <item name="colorOnSecondaryContainer">@color/on_bg</item>
+        <item name="colorTertiary">@color/brand_red</item>
+        <item name="colorError">#FF4E45</item>
+
+        <item name="android:colorBackground">@color/bg</item>
+        <item name="colorOnBackground">@color/on_bg</item>
+        <item name="colorSurface">@color/bg</item>
+        <item name="colorOnSurface">@color/on_bg</item>
+        <item name="colorSurfaceVariant">@color/surface_2</item>
+        <item name="colorOnSurfaceVariant">@color/on_bg_muted</item>
+        <item name="colorSurfaceContainerLowest">@color/bg</item>
+        <item name="colorSurfaceContainerLow">@color/surface_1</item>
+        <item name="colorSurfaceContainer">@color/surface_1</item>
+        <item name="colorSurfaceContainerHigh">@color/surface_2</item>
+        <item name="colorSurfaceContainerHighest">@color/surface_3</item>
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorOutlineVariant">@color/outline</item>
+        <item name="colorControlNormal">@color/on_bg</item>
+        <item name="android:textColorPrimary">@color/on_bg</item>
+        <item name="android:textColorSecondary">@color/on_bg_muted</item>
+
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:windowLightStatusBar">@bool/light_bars</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+
+        <!-- Type -->
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.App.Headline</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.App.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.App.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.App.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.App.TitleSmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.App.Label</item>
+
+        <!-- Shapes -->
+        <item name="shapeAppearanceCornerSmall">@style/Shape.App.Small</item>
+        <item name="shapeAppearanceCornerMedium">@style/Shape.App.Medium</item>
+        <item name="shapeAppearanceCornerLarge">@style/Shape.App.Large</item>
+        <item name="shapeAppearanceCornerExtraLarge">@style/Shape.App.ExtraLarge</item>
+
+        <!-- Widgets -->
+        <item name="materialCardViewStyle">@style/Widget.App.Card</item>
+        <item name="chipStyle">@style/Widget.App.Chip</item>
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="linearProgressIndicatorStyle">@style/Widget.App.Progress</item>
+        <item name="popupMenuStyle">@style/Widget.App.PopupMenu</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.Dialog</item>
+        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
     </style>
 
+    <style name="Theme.YTDownloader" parent="Base.Theme.YTDownloader" />
+
+    <!-- Player: always dark, whatever the phone setting. -->
     <style name="Theme.YTDownloader.Player" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">#FF5449</item>
+        <item name="colorPrimary">@color/brand_red</item>
+        <item name="colorOnPrimary">@color/on_brand</item>
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:statusBarColor">@android:color/black</item>
         <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="popupMenuStyle">@style/Widget.App.PopupMenu</item>
+    </style>
+
+    <!-- ===== Text ===== -->
+    <style name="TextAppearance.App.Headline" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+    <style name="TextAppearance.App.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+    <style name="TextAppearance.App.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TextAppearance.App.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.App.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.App.Label" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    <!-- Small grey caps label above a field, e.g. "FORMAT" -->
+    <style name="TextAppearance.App.Overline" parent="TextAppearance.Material3.LabelSmall">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textColor">@color/on_bg_muted</item>
+    </style>
+    <style name="TextAppearance.App.Meta" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@color/on_bg_muted</item>
+    </style>
+
+    <!-- ===== Shapes ===== -->
+    <style name="Shape.App.Small" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+    </style>
+    <style name="Shape.App.Medium" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+    <style name="Shape.App.Large" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+    <style name="Shape.App.ExtraLarge" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
+    </style>
+    <style name="Shape.App.Thumb" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="Shape.App.ThumbSmall" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+    <style name="Shape.App.Pill" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- ===== Widgets ===== -->
+    <style name="Widget.App.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/surface_1</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="shapeAppearance">@style/Shape.App.Large</item>
+    </style>
+
+    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_bg</item>
+        <item name="android:textColor">@color/chip_text</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="chipCornerRadius">10dp</item>
+        <item name="chipMinHeight">36dp</item>
+        <item name="checkedIconVisible">false</item>
+    </style>
+
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">48dp</item>
+        <item name="shapeAppearance">@style/Shape.App.Pill</item>
+    </style>
+    <!-- The big red "Download" button -->
+    <style name="Widget.App.Button.Hero" parent="Widget.App.Button">
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">10dp</item>
+    </style>
+    <style name="Widget.App.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:minHeight">44dp</item>
+        <item name="shapeAppearance">@style/Shape.App.Pill</item>
+        <item name="backgroundTint">@color/surface_2</item>
+        <item name="android:textColor">@color/on_bg</item>
+        <item name="iconTint">@color/on_bg</item>
+    </style>
+    <style name="Widget.App.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="shapeAppearance">@style/Shape.App.Pill</item>
+    </style>
+    <!-- Round icon-only button, e.g. paste -->
+    <style name="Widget.App.Button.IconRound" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:layout_width">52dp</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconSize">22dp</item>
+        <item name="shapeAppearance">@style/Shape.App.Pill</item>
+        <item name="backgroundTint">@color/surface_2</item>
+        <item name="iconTint">@color/on_bg</item>
+    </style>
+
+    <!-- Rounded pill text field with no outline (search boxes) -->
+    <style name="Widget.App.SearchField" parent="Widget.Material3.TextInputLayout.FilledBox.Dense">
+        <item name="boxBackgroundColor">@color/surface_1</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxCornerRadiusTopStart">26dp</item>
+        <item name="boxCornerRadiusTopEnd">26dp</item>
+        <item name="boxCornerRadiusBottomStart">26dp</item>
+        <item name="boxCornerRadiusBottomEnd">26dp</item>
+        <item name="hintEnabled">false</item>
+        <item name="startIconTint">@color/on_bg_muted</item>
+        <item name="endIconTint">@color/on_bg_muted</item>
+    </style>
+
+    <style name="Widget.App.Progress" parent="Widget.Material3.LinearProgressIndicator">
+        <item name="trackCornerRadius">3dp</item>
+        <item name="trackThickness">5dp</item>
+        <item name="indicatorColor">@color/brand_red</item>
+        <item name="trackColor">@color/surface_3</item>
+    </style>
+
+    <style name="Widget.App.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_popup</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/surface_1</item>
+        <item name="colorSurfaceContainerHigh">@color/surface_1</item>
+        <item name="shapeAppearanceCornerExtraLarge">@style/Shape.App.ExtraLarge</item>
+    </style>
+
+    <style name="Widget.App.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="shapeAppearance">@style/Shape.App.Medium</item>
+    </style>
+
+    <!-- Library "Files / Synced lists" switch: grey pills, the chosen one filled -->
+    <style name="Widget.App.Segment" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">40dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="backgroundTint">@color/segment_bg</item>
+        <item name="android:textColor">@color/chip_text</item>
+        <item name="shapeAppearance">@style/Shape.App.Pill</item>
+    </style>
+
+    <!-- Bottom bar inside the floating card -->
+    <style name="Widget.App.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.App.BottomNav.Indicator</item>
+        <item name="itemIconTint">@color/nav_item</item>
+        <item name="itemTextColor">@color/nav_item</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.App.NavLabel</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.App.NavLabel</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">0dp</item>
+    </style>
+    <style name="Widget.App.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/red_container</item>
+        <item name="android:width">56dp</item>
+        <item name="android:height">30dp</item>
+    </style>
+    <style name="TextAppearance.App.NavLabel" parent="TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 </resources>

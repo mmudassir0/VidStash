@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Compact row: playlists, channels and the Library -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="6dp">
+    android:paddingVertical="8dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="4dp">
 
     <FrameLayout
-        android:layout_width="120dp"
-        android:layout_height="68dp">
+        android:layout_width="136dp"
+        android:layout_height="77dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/colorSurfaceVariant"
+            android:background="@color/surface_2"
             android:contentDescription="Thumbnail"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:shapeAppearance="@style/Shape.App.Thumb" />
 
-        <!-- Video length, like on YouTube -->
         <TextView
             android:id="@+id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="4dp"
-            android:background="#CC000000"
-            android:paddingHorizontal="4dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/bg_badge"
+            android:paddingHorizontal="5dp"
             android:paddingVertical="1dp"
             android:textColor="#FFFFFF"
             android:textSize="11sp"
@@ -49,16 +52,17 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
+            android:textAppearance="?attr/textAppearanceTitleSmall"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/meta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="?attr/textAppearanceBodySmall" />
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.App.Meta" />
     </LinearLayout>
 
     <com.google.android.material.checkbox.MaterialCheckBox

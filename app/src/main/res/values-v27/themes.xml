@@ -1,0 +1,7 @@
+<resources>
+    <!-- Android 8.1+: navigation bar matches the app, with dark icons in light mode. -->
+    <style name="Theme.YTDownloader" parent="Base.Theme.YTDownloader">
+        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="android:windowLightNavigationBar">@bool/light_bars</item>
+    </style>
+</resources>

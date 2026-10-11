@@ -12,7 +12,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.PopupMenu
+import androidx.appcompat.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
@@ -37,6 +37,8 @@ import com.mudassir.ytdownloader.formatDuration
 import android.os.Build
 import android.view.ViewTreeObserver
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.chip.Chip
+import com.mudassir.ytdownloader.R
 import kotlinx.coroutines.launch
 
 /** Paste a link or search; shows one video, a playlist/channel to pick from, or search results. */
@@ -113,7 +115,7 @@ class GetFragment : Fragment() {
         footer.moreButton.setOnClickListener { vm.loadMoreResults() }
 
         b.pasteButton.setOnClickListener { paste() }
-        b.goButton.setOnClickListener { submit() }
+        b.inputLayout.setEndIconOnClickListener { submit() }
         b.input.setOnEditorActionListener { _, id, _ ->
             if (id == EditorInfo.IME_ACTION_GO) { submit(); true } else false
         }
@@ -182,6 +184,24 @@ class GetFragment : Fragment() {
         }
     }
 
+    /** Recent searches as chips on the start screen; tap to search again. */
+    private fun renderRecent() {
+        val recent = Settings(requireContext()).let { if (it.searchHistory) it.recentSearches.take(12) else emptyList() }
+        b.recentTitle.isVisible = recent.isNotEmpty()
+        b.recentChips.isVisible = recent.isNotEmpty()
+        b.recentChips.removeAllViews()
+        recent.forEach { q ->
+            b.recentChips.addView(Chip(requireContext()).apply {
+                text = q
+                isCheckable = false
+                setChipIconResource(R.drawable.ic_history)
+                isChipIconVisible = true
+                chipIconSize = resources.displayMetrics.density * 18
+                setOnClickListener { submitText(q) }
+            })
+        }
+    }
+
     // ---------- copied link ----------
 
     private val focusListener = ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
@@ -226,7 +246,9 @@ class GetFragment : Fragment() {
     private fun render(state: GetState) {
         updateBack()
         b.progress.isVisible = state is GetState.Loading
-        b.goButton.isEnabled = state !is GetState.Loading
+        b.inputLayout.isEndIconVisible = state !is GetState.Loading
+        b.emptyState.isVisible = state is GetState.Idle
+        if (state is GetState.Idle) renderRecent()
         b.statusText.isVisible = state is GetState.Loading || state is GetState.Error
         b.statusText.text = when (state) {
             is GetState.Loading -> state.message
@@ -236,7 +258,7 @@ class GetFragment : Fragment() {
 
         // Reset header pieces; each state turns on what it needs.
         h.card.isVisible = false
-        h.formatSpinner.isVisible = false
+        h.formatRow.isVisible = false
         h.qualityRow.isVisible = false
         h.limitRow.isVisible = false
         h.selectRow.isVisible = false
@@ -276,7 +298,7 @@ class GetFragment : Fragment() {
             h.formatSpinner.setSelection(def)
             renderedList = d
         }
-        h.formatSpinner.isVisible = true
+        h.formatRow.isVisible = true
         h.sizeText.isVisible = true
         h.downloadButton.isVisible = true
         h.downloadButton.text = "Download"
@@ -328,7 +350,7 @@ class GetFragment : Fragment() {
         h.listTitle.isVisible = true
         h.listTitle.text = if (s.page.videos.isEmpty()) "No results for “${s.page.query}”" else "Results for “${s.page.query}”"
         // Loading more results keeps the scroll position; a new search starts at the top.
-        showList(s.page.videos, selectable = false, key = s.page.videos, resetScroll = s.page.query != shownQuery)
+        showList(s.page.videos, selectable = false, key = s.page.videos, resetScroll = s.page.query != shownQuery, large = true)
         shownQuery = s.page.query
         footerAdapter.shown = s.page.next != null && s.page.videos.isNotEmpty()
         footer.moreButton.isEnabled = !s.loadingMore
@@ -338,8 +360,9 @@ class GetFragment : Fragment() {
     private var listKey: Any? = null
     private var shownQuery: String? = null
 
-    private fun showList(items: List<VideoEntry>, selectable: Boolean, key: Any?, resetScroll: Boolean) {
+    private fun showList(items: List<VideoEntry>, selectable: Boolean, key: Any?, resetScroll: Boolean, large: Boolean = false) {
         videos.selectable = selectable
+        videos.large = large
         if (key != null && key === listKey) return
         if (key !is List<*>) shownQuery = null
         listKey = key

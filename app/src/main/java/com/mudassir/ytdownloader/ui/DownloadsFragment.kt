@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import com.mudassir.ytdownloader.R
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -100,6 +102,7 @@ class DownloadsFragment : Fragment() {
         b.summaryText.text = parts.joinToString(" · ")
         b.summaryText.isVisible = parts.isNotEmpty()
         b.pauseButton.text = if (paused) "Resume" else "Pause"
+        b.pauseButton.setIconResource(if (paused) R.drawable.ic_play else R.drawable.ic_pause)
         b.pauseButton.isVisible = paused || running + queued > 0
         b.emptyText.isVisible = items.isEmpty()
     }
@@ -134,6 +137,22 @@ class DownloadsFragment : Fragment() {
             }
 
             b.status.text = statusText(item, p)
+            b.status.setTextColor(
+                if (item.status == Status.FAILED) ContextCompat.getColor(ctx, R.color.brand_red)
+                else ContextCompat.getColor(ctx, R.color.on_bg_muted)
+            )
+            // Badge on the thumbnail: progress while downloading, otherwise length or state.
+            val pct = p?.percent ?: -1
+            val badge = when (item.status) {
+                Status.RUNNING -> if (pct >= 0) "$pct%" else null
+                Status.QUEUED -> "Waiting"
+                Status.FAILED -> "Failed"
+                Status.SKIPPED -> "Skipped"
+                Status.DONE -> if (item.durationSec > 0) formatDuration(item.durationSec) else null
+            }
+            b.badge.text = badge
+            b.badge.isVisible = badge != null
+            b.dim.isVisible = item.status != Status.DONE && item.status != Status.RUNNING
             b.bar.isVisible = item.status == Status.RUNNING
             if (item.status == Status.RUNNING) {
                 val pct = p?.percent ?: -1
@@ -150,9 +169,9 @@ class DownloadsFragment : Fragment() {
             }
 
             when (item.status) {
-                Status.RUNNING, Status.QUEUED -> button(b, "Skip") { Queue.skip(item.id) }
-                Status.FAILED, Status.SKIPPED -> button(b, "Retry") { Queue.retry(ctx, item.id) }
-                Status.DONE -> button(b, "Play") { Files.play(ctx, item) }
+                Status.RUNNING, Status.QUEUED -> button(b, "Skip", R.drawable.ic_close) { Queue.skip(item.id) }
+                Status.FAILED, Status.SKIPPED -> button(b, "Retry", R.drawable.ic_retry) { Queue.retry(ctx, item.id) }
+                Status.DONE -> button(b, "Play", R.drawable.ic_play) { Files.play(ctx, item) }
             }
 
             b.root.setOnClickListener { if (item.status == Status.DONE) Files.play(ctx, item) }
@@ -175,8 +194,9 @@ class DownloadsFragment : Fragment() {
             }
         }
 
-        private fun button(b: ItemDownloadBinding, text: String, action: () -> Unit) {
-            b.actionButton.text = text
+        private fun button(b: ItemDownloadBinding, label: String, icon: Int, action: () -> Unit) {
+            b.actionButton.setIconResource(icon)
+            b.actionButton.contentDescription = label
             b.actionButton.setOnClickListener { action() }
         }
 

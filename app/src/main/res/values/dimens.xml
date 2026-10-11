@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Space under scrolling lists so the last item clears the floating bottom bar -->
+    <dimen name="list_bottom_space">140dp</dimen>
+    <dimen name="screen_padding">16dp</dimen>
+</resources>

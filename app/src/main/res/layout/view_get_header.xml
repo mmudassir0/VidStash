@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Details card shown above the video list: one video, a playlist, a channel or search results. -->
+<!-- Shown above the video list: one video, a playlist or a channel (big thumbnail + options),
+     or just a section title for search results. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -7,178 +8,304 @@
     android:orientation="vertical"
     android:paddingHorizontal="16dp">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:id="@+id/card"
-        style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:orientation="vertical"
         android:visibility="gone">
 
-        <LinearLayout
+        <!-- Hero: 16:9 thumbnail with the title on a dark fade -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:cardBackgroundColor="#000000"
+            app:shapeAppearance="@style/Shape.App.Large">
 
-            <ImageView
-                android:id="@+id/thumb"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="190dp"
-                android:background="?attr/colorSurfaceVariant"
-                android:contentDescription="Thumbnail"
-                android:scaleType="centerCrop" />
+                android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                <ImageView
+                    android:id="@+id/thumb"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:contentDescription="Thumbnail"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintDimensionRatio="16:9"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/titleText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceTitleMedium" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/bg_scrim"
+                    app:layout_constraintBottom_toBottomOf="@id/thumb"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHeight_percent="0.62"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
                     android:id="@+id/subtitleText"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textAppearance="?attr/textAppearanceBodySmall" />
-
-                <Spinner
-                    android:id="@+id/formatSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="12dp"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:id="@+id/qualityRow"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Quality"
-                        android:textAppearance="?attr/textAppearanceBodyLarge" />
-
-                    <Spinner
-                        android:id="@+id/qualitySpinner"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="16dp"
-                        android:layout_weight="1" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/limitRow"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Load newest"
-                        android:textAppearance="?attr/textAppearanceBodyLarge" />
-
-                    <Spinner
-                        android:id="@+id/limitSpinner"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="16dp"
-                        android:layout_weight="1" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/selectRow"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/selectedText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/selectAllButton"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="All" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/selectNoneButton"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="None" />
-                </LinearLayout>
-
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/rememberCheck"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Keep for Sync (next time, only new videos)"
-                    android:visibility="gone" />
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="14dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="#D9FFFFFF"
+                    app:layout_constraintBottom_toBottomOf="@id/thumb"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
-                    android:id="@+id/sizeText"
-                    android:layout_width="match_parent"
+                    android:id="@+id/titleText"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:visibility="gone" />
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:shadowColor="#80000000"
+                    android:shadowRadius="6"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
+                    android:textColor="#FFFFFF"
+                    android:textSize="19sp"
+                    app:layout_constraintBottom_toTopOf="@id/subtitleText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Options -->
+        <LinearLayout
+            android:id="@+id/optionsPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_panel"
+            android:orientation="vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="14dp">
+
+    <LinearLayout
+        android:id="@+id/formatRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="6dp"
+            android:text="Format"
+            android:textAppearance="@style/TextAppearance.App.Overline" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_field">
+
+            <Spinner
+                android:id="@+id/formatSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:paddingStart="8dp"
+                android:paddingEnd="40dp"
+                android:popupBackground="@drawable/bg_popup"
+                android:spinnerMode="dropdown" />
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="14dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_expand_more" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/qualityRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="6dp"
+            android:text="Quality"
+            android:textAppearance="@style/TextAppearance.App.Overline" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_field">
+
+            <Spinner
+                android:id="@+id/qualitySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:paddingStart="8dp"
+                android:paddingEnd="40dp"
+                android:popupBackground="@drawable/bg_popup"
+                android:spinnerMode="dropdown" />
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="14dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_expand_more" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/limitRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="6dp"
+            android:text="Load newest"
+            android:textAppearance="@style/TextAppearance.App.Overline" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_field">
+
+            <Spinner
+                android:id="@+id/limitSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:paddingStart="8dp"
+                android:paddingEnd="40dp"
+                android:popupBackground="@drawable/bg_popup"
+                android:spinnerMode="dropdown" />
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="14dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_expand_more" />
+        </FrameLayout>
+    </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/selectRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/selectedText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceTitleSmall" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/calcSizeButton"
-                    style="@style/Widget.Material3.Button.TextButton"
+                    android:id="@+id/selectAllButton"
+                    style="@style/Widget.App.Button.Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Calculate exact size"
-                    android:visibility="gone" />
+                    android:minWidth="0dp"
+                    android:text="Select all" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/downloadButton"
-                    android:layout_width="match_parent"
+                    android:id="@+id/selectNoneButton"
+                    style="@style/Widget.App.Button.Text"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Download"
-                    android:visibility="gone"
-                    app:icon="@drawable/ic_download" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/openPlaylistButton"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Open the whole playlist"
-                    android:visibility="gone" />
+                    android:minWidth="0dp"
+                    android:text="None" />
             </LinearLayout>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/rememberCheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:checked="true"
+                android:text="Keep for Sync (next time, only new videos)"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/sizeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="12dp"
+                android:lineSpacingExtra="2dp"
+                android:textAppearance="@style/TextAppearance.App.Meta"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/calcSizeButton"
+                style="@style/Widget.App.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:text="Calculate exact size"
+                android:visibility="gone" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/downloadButton"
+            style="@style/Widget.App.Button.Hero"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Download"
+            android:visibility="gone"
+            app:icon="@drawable/ic_download" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/openPlaylistButton"
+            style="@style/Widget.App.Button.Tonal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Open the whole playlist"
+            android:visibility="gone"
+            app:icon="@drawable/ic_playlist" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/listTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="4dp"
-        android:textAppearance="?attr/textAppearanceTitleSmall"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
         android:visibility="gone" />
 </LinearLayout>
