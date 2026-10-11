@@ -268,7 +268,8 @@ class GetFragment : Fragment() {
         h.downloadButton.isVisible = false
         h.openPlaylistButton.isVisible = false
         h.listTitle.isVisible = false
-        footerAdapter.shown = false
+        // The footer is set once per render (hiding and re-showing it in one frame upsets the list).
+        footerAdapter.shown = state is GetState.Search && state.page.next != null && state.page.videos.isNotEmpty()
 
         when (state) {
             is GetState.Video -> renderVideo(state)
@@ -352,7 +353,6 @@ class GetFragment : Fragment() {
         // Loading more results keeps the scroll position; a new search starts at the top.
         showList(s.page.videos, selectable = false, key = s.page.videos, resetScroll = s.page.query != shownQuery, large = true)
         shownQuery = s.page.query
-        footerAdapter.shown = s.page.next != null && s.page.videos.isNotEmpty()
         footer.moreButton.isEnabled = !s.loadingMore
         footer.moreButton.text = if (s.loadingMore) "Loading…" else "Load more results"
     }

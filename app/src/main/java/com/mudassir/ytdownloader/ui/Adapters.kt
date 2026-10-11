@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -16,7 +17,14 @@ import com.mudassir.ytdownloader.databinding.ItemVideoBinding
 import com.mudassir.ytdownloader.databinding.ItemVideoLargeBinding
 import com.mudassir.ytdownloader.formatDuration
 
-/** Wraps a single, already-inflated view (a header or footer) so it can sit in a ConcatAdapter. */
+/**
+ * Wraps a single, already-inflated view (a header or footer) so it can sit in a ConcatAdapter.
+ *
+ * RecyclerView may briefly keep an old row while creating a new one for the same position
+ * (e.g. when the footer is hidden and shown again in one frame). Each row therefore gets its
+ * own container and the shared view moves into whichever row is being shown, so the same view
+ * is never attached to the list twice.
+ */
 class SingleViewAdapter(private val view: View) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var shown = true
         set(v) {
@@ -25,12 +33,25 @@ class SingleViewAdapter(private val view: View) : RecyclerView.Adapter<RecyclerV
             if (v) notifyItemInserted(0) else notifyItemRemoved(0)
         }
 
+    private val type = View.generateViewId()
+
     override fun getItemCount() = if (shown) 1 else 0
-    override fun getItemViewType(position: Int) = view.id.takeIf { it != View.NO_ID } ?: System.identityHashCode(view)
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = object : RecyclerView.ViewHolder(
-        view.also { (it.parent as? ViewGroup)?.removeView(it) }
-    ) {}
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {}
+    override fun getItemViewType(position: Int) = type
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val box = FrameLayout(parent.context).apply {
+            layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
+        return object : RecyclerView.ViewHolder(box) {}
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val box = holder.itemView as FrameLayout
+        if (view.parent !== box) {
+            (view.parent as? ViewGroup)?.removeView(view)
+            box.addView(view, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
+    }
 }
 
 /**
