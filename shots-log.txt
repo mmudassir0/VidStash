@@ -1,0 +1,25 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1791736951977.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/YTDownloader/YTDownloader/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+A problem occurred configuring root project 'YTDownloader'.
+> Could not resolve all artifacts for configuration 'classpath'.
+   > Could not resolve app.cash.paparazzi:paparazzi-gradle-plugin:2.0.0-alpha05.1.
+     Required by:
+         root project : > app.cash.paparazzi:app.cash.paparazzi.gradle.plugin:2.0.0-alpha05.1
+      > Dependency requires at least JVM runtime version 21. This build uses a Java 17 JVM.
+
+* Try:
+> Run this build using a Java 21 or newer JVM.
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 11s
+FAILED
