@@ -1,0 +1,299 @@
+de/sciss/jump3r/mpg/Decode.class
+de/sciss/jump3r/mp3/LameInternalFlags.class
+de/sciss/jump3r/mp3/L3Side.class
+de/sciss/jump3r/mp3/ABRPresets.class
+de/sciss/jump3r/mp3/Quantize$BinSearchDirection.class
+de/sciss/jump3r/mp3/ABRIterationLoop.class
+de/sciss/jump3r/mp3/IIISideInfo.class
+de/sciss/jump3r/mp3/VBRTag$1.class
+de/sciss/jump3r/mpg/Layer2.class
+de/sciss/jump3r/lowlevel/LameDecoder.class
+de/sciss/jump3r/mp3/Encoder.class
+de/sciss/jump3r/mpg/MPGLib$mpstr_tag.class
+de/sciss/jump3r/mp3/PsyModel.class
+de/sciss/jump3r/mp3/LongBlockConstrain.class
+de/sciss/jump3r/mp3/GetAudio$1.class
+de/sciss/jump3r/mpg/Layer3$bandInfoStruct.class
+de/sciss/jump3r/mpg/MPG123.class
+de/sciss/jump3r/mp3/VBRQuantize$alloc_sf_f.class
+de/sciss/jump3r/mpg/MPGLib$framebuf.class
+de/sciss/jump3r/mp3/VBRQuantize.class
+de/sciss/jump3r/mp3/FFT.class
+de/sciss/jump3r/mp3/VBRQuantize$algo_t.class
+de/sciss/jump3r/mpg/DCT64.class
+de/sciss/jump3r/mpg/MPG123$III_sideinfo.class
+de/sciss/jump3r/lowlevel/LameEncoder.class
+de/sciss/jump3r/Main.class
+de/sciss/jump3r/mpg/MPGLib.class
+de/sciss/jump3r/mp3/QuantizePVT$StartLine.class
+de/sciss/jump3r/mpg/Interface$1.class
+de/sciss/jump3r/mp3/VBRTagData.class
+de/sciss/jump3r/mp3/ScaleFac.class
+de/sciss/jump3r/mpg/TabInit.class
+de/sciss/jump3r/mp3/QuantizePVT.class
+de/sciss/jump3r/mp3/ShortBlockConstrain.class
+de/sciss/jump3r/mpg/Layer3.class
+de/sciss/jump3r/mp3/Tables.class
+de/sciss/jump3r/mp3/VBROldIterationLoop.class
+de/sciss/jump3r/mp3/PSY.class
+de/sciss/jump3r/mp3/VBRNewIterationLoop.class
+de/sciss/jump3r/mp3/CBRNewIterationLoop.class
+de/sciss/jump3r/mp3/LameGlobalFlags.class
+de/sciss/jump3r/mp3/MP3Data.class
+de/sciss/jump3r/mpg/MPGLib$buf.class
+de/sciss/jump3r/mp3/NsPsy.class
+de/sciss/jump3r/mp3/NewMDCT.class
+de/sciss/jump3r/mpg/Decode$Factory.class
+de/sciss/jump3r/mp3/III_psy_xmin.class
+de/sciss/jump3r/mp3/CalcNoiseResult.class
+de/sciss/jump3r/mp3/BRHist.class
+de/sciss/jump3r/mp3/Util.class
+de/sciss/jump3r/mp3/VBRQuantize$CalcNoiseCache.class
+de/sciss/jump3r/mp3/ID3Tag$MimeType.class
+de/sciss/jump3r/mp3/MPEGMode.class
+de/sciss/jump3r/mp3/ShortBlock.class
+de/sciss/jump3r/mp3/LameInternalFlags$Header.class
+de/sciss/jump3r/mpg/Huffman.class
+de/sciss/jump3r/mp3/GetAudio$IFF_AIFF.class
+de/sciss/jump3r/mp3/ATH.class
+de/sciss/jump3r/mp3/Takehiro$Bits.class
+de/sciss/jump3r/mp3/Parse$TextEncoding.class
+de/sciss/jump3r/mp3/HuffCodeTab.class
+de/sciss/jump3r/mp3/VBRPresets.class
+de/sciss/jump3r/mpg/MPGLib$3.class
+de/sciss/jump3r/mp3/ID3TagSpec.class
+de/sciss/jump3r/mp3/Parse$2.class
+de/sciss/jump3r/mp3/Inf.class
+de/sciss/jump3r/mpg/Interface$2.class
+de/sciss/jump3r/mp3/III_psy_ratio.class
+de/sciss/jump3r/mp3/Presets.class
+de/sciss/jump3r/mp3/GetAudio$sound_file_format.class
+de/sciss/jump3r/Main$1.class
+de/sciss/jump3r/mpg/L2Tables.class
+de/sciss/jump3r/mp3/Version.class
+de/sciss/jump3r/mpg/MPGLib$1.class
+de/sciss/jump3r/mpg/L2Tables$al_table2.class
+de/sciss/jump3r/mpg/MPGLib$2.class
+de/sciss/jump3r/mp3/GetAudio$BlockAlign.class
+de/sciss/jump3r/mp3/Lame.class
+de/sciss/jump3r/mp3/Parse.class
+de/sciss/jump3r/mp3/Quantize.class
+de/sciss/jump3r/mp3/GenreListHandler.class
+de/sciss/jump3r/mp3/IIterationLoop.class
+de/sciss/jump3r/mpg/Common.class
+de/sciss/jump3r/mp3/Lame$1.class
+de/sciss/jump3r/mp3/ReplayGain.class
+de/sciss/jump3r/mp3/BitStream.class
+de/sciss/jump3r/mp3/FrameDataNode.class
+de/sciss/jump3r/mp3/VBRTag.class
+de/sciss/jump3r/mpg/Layer1.class
+de/sciss/jump3r/mp3/VbrMode.class
+de/sciss/jump3r/mp3/MeanBits.class
+de/sciss/jump3r/mp3/Parse$ID3TAG_MODE.class
+de/sciss/jump3r/mp3/BitStream$TotalBytes.class
+de/sciss/jump3r/mpg/Interface$ISynth.class
+de/sciss/jump3r/mp3/CalcNoiseData.class
+de/sciss/jump3r/mpg/MPGLib$IDecoder.class
+de/sciss/jump3r/mp3/ID3Tag.class
+de/sciss/jump3r/mpg/MPGLib$4.class
+de/sciss/jump3r/mpg/Huffman$newhuff.class
+de/sciss/jump3r/mpg/Interface.class
+de/sciss/jump3r/mp3/Parse$1.class
+de/sciss/jump3r/mp3/GetAudio.class
+de/sciss/jump3r/mp3/GainAnalysis.class
+de/sciss/jump3r/mp3/Parse$NoGap.class
+de/sciss/jump3r/mp3/Lame$LowPassHighPass.class
+de/sciss/jump3r/mpg/Frame.class
+de/sciss/jump3r/mp3/Lame$NumUsed.class
+de/sciss/jump3r/mp3/Takehiro.class
+de/sciss/jump3r/mp3/VBRSeekInfo.class
+de/sciss/jump3r/mp3/Lame$BandPass.class
+de/sciss/jump3r/mp3/Lame$InOut.class
+de/sciss/jump3r/mp3/Enc.class
+de/sciss/jump3r/mp3/ID3Tag$1.class
+de/sciss/jump3r/mpg/MPGLib$ProcessedBytes.class
+de/sciss/jump3r/mp3/GrInfo.class
+de/sciss/jump3r/mp3/Reservoir.class
+de/sciss/jump3r/mpg/MPG123$gr_info_s.class
+de/sciss/jump3r/mp3/PlottingData.class
+de/sciss/jump3r/mpg/MPG123$grT.class
+=== jdeps
+   de.sciss.jump3r.lowlevel                           -> javax.sound.sampled                                java.desktop
+=== de.sciss.jump3r.mp3.Lame
+Compiled from "Lame.java"
+public class de.sciss.jump3r.mp3.Lame {
+  public de.sciss.jump3r.mp3.Encoder enc;
+  public static final long LAME_ID;
+  public static final int V9;
+  public static final int V8;
+  public static final int V7;
+  public static final int V6;
+  public static final int V5;
+  public static final int V4;
+  public static final int V3;
+  public static final int V2;
+  public static final int V1;
+  public static final int V0;
+  public static final int R3MIX;
+  public static final int STANDARD;
+  public static final int EXTREME;
+  public static final int INSANE;
+  public static final int STANDARD_FAST;
+  public static final int EXTREME_FAST;
+  public static final int MEDIUM;
+  public static final int MEDIUM_FAST;
+  public static final int LAME_MAXMP3BUFFER;
+  public de.sciss.jump3r.mp3.Lame();
+  public final void setModules(de.sciss.jump3r.mp3.GainAnalysis, de.sciss.jump3r.mp3.BitStream, de.sciss.jump3r.mp3.Presets, de.sciss.jump3r.mp3.QuantizePVT, de.sciss.jump3r.mp3.Quantize, de.sciss.jump3r.mp3.VBRTag, de.sciss.jump3r.mp3.Version, de.sciss.jump3r.mp3.ID3Tag, de.sciss.jump3r.mpg.MPGLib);
+  public final int nearestBitrateFullIndex(int);
+  public final int BitrateIndex(int, int, int);
+  public final int lame_init_params(de.sciss.jump3r.mp3.LameGlobalFlags);
+  public final void lame_print_config(de.sciss.jump3r.mp3.LameGlobalFlags);
+  public final void lame_print_internals(de.sciss.jump3r.mp3.LameGlobalFlags);
+  public int lame_encode_buffer_int(de.sciss.jump3r.mp3.LameGlobalFlags, int[], int[], int, byte[], int, int);
+  public final int lame_encode_flush_nogap(de.sciss.jump3r.mp3.LameGlobalFlags, byte[], int);
+  public final void lame_init_bitstream(de.sciss.jump3r.mp3.LameGlobalFlags);
+  public final int lame_encode_flush(de.sciss.jump3r.mp3.LameGlobalFlags, byte[], int, int);
+  public final int lame_close(de.sciss.jump3r.mp3.LameGlobalFlags);
+  public final de.sciss.jump3r.mp3.LameGlobalFlags lame_init();
+  public final void lame_bitrate_kbps(de.sciss.jump3r.mp3.LameGlobalFlags, int[]);
+  public final void lame_bitrate_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[]);
+  public final void lame_stereo_mode_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[]);
+  public final void lame_bitrate_stereo_mode_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[][]);
+  public final void lame_block_type_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[]);
+  public final void lame_bitrate_block_type_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[][]);
+}
+=== de.sciss.jump3r.mp3.LameGlobalFlags
+Compiled from "LameGlobalFlags.java"
+public class de.sciss.jump3r.mp3.LameGlobalFlags {
+  public long class_id;
+  public int num_samples;
+  public int num_channels;
+  public int in_samplerate;
+  public int out_samplerate;
+  public float scale;
+  public float scale_left;
+  public float scale_right;
+  public boolean analysis;
+  public boolean bWriteVbrTag;
+  public boolean decode_only;
+  public int quality;
+  public de.sciss.jump3r.mp3.MPEGMode mode;
+  public boolean force_ms;
+  public boolean free_format;
+  public boolean findReplayGain;
+  public boolean decode_on_the_fly;
+  public boolean write_id3tag_automatic;
+  public int brate;
+  public float compression_ratio;
+  public int copyright;
+  public int original;
+  public int extension;
+  public int emphasis;
+  public boolean error_protection;
+  public boolean strict_ISO;
+  public boolean disable_reservoir;
+  public int quant_comp;
+  public int quant_comp_short;
+  public boolean experimentalY;
+  public int experimentalZ;
+  public int exp_nspsytune;
+  public int preset;
+  public de.sciss.jump3r.mp3.VbrMode VBR;
+  public float VBR_q_frac;
+  public int VBR_q;
+  public int VBR_mean_bitrate_kbps;
+  public int VBR_min_bitrate_kbps;
+  public int VBR_max_bitrate_kbps;
+  public int VBR_hard_min;
+  public int lowpassfreq;
+  public int highpassfreq;
+  public int lowpasswidth;
+  public int highpasswidth;
+  public float maskingadjust;
+  public float maskingadjust_short;
+  public boolean ATHonly;
+  public boolean ATHshort;
+  public boolean noATH;
+  public int ATHtype;
+  public float ATHcurve;
+  public float ATHlower;
+  public int athaa_type;
+  public int athaa_loudapprox;
+  public float athaa_sensitivity;
+  public de.sciss.jump3r.mp3.ShortBlock short_blocks;
+  public java.lang.Boolean useTemporal;
+  public float interChRatio;
+  public float msfix;
+  public boolean tune;
+  public float tune_value_a;
+  public int version;
+  public int encoder_delay;
+  public int encoder_padding;
+  public int framesize;
+  public int frameNum;
+  public int lame_allocated_gfp;
+  public de.sciss.jump3r.mp3.LameInternalFlags internal_flags;
+  public de.sciss.jump3r.mp3.LameGlobalFlags();
+}
+=== de.sciss.jump3r.lowlevel.LameEncoder
+Compiled from "LameEncoder.java"
+public class de.sciss.jump3r.lowlevel.LameEncoder {
+  public static final javax.sound.sampled.AudioFormat$Encoding MPEG1L3;
+  public static final javax.sound.sampled.AudioFormat$Encoding MPEG2L3;
+  public static final javax.sound.sampled.AudioFormat$Encoding MPEG2DOT5L3;
+  public static final java.lang.String P_VBR;
+  public static final java.lang.String P_CHMODE;
+  public static final java.lang.String P_BITRATE;
+  public static final java.lang.String P_QUALITY;
+  public static final int MPEG_VERSION_2;
+  public static final int MPEG_VERSION_1;
+  public static final int MPEG_VERSION_2DOT5;
+  public static final int QUALITY_LOWEST;
+  public static final int QUALITY_LOW;
+  public static final int QUALITY_MIDDLE;
+  public static final int QUALITY_HIGH;
+  public static final int QUALITY_HIGHEST;
+  public static final int CHANNEL_MODE_STEREO;
+  public static final int CHANNEL_MODE_JOINT_STEREO;
+  public static final int CHANNEL_MODE_DUAL_CHANNEL;
+  public static final int CHANNEL_MODE_MONO;
+  public static final int CHANNEL_MODE_AUTO;
+  public static final int BITRATE_AUTO;
+  public de.sciss.jump3r.lowlevel.LameEncoder();
+  public de.sciss.jump3r.lowlevel.LameEncoder(javax.sound.sampled.AudioFormat);
+  public de.sciss.jump3r.lowlevel.LameEncoder(javax.sound.sampled.AudioFormat, javax.sound.sampled.AudioFormat);
+  public de.sciss.jump3r.lowlevel.LameEncoder(javax.sound.sampled.AudioFormat, int, int, int, boolean);
+  public void setSourceFormat(javax.sound.sampled.AudioFormat);
+  public void setTargetFormat(javax.sound.sampled.AudioFormat);
+  public void setFormat(javax.sound.sampled.AudioFormat, javax.sound.sampled.AudioFormat);
+  public java.lang.String getEncoderVersion();
+  public int getPCMBufferSize();
+  public int getMP3BufferSize();
+  public int getInputBufferSize();
+  public int getOutputBufferSize();
+  public int encodeBuffer(byte[], int, int, byte[]) throws java.lang.ArrayIndexOutOfBoundsException;
+  public int encodeFinish(byte[]);
+  public void close();
+  public javax.sound.sampled.AudioFormat getEffectiveFormat();
+  public int getEffectiveQuality();
+  public int getEffectiveBitRate();
+  public int getEffectiveChannelMode();
+  public boolean getEffectiveVBR();
+  public int getEffectiveSampleRate();
+  public javax.sound.sampled.AudioFormat$Encoding getEffectiveEncoding();
+  public final float convertByteArrayToFloat(byte[], int, java.nio.ByteOrder);
+  public javax.sound.sampled.AudioFormat getSourceFormat();
+  public javax.sound.sampled.AudioFormat getTargetFormat();
+}
+=== de.sciss.jump3r.mp3.MPEGMode
+Compiled from "MPEGMode.java"
+public final class de.sciss.jump3r.mp3.MPEGMode extends java.lang.Enum<de.sciss.jump3r.mp3.MPEGMode> {
+  public static final de.sciss.jump3r.mp3.MPEGMode STEREO;
+  public static final de.sciss.jump3r.mp3.MPEGMode JOINT_STEREO;
+  public static final de.sciss.jump3r.mp3.MPEGMode DUAL_CHANNEL;
+  public static final de.sciss.jump3r.mp3.MPEGMode MONO;
+  public static final de.sciss.jump3r.mp3.MPEGMode NOT_SET;
+  public static de.sciss.jump3r.mp3.MPEGMode[] values();
+  public static de.sciss.jump3r.mp3.MPEGMode valueOf(java.lang.String);
+}
