@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<paths>
-    <!-- Downloaded update APKs -->
-    <cache-path name="updates" path="updates/" />
-    <!-- Files saved on Android 9 and older (opened with other apps) -->
-    <external-path name="external" path="." />
-</paths>

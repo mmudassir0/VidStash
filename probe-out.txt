@@ -1,299 +1,700 @@
-de/sciss/jump3r/mpg/Decode.class
-de/sciss/jump3r/mp3/LameInternalFlags.class
-de/sciss/jump3r/mp3/L3Side.class
-de/sciss/jump3r/mp3/ABRPresets.class
-de/sciss/jump3r/mp3/Quantize$BinSearchDirection.class
-de/sciss/jump3r/mp3/ABRIterationLoop.class
-de/sciss/jump3r/mp3/IIISideInfo.class
-de/sciss/jump3r/mp3/VBRTag$1.class
-de/sciss/jump3r/mpg/Layer2.class
-de/sciss/jump3r/lowlevel/LameDecoder.class
-de/sciss/jump3r/mp3/Encoder.class
-de/sciss/jump3r/mpg/MPGLib$mpstr_tag.class
-de/sciss/jump3r/mp3/PsyModel.class
-de/sciss/jump3r/mp3/LongBlockConstrain.class
-de/sciss/jump3r/mp3/GetAudio$1.class
-de/sciss/jump3r/mpg/Layer3$bandInfoStruct.class
-de/sciss/jump3r/mpg/MPG123.class
-de/sciss/jump3r/mp3/VBRQuantize$alloc_sf_f.class
-de/sciss/jump3r/mpg/MPGLib$framebuf.class
-de/sciss/jump3r/mp3/VBRQuantize.class
-de/sciss/jump3r/mp3/FFT.class
-de/sciss/jump3r/mp3/VBRQuantize$algo_t.class
-de/sciss/jump3r/mpg/DCT64.class
-de/sciss/jump3r/mpg/MPG123$III_sideinfo.class
-de/sciss/jump3r/lowlevel/LameEncoder.class
-de/sciss/jump3r/Main.class
-de/sciss/jump3r/mpg/MPGLib.class
-de/sciss/jump3r/mp3/QuantizePVT$StartLine.class
-de/sciss/jump3r/mpg/Interface$1.class
-de/sciss/jump3r/mp3/VBRTagData.class
-de/sciss/jump3r/mp3/ScaleFac.class
-de/sciss/jump3r/mpg/TabInit.class
-de/sciss/jump3r/mp3/QuantizePVT.class
-de/sciss/jump3r/mp3/ShortBlockConstrain.class
-de/sciss/jump3r/mpg/Layer3.class
-de/sciss/jump3r/mp3/Tables.class
-de/sciss/jump3r/mp3/VBROldIterationLoop.class
-de/sciss/jump3r/mp3/PSY.class
-de/sciss/jump3r/mp3/VBRNewIterationLoop.class
-de/sciss/jump3r/mp3/CBRNewIterationLoop.class
-de/sciss/jump3r/mp3/LameGlobalFlags.class
-de/sciss/jump3r/mp3/MP3Data.class
-de/sciss/jump3r/mpg/MPGLib$buf.class
-de/sciss/jump3r/mp3/NsPsy.class
-de/sciss/jump3r/mp3/NewMDCT.class
-de/sciss/jump3r/mpg/Decode$Factory.class
-de/sciss/jump3r/mp3/III_psy_xmin.class
-de/sciss/jump3r/mp3/CalcNoiseResult.class
-de/sciss/jump3r/mp3/BRHist.class
-de/sciss/jump3r/mp3/Util.class
-de/sciss/jump3r/mp3/VBRQuantize$CalcNoiseCache.class
-de/sciss/jump3r/mp3/ID3Tag$MimeType.class
-de/sciss/jump3r/mp3/MPEGMode.class
-de/sciss/jump3r/mp3/ShortBlock.class
-de/sciss/jump3r/mp3/LameInternalFlags$Header.class
-de/sciss/jump3r/mpg/Huffman.class
-de/sciss/jump3r/mp3/GetAudio$IFF_AIFF.class
-de/sciss/jump3r/mp3/ATH.class
-de/sciss/jump3r/mp3/Takehiro$Bits.class
-de/sciss/jump3r/mp3/Parse$TextEncoding.class
-de/sciss/jump3r/mp3/HuffCodeTab.class
-de/sciss/jump3r/mp3/VBRPresets.class
-de/sciss/jump3r/mpg/MPGLib$3.class
-de/sciss/jump3r/mp3/ID3TagSpec.class
-de/sciss/jump3r/mp3/Parse$2.class
-de/sciss/jump3r/mp3/Inf.class
-de/sciss/jump3r/mpg/Interface$2.class
-de/sciss/jump3r/mp3/III_psy_ratio.class
-de/sciss/jump3r/mp3/Presets.class
-de/sciss/jump3r/mp3/GetAudio$sound_file_format.class
-de/sciss/jump3r/Main$1.class
-de/sciss/jump3r/mpg/L2Tables.class
-de/sciss/jump3r/mp3/Version.class
-de/sciss/jump3r/mpg/MPGLib$1.class
-de/sciss/jump3r/mpg/L2Tables$al_table2.class
-de/sciss/jump3r/mpg/MPGLib$2.class
-de/sciss/jump3r/mp3/GetAudio$BlockAlign.class
-de/sciss/jump3r/mp3/Lame.class
-de/sciss/jump3r/mp3/Parse.class
-de/sciss/jump3r/mp3/Quantize.class
-de/sciss/jump3r/mp3/GenreListHandler.class
-de/sciss/jump3r/mp3/IIterationLoop.class
-de/sciss/jump3r/mpg/Common.class
-de/sciss/jump3r/mp3/Lame$1.class
-de/sciss/jump3r/mp3/ReplayGain.class
-de/sciss/jump3r/mp3/BitStream.class
-de/sciss/jump3r/mp3/FrameDataNode.class
-de/sciss/jump3r/mp3/VBRTag.class
-de/sciss/jump3r/mpg/Layer1.class
-de/sciss/jump3r/mp3/VbrMode.class
-de/sciss/jump3r/mp3/MeanBits.class
-de/sciss/jump3r/mp3/Parse$ID3TAG_MODE.class
-de/sciss/jump3r/mp3/BitStream$TotalBytes.class
-de/sciss/jump3r/mpg/Interface$ISynth.class
-de/sciss/jump3r/mp3/CalcNoiseData.class
-de/sciss/jump3r/mpg/MPGLib$IDecoder.class
-de/sciss/jump3r/mp3/ID3Tag.class
-de/sciss/jump3r/mpg/MPGLib$4.class
-de/sciss/jump3r/mpg/Huffman$newhuff.class
-de/sciss/jump3r/mpg/Interface.class
-de/sciss/jump3r/mp3/Parse$1.class
-de/sciss/jump3r/mp3/GetAudio.class
-de/sciss/jump3r/mp3/GainAnalysis.class
-de/sciss/jump3r/mp3/Parse$NoGap.class
-de/sciss/jump3r/mp3/Lame$LowPassHighPass.class
-de/sciss/jump3r/mpg/Frame.class
-de/sciss/jump3r/mp3/Lame$NumUsed.class
-de/sciss/jump3r/mp3/Takehiro.class
-de/sciss/jump3r/mp3/VBRSeekInfo.class
-de/sciss/jump3r/mp3/Lame$BandPass.class
-de/sciss/jump3r/mp3/Lame$InOut.class
-de/sciss/jump3r/mp3/Enc.class
-de/sciss/jump3r/mp3/ID3Tag$1.class
-de/sciss/jump3r/mpg/MPGLib$ProcessedBytes.class
-de/sciss/jump3r/mp3/GrInfo.class
-de/sciss/jump3r/mp3/Reservoir.class
-de/sciss/jump3r/mpg/MPG123$gr_info_s.class
-de/sciss/jump3r/mp3/PlottingData.class
-de/sciss/jump3r/mpg/MPG123$grT.class
-=== jdeps
-   de.sciss.jump3r.lowlevel                           -> javax.sound.sampled                                java.desktop
-=== de.sciss.jump3r.mp3.Lame
-Compiled from "Lame.java"
-public class de.sciss.jump3r.mp3.Lame {
-  public de.sciss.jump3r.mp3.Encoder enc;
-  public static final long LAME_ID;
-  public static final int V9;
-  public static final int V8;
-  public static final int V7;
-  public static final int V6;
-  public static final int V5;
-  public static final int V4;
-  public static final int V3;
-  public static final int V2;
-  public static final int V1;
-  public static final int V0;
-  public static final int R3MIX;
-  public static final int STANDARD;
-  public static final int EXTREME;
-  public static final int INSANE;
-  public static final int STANDARD_FAST;
-  public static final int EXTREME_FAST;
-  public static final int MEDIUM;
-  public static final int MEDIUM_FAST;
-  public static final int LAME_MAXMP3BUFFER;
-  public de.sciss.jump3r.mp3.Lame();
-  public final void setModules(de.sciss.jump3r.mp3.GainAnalysis, de.sciss.jump3r.mp3.BitStream, de.sciss.jump3r.mp3.Presets, de.sciss.jump3r.mp3.QuantizePVT, de.sciss.jump3r.mp3.Quantize, de.sciss.jump3r.mp3.VBRTag, de.sciss.jump3r.mp3.Version, de.sciss.jump3r.mp3.ID3Tag, de.sciss.jump3r.mpg.MPGLib);
-  public final int nearestBitrateFullIndex(int);
-  public final int BitrateIndex(int, int, int);
-  public final int lame_init_params(de.sciss.jump3r.mp3.LameGlobalFlags);
-  public final void lame_print_config(de.sciss.jump3r.mp3.LameGlobalFlags);
-  public final void lame_print_internals(de.sciss.jump3r.mp3.LameGlobalFlags);
-  public int lame_encode_buffer_int(de.sciss.jump3r.mp3.LameGlobalFlags, int[], int[], int, byte[], int, int);
-  public final int lame_encode_flush_nogap(de.sciss.jump3r.mp3.LameGlobalFlags, byte[], int);
-  public final void lame_init_bitstream(de.sciss.jump3r.mp3.LameGlobalFlags);
-  public final int lame_encode_flush(de.sciss.jump3r.mp3.LameGlobalFlags, byte[], int, int);
-  public final int lame_close(de.sciss.jump3r.mp3.LameGlobalFlags);
-  public final de.sciss.jump3r.mp3.LameGlobalFlags lame_init();
-  public final void lame_bitrate_kbps(de.sciss.jump3r.mp3.LameGlobalFlags, int[]);
-  public final void lame_bitrate_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[]);
-  public final void lame_stereo_mode_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[]);
-  public final void lame_bitrate_stereo_mode_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[][]);
-  public final void lame_block_type_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[]);
-  public final void lame_bitrate_block_type_hist(de.sciss.jump3r.mp3.LameGlobalFlags, int[][]);
+package de.sciss.jump3r.lowlevel;
+
+import static javax.sound.sampled.AudioSystem.NOT_SPECIFIED;
+
+import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFormat.Encoding;
+
+import de.sciss.jump3r.mp3.BRHist;
+import de.sciss.jump3r.mp3.BitStream;
+import de.sciss.jump3r.mp3.GainAnalysis;
+import de.sciss.jump3r.mp3.GetAudio;
+import de.sciss.jump3r.mp3.ID3Tag;
+import de.sciss.jump3r.mp3.Lame;
+import de.sciss.jump3r.mp3.LameGlobalFlags;
+import de.sciss.jump3r.mp3.MPEGMode;
+import de.sciss.jump3r.mp3.Parse;
+import de.sciss.jump3r.mp3.Presets;
+import de.sciss.jump3r.mp3.Quantize;
+import de.sciss.jump3r.mp3.QuantizePVT;
+import de.sciss.jump3r.mp3.Reservoir;
+import de.sciss.jump3r.mp3.Takehiro;
+import de.sciss.jump3r.mp3.Util;
+import de.sciss.jump3r.mp3.VBRTag;
+import de.sciss.jump3r.mp3.VbrMode;
+import de.sciss.jump3r.mp3.Version;
+import de.sciss.jump3r.mpg.Common;
+import de.sciss.jump3r.mpg.Interface;
+import de.sciss.jump3r.mpg.MPGLib;
+
+/**
+ * Wrapper for the jump3r encoder.
+ * 
+ * @author Ken Handel
+ */
+public class LameEncoder /* implements org.jma.encoder.audio.IAudioEncoder */ {
+
+	public static final AudioFormat.Encoding MPEG1L3 = new AudioFormat.Encoding(
+			"MPEG1L3");
+	// Lame converts automagically to MPEG2 or MPEG2.5, if necessary.
+	public static final AudioFormat.Encoding MPEG2L3 = new AudioFormat.Encoding(
+			"MPEG2L3");
+	public static final AudioFormat.Encoding MPEG2DOT5L3 = new AudioFormat.Encoding(
+			"MPEG2DOT5L3");
+
+	// property constants
+	/**
+	 * property key to read/set the VBR mode: an instance of Boolean (default:
+	 * false)
+	 */
+	public static final String P_VBR = "vbr";
+	/**
+	 * property key to read/set the channel mode: a String, one of
+	 * &quot;jointstereo&quot;, &quot;dual&quot;, &quot;mono&quot;,
+	 * &quot;auto&quot; (default).
+	 */
+	public static final String P_CHMODE = "chmode";
+	/**
+	 * property key to read/set the bitrate: an Integer value. Set to -1 for
+	 * default bitrate.
+	 */
+	public static final String P_BITRATE = "bitrate";
+	/**
+	 * property key to read/set the quality: an Integer from 1 (highest) to 9
+	 * (lowest).
+	 */
+	public static final String P_QUALITY = "quality";
+
+	// constants from lame.h
+	public static final int MPEG_VERSION_2 = 0; // MPEG-2
+	public static final int MPEG_VERSION_1 = 1; // MPEG-1
+	public static final int MPEG_VERSION_2DOT5 = 2; // MPEG-2.5
+
+	// low mean bitrate in VBR mode
+	public static final int QUALITY_LOWEST = 9;
+	public static final int QUALITY_LOW = 7;
+	public static final int QUALITY_MIDDLE = 5;
+	public static final int QUALITY_HIGH = 2;
+	// quality==0 not yet coded in LAME (3.83alpha)
+	// high mean bitrate in VBR // mode
+	public static final int QUALITY_HIGHEST = 1;
+
+	public static final int CHANNEL_MODE_STEREO = 0;
+	public static final int CHANNEL_MODE_JOINT_STEREO = 1;
+	public static final int CHANNEL_MODE_DUAL_CHANNEL = 2;
+	public static final int CHANNEL_MODE_MONO = 3;
+
+	// channel mode has no influence on mono files.
+	public static final int CHANNEL_MODE_AUTO = -1;
+	public static final int BITRATE_AUTO = -1;
+
+	// suggested maximum buffer size for an mpeg frame
+	private static final int DEFAULT_PCM_BUFFER_SIZE = 2048 * 16;
+
+	// frame size=576 for MPEG2 and MPEG2.5
+	// =576*2 for MPEG1
+
+	private static int DEFAULT_QUALITY = QUALITY_MIDDLE;
+	private static int DEFAULT_BITRATE = BITRATE_AUTO;
+	private static int DEFAULT_CHANNEL_MODE = CHANNEL_MODE_AUTO;
+	// in VBR mode, bitrate is ignored.
+	private static boolean DEFAULT_VBR = false;
+
+	// encoding source values
+	private Encoding sourceEncoding;
+	private ByteOrder sourceByteOrder;
+	private int sourceChannels;
+	private int sourceSampleRate;
+	private int sourceSampleSizeInBits;
+	private boolean sourceIsBigEndian;
+	
+	private int quality = DEFAULT_QUALITY;
+	private int bitRate = DEFAULT_BITRATE;
+	private boolean vbrMode = DEFAULT_VBR;
+	private int chMode = DEFAULT_CHANNEL_MODE;
+
+	// these fields are set upon successful initialization to show effective
+	// values.
+	private int effQuality;
+	private int effBitRate;
+	private int effVbr;
+	private int effChMode;
+	private int effSampleRate;
+	private int effEncoding;
+	private LameGlobalFlags gfp;
+	private AudioFormat sourceFormat;
+	private AudioFormat targetFormat;
+	
+	
+	
+	public LameEncoder() {
+		
+	}
+
+	/**
+	 * Initializes the encoder with the given source/PCM format. The default mp3
+	 * encoding parameters are used, see DEFAULT_BITRATE, DEFAULT_CHANNEL_MODE,
+	 * DEFAULT_QUALITY, and DEFAULT_VBR.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             when parameters are not supported by LAME.
+	 */
+
+
+
+
+	public LameEncoder(AudioFormat sourceFormat) {
+		readParams(sourceFormat, null);
+		setFormat(sourceFormat, null);
+	}
+
+	/**
+	 * Initializes the encoder with the given source/PCM format. The mp3
+	 * parameters are read from the targetFormat's properties. For any parameter
+	 * that is not set, global system properties are queried for backwards
+	 * tritonus compatibility. Last, parameters will use the default values
+	 * DEFAULT_BITRATE, DEFAULT_CHANNEL_MODE, DEFAULT_QUALITY, and DEFAULT_VBR.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             when parameters are not supported by LAME.
+	 */
+	public LameEncoder(AudioFormat sourceFormat, AudioFormat targetFormat) {
+		readParams(sourceFormat, targetFormat.properties());
+		setFormat(sourceFormat, targetFormat);
+	}
+
+
+	/**
+	 * Initializes the encoder, overriding any parameters set in the audio
+	 * format's properties or in the system properties.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             when parameters are not supported by LAME.
+	 */
+	public LameEncoder(AudioFormat sourceFormat, int bitRate, int channelMode, int quality, boolean VBR) {
+		this.bitRate = bitRate;
+		this.chMode = channelMode;
+		this.quality = quality;
+		this.vbrMode = VBR;
+		setFormat(sourceFormat, null);
+	}
+
+	private void readParams(AudioFormat sourceFormat, Map<String, Object> props) {
+		if (props != null) {
+			readProps(props);
+		}
+	}
+
+	public void setSourceFormat(AudioFormat sourceFormat) {
+		setFormat(sourceFormat, null);
+	}
+
+	public void setTargetFormat(AudioFormat targetFormat) {
+		setFormat(null, targetFormat);
+	}
+	
+	public void setFormat(AudioFormat sourceFormat, AudioFormat targetFormat) {
+		this.sourceFormat = sourceFormat;
+		if (sourceFormat!=null){			
+			sourceEncoding = sourceFormat.getEncoding();
+			sourceSampleSizeInBits = sourceFormat.getSampleSizeInBits();
+			sourceByteOrder = sourceFormat.isBigEndian() ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN;
+			sourceChannels = sourceFormat.getChannels();
+			sourceSampleRate = Math.round(sourceFormat.getSampleRate());
+			sourceIsBigEndian = sourceFormat.isBigEndian();
+			// simple check that bitrate is not too high for MPEG2 and MPEG2.5
+			// todo: exception ?
+			if (sourceFormat.getSampleRate() < 32000 && bitRate > 160) {
+				bitRate = 160;
+			}
+		}
+		//-1 means do not change the sample rate
+		int targetSampleRate = -1;
+		this.targetFormat = targetFormat;
+		if (targetFormat!=null){
+			targetSampleRate = Math.round(targetFormat.getSampleRate());
+		}
+		int result = nInitParams(sourceChannels, 
+								 sourceSampleRate,
+								 targetSampleRate,
+								 bitRate, 
+								 chMode,
+								 quality, 
+								 vbrMode, 
+								 sourceIsBigEndian);
+		if (result < 0) {
+			throw new IllegalArgumentException("parameters not supported by LAME (returned " + result + ")");
+		}
+	}
+
+	GetAudio gaud;
+	ID3Tag id3;
+	Lame lame;
+	GainAnalysis ga;
+	BitStream bs;
+	Presets p;
+	QuantizePVT qupvt;
+	Quantize qu;
+	VBRTag vbr;
+	Version ver;
+	Util util;
+	Reservoir rv;
+	Takehiro tak;
+	Parse parse;
+	BRHist hist;
+
+	MPGLib mpg;
+	Interface intf;
+	Common common;
+
+	/**
+	 * Initializes the lame encoder. Throws IllegalArgumentException when
+	 * parameters are not supported by LAME.
+	 */
+	private int nInitParams(int channels, int inSampleRate, int outSampleRate, int bitrate,
+			int mode, int quality, boolean VBR, boolean bigEndian) {
+		// encoder modules
+		lame = new Lame();
+		gaud = new GetAudio();
+		ga = new GainAnalysis();
+		bs = new BitStream();
+		p = new Presets();
+		qupvt = new QuantizePVT();
+		qu = new Quantize();
+		vbr = new VBRTag();
+		ver = new Version();
+		id3 = new ID3Tag();
+		rv = new Reservoir();
+		tak = new Takehiro();
+		parse = new Parse();
+		hist = new BRHist();
+
+		mpg = new MPGLib();
+		intf = new Interface();
+		common = new Common();
+
+		lame.setModules(ga, bs, p, qupvt, qu, vbr, ver, id3, mpg);
+		bs.setModules(ga, mpg, ver, vbr);
+		id3.setModules(bs, ver);
+		p.setModules(lame);
+		qu.setModules(bs, rv, qupvt, tak);
+		qupvt.setModules(tak, rv, lame.enc.psy);
+		rv.setModules(bs);
+		tak.setModules(qupvt);
+		vbr.setModules(lame, bs, ver);
+		gaud.setModules(parse, mpg);
+		parse.setModules(ver, id3, p);
+		
+
+		// decoder modules
+		mpg.setModules(intf, common);
+		intf.setModules(vbr, common);
+
+		gfp = lame.lame_init();
+		gfp.num_channels = channels;
+		gfp.in_samplerate = inSampleRate;
+		if (outSampleRate>=0)
+			gfp.out_samplerate = outSampleRate;
+		if (mode != CHANNEL_MODE_AUTO) {
+            gfp.mode = MPEGMode.values()[mode];
+		}
+		if (VBR) {
+			gfp.VBR = VbrMode.vbr_default;
+			gfp.VBR_q = quality;
+		} else {
+			if (bitrate != BITRATE_AUTO) {
+				gfp.brate = bitrate;
+			}
+		}
+		gfp.quality = quality;
+
+		id3.id3tag_init(gfp);
+		/*
+		 * turn off automatic writing of ID3 tag data into mp3 stream we have to
+		 * call it before 'lame_init_params', because that function would spit
+		 * out ID3v2 tag data.
+		 */
+		gfp.write_id3tag_automatic = false;
+		gfp.findReplayGain = true;
+
+		int rc = lame.lame_init_params(gfp);
+		// return effective values
+		effSampleRate = gfp.out_samplerate;
+		effBitRate = gfp.brate;
+		effChMode = gfp.mode.ordinal();
+		effVbr = gfp.VBR.ordinal();
+		effQuality = (VBR) ? gfp.VBR_q : gfp.quality;
+		return rc;
+	}
+
+	/**
+	 * returns -1 if string is too short or returns one of the exception
+	 * constants if everything OK, returns the length of the string
+	 */
+	public String getEncoderVersion() {
+		return ver.getLameVersion();
+	}
+
+	/**
+	 * Returns the buffer needed pcm buffer size. The passed parameter is a
+	 * wished buffer size. The implementation of the encoder may return a lower
+	 * or higher buffer size. The encoder must be initalized (i.e. not closed)
+	 * at this point. A return value of <0 denotes an error.
+	 */
+	public int getPCMBufferSize() {
+		return DEFAULT_PCM_BUFFER_SIZE;
+	}
+
+	public int getMP3BufferSize() {
+		// bad estimate :)
+		return getPCMBufferSize() / 2 + 1024;
+	}
+
+
+	public int getInputBufferSize() {
+		return getPCMBufferSize();
+	}
+
+	public int getOutputBufferSize() {
+		return getMP3BufferSize();
+	}
+
+	private int doEncodeBuffer(byte[] pcm, int offset, int length,	byte[] encoded) {
+		int bytes_per_sample = sourceSampleSizeInBits >> 3;
+		int samples_read = length / bytes_per_sample;
+
+
+
+		int[] sample_buffer = new int[samples_read];
+
+		int sample_index = samples_read;
+		if (!sourceEncoding.toString().equals("PCM_FLOAT")){
+			if (sourceByteOrder == ByteOrder.LITTLE_ENDIAN) {
+				if (bytes_per_sample == 1)
+					for (int i = samples_read * bytes_per_sample; (i -= bytes_per_sample) >= 0;)
+						sample_buffer[--sample_index] = (pcm[offset + i] & 0xff) << 24;
+				if (bytes_per_sample == 2)
+					for (int i = samples_read * bytes_per_sample; (i -= bytes_per_sample) >= 0;)
+						sample_buffer[--sample_index] = (pcm[offset + i] & 0xff) << 16
+								| (pcm[offset + i + 1] & 0xff) << 24;
+				if (bytes_per_sample == 3)
+					for (int i = samples_read * bytes_per_sample; (i -= bytes_per_sample) >= 0;)
+						sample_buffer[--sample_index] = (pcm[offset + i] & 0xff) << 8
+								| (pcm[offset + i + 1] & 0xff) << 16
+								| (pcm[offset + i + 2] & 0xff) << 24;
+				if (bytes_per_sample == 4)
+					for (int i = samples_read * bytes_per_sample; (i -= bytes_per_sample) >= 0;)
+						sample_buffer[--sample_index] = (pcm[offset + i] & 0xff)
+								| (pcm[offset + i + 1] & 0xff) << 8
+								| (pcm[offset + i + 2] & 0xff) << 16
+								| (pcm[offset + i + 3] & 0xff) << 24;
+			} else {
+				if (bytes_per_sample == 1)
+					for (int i = samples_read * bytes_per_sample; (i -= bytes_per_sample) >= 0;)
+						sample_buffer[--sample_index] = ((pcm[offset + i] & 0xff) ^ 0x80) << 24
+								| 0x7f << 16;
+				if (bytes_per_sample == 2)
+					for (int i = samples_read * bytes_per_sample; (i -= bytes_per_sample) >= 0;)
+						sample_buffer[--sample_index] = (pcm[offset + i] & 0xff) << 24
+								| (pcm[offset + i + 1] & 0xff) << 16;
+				if (bytes_per_sample == 3)
+					for (int i = samples_read * bytes_per_sample; (i -= bytes_per_sample) >= 0;)
+						sample_buffer[--sample_index] = (pcm[offset + i] & 0xff) << 24
+								| (pcm[offset + i + 1] & 0xff) << 16
+								| (pcm[offset + i + 2] & 0xff) << 8;
+				if (bytes_per_sample == 4)
+					for (int i = samples_read * bytes_per_sample; (i -= bytes_per_sample) >= 0;)
+						sample_buffer[--sample_index] = (pcm[offset + i] & 0xff) << 24
+								| (pcm[offset + i + 1] & 0xff) << 16
+								| (pcm[offset + i + 2] & 0xff) << 8
+								| (pcm[offset + i + 3] & 0xff);
+			}
+		} else {
+			if (bytes_per_sample == 4)
+				for (int i = samples_read * bytes_per_sample; (i -= bytes_per_sample) >= 0;){
+					byte[] sample = new byte[4];
+					sample[0] = pcm [offset + i];
+					sample[1] = pcm [offset + i + 1];
+					sample[2] = pcm [offset + i + 2];
+					sample[3] = pcm [offset + i + 3];
+					float amlitude = convertByteArrayToFloat(sample, 0, sourceByteOrder);
+					if (Math.abs(amlitude)>=1.0) continue;
+					int sampleInt = Math.round(Integer.MAX_VALUE*amlitude);
+					sample_buffer[--sample_index]=sampleInt;
+//					System.out.print(sample_buffer[--sample_index]=sampleInt);
+//					System.out.println(Arrays.toString(sample));
+				}
+		}
+		int p = samples_read;
+		samples_read /= gfp.num_channels;
+
+		int buffer[][] = new int[2][samples_read];
+		if (gfp.num_channels == 2) {
+			for (int i = samples_read; --i >= 0;) {
+				buffer[1][i] = sample_buffer[--p];
+				buffer[0][i] = sample_buffer[--p];
+			}
+		} else if (gfp.num_channels == 1) {
+			Arrays.fill(buffer[1], 0, samples_read, 0);
+			for (int i = samples_read; --i >= 0;) {
+				buffer[0][i] = buffer[1][i] = sample_buffer[--p];
+			}
+		}
+			
+		int res = lame.lame_encode_buffer_int(gfp, buffer[0], buffer[1], samples_read, encoded, 0, encoded.length);
+		return res;
+	}
+
+	/**
+	 * Encode a block of data. Throws IllegalArgumentException when parameters
+	 * are wrong. When the <code>encoded</code> array is too small, an
+	 * ArrayIndexOutOfBoundsException is thrown. <code>length</code> should be
+	 * the value returned by getPCMBufferSize.
+	 * 
+	 * @return the number of bytes written to <code>encoded</code>. May be 0.
+	 */
+	public int encodeBuffer(byte[] pcm, int offset, int length, byte[] encoded)
+			throws ArrayIndexOutOfBoundsException {
+		if (length < 0 || (offset + length) > pcm.length) {
+			throw new IllegalArgumentException("inconsistent parameters");
+		}
+		int result = doEncodeBuffer(pcm, offset, length, encoded);
+		if (result < 0) {
+			if (result == -1) {
+				throw new ArrayIndexOutOfBoundsException(
+						"Encode buffer too small");
+			}
+			throw new RuntimeException("crucial error in encodeBuffer.");
+		}
+		return result;
+	}
+
+	public int encodeFinish(byte[] encoded) {
+		return lame.lame_encode_flush(gfp, encoded, 0, encoded.length);
+	}
+
+	public void close() {
+		lame.lame_close(gfp);
+	}
+
+	// properties
+	private void readProps(Map<String, Object> props) {
+		Object q = props.get(P_QUALITY);
+		if (q instanceof String) {
+			quality = string2quality(((String) q).toLowerCase(), quality);
+		} else if (q instanceof Integer) {
+			quality = (Integer) q;
+		} else if (q != null) {
+			throw new IllegalArgumentException(
+					"illegal type of quality property: " + q);
+		}
+		q = props.get(P_BITRATE);
+		if (q instanceof String) {
+			bitRate = Integer.parseInt((String) q);
+		} else if (q instanceof Integer) {
+			bitRate = (Integer) q;
+		} else if (q != null) {
+			throw new IllegalArgumentException(
+					"illegal type of bitrate property: " + q);
+		}
+		q = props.get(P_CHMODE);
+		if (q instanceof String) {
+			chMode = string2chmode(((String) q).toLowerCase(), chMode);
+		} else if (q != null) {
+			throw new IllegalArgumentException(
+					"illegal type of chmode property: " + q);
+		}
+		q = props.get(P_VBR);
+		if (q instanceof String) {
+			vbrMode = string2bool(((String) q));
+		} else if (q instanceof Boolean) {
+			vbrMode = (Boolean) q;
+		} else if (q != null) {
+			throw new IllegalArgumentException("illegal type of vbr property: "
+					+ q);
+		}
+	}
+
+	/**
+	 * Return the audioformat representing the encoded mp3 stream. The format
+	 * object will have the following properties:
+	 * <ul>
+	 * <li>quality: an Integer, 1 (highest) to 9 (lowest)
+	 * <li>bitrate: an Integer, 32...320 kbit/s
+	 * <li>chmode: channel mode, a String, one of &quot;jointstereo&quot;,
+	 * &quot;dual&quot;, &quot;mono&quot;, &quot;auto&quot; (default).
+	 * <li>vbr: a Boolean
+	 * <li>encoder.version: a string with the version of the encoder
+	 * <li>encoder.name: a string with the name of the encoder
+	 * </ul>
+	 */
+	public AudioFormat getEffectiveFormat() {
+		// first gather properties
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put(P_QUALITY, getEffectiveQuality());
+		map.put(P_BITRATE, getEffectiveBitRate());
+		map.put(P_CHMODE, chmode2string(getEffectiveChannelMode()));
+		map.put(P_VBR, getEffectiveVBR());
+		// map.put(P_SAMPLERATE, getEffectiveSampleRate());
+		// map.put(P_ENCODING,getEffectiveEncoding());
+		map.put("encoder.name", "LAME");
+		map.put("encoder.version", getEncoderVersion());
+		int channels = 2;
+		if (chMode == CHANNEL_MODE_MONO) {
+			channels = 1;
+		}
+		return new AudioFormat(getEffectiveEncoding(),
+				getEffectiveSampleRate(), NOT_SPECIFIED, channels,
+				NOT_SPECIFIED, NOT_SPECIFIED, false, map);
+	}
+
+	public int getEffectiveQuality() {
+		if (effQuality >= QUALITY_LOWEST) {
+			return QUALITY_LOWEST;
+		} else if (effQuality >= QUALITY_LOW) {
+			return QUALITY_LOW;
+		} else if (effQuality >= QUALITY_MIDDLE) {
+			return QUALITY_MIDDLE;
+		} else if (effQuality >= QUALITY_HIGH) {
+			return QUALITY_HIGH;
+		}
+		return QUALITY_HIGHEST;
+	}
+
+	public int getEffectiveBitRate() {
+		return effBitRate;
+	}
+
+	public int getEffectiveChannelMode() {
+		return effChMode;
+	}
+
+	public boolean getEffectiveVBR() {
+		return effVbr != 0;
+	}
+
+	public int getEffectiveSampleRate() {
+		return effSampleRate;
+	}
+
+	public AudioFormat.Encoding getEffectiveEncoding() {
+		if (effEncoding == MPEG_VERSION_2) {
+			if (getEffectiveSampleRate() < 16000) {
+				return MPEG2DOT5L3;
+			}
+			return MPEG2L3;
+		} else if (effEncoding == MPEG_VERSION_2DOT5) {
+			return MPEG2DOT5L3;
+		}
+		// default
+		return MPEG1L3;
+	}
+
+	private int string2quality(String quality, int def) {
+		if (quality.equals("lowest")) {
+			return QUALITY_LOWEST;
+		} else if (quality.equals("low")) {
+			return QUALITY_LOW;
+		} else if (quality.equals("middle")) {
+			return QUALITY_MIDDLE;
+		} else if (quality.equals("high")) {
+			return QUALITY_HIGH;
+		} else if (quality.equals("highest")) {
+			return QUALITY_HIGHEST;
+		}
+		return def;
+	}
+
+	private String chmode2string(int chmode) {
+		if (chmode == CHANNEL_MODE_STEREO) {
+			return "stereo";
+		} else if (chmode == CHANNEL_MODE_JOINT_STEREO) {
+			return "jointstereo";
+		} else if (chmode == CHANNEL_MODE_DUAL_CHANNEL) {
+			return "dual";
+		} else if (chmode == CHANNEL_MODE_MONO) {
+			return "mono";
+		} else if (chmode == CHANNEL_MODE_AUTO) {
+			return "auto";
+		}
+		return "auto";
+	}
+
+	private int string2chmode(String chmode, int def) {
+		if (chmode.equals("stereo")) {
+			return CHANNEL_MODE_STEREO;
+		} else if (chmode.equals("jointstereo")) {
+			return CHANNEL_MODE_JOINT_STEREO;
+		} else if (chmode.equals("dual")) {
+			return CHANNEL_MODE_DUAL_CHANNEL;
+		} else if (chmode.equals("mono")) {
+			return CHANNEL_MODE_MONO;
+		} else if (chmode.equals("auto")) {
+			return CHANNEL_MODE_AUTO;
+		}
+		return def;
+	}
+
+	/**
+	 * @return true if val is starts with t or y or on, false if val starts with
+	 *         f or n or off.
+	 * @throws IllegalArgumentException
+	 *             if val is neither true nor false
+	 */
+	private static boolean string2bool(String val) {
+		if (val.length() > 0) {
+			if ((val.charAt(0) == 'f') // false
+					|| (val.charAt(0) == 'n') // no
+					|| (val.equals("off"))) {
+				return false;
+			}
+			if ((val.charAt(0) == 't') // true
+					|| (val.charAt(0) == 'y') // yes
+					|| (val.equals("on"))) {
+				return true;
+			}
+		}
+		throw new IllegalArgumentException(
+				"wrong string for boolean property: " + val);
+	}
+
+	public final float convertByteArrayToFloat(byte bytes[], int offset, ByteOrder byteOrder)
+	{
+		byte byte0 = bytes[offset + 0];
+		byte byte1 = bytes[offset + 1];
+		byte byte2 = bytes[offset + 2];
+		byte byte3 = bytes[offset + 3];
+		int bits;
+		if (byteOrder == ByteOrder.BIG_ENDIAN) //big endian
+		{
+			bits = ((0xff & byte0) << 24) | ((0xff & byte1) << 16) | ((0xff & byte2) << 8) | ((0xff & byte3) << 0);
+		} else{
+			// little endian
+			bits = ((0xff & byte3) << 24) | ((0xff & byte2) << 16) | ((0xff & byte1) << 8) | ((0xff & byte0) << 0);
+		}
+		float result = Float.intBitsToFloat(bits);
+		return result;
+	}
+
+	public AudioFormat getSourceFormat() {
+		return sourceFormat;
+	}
+
+	public AudioFormat getTargetFormat() {
+		return targetFormat;
+	}
+
+	/** * Lame.java ** */
+
 }
-=== de.sciss.jump3r.mp3.LameGlobalFlags
-Compiled from "LameGlobalFlags.java"
-public class de.sciss.jump3r.mp3.LameGlobalFlags {
-  public long class_id;
-  public int num_samples;
-  public int num_channels;
-  public int in_samplerate;
-  public int out_samplerate;
-  public float scale;
-  public float scale_left;
-  public float scale_right;
-  public boolean analysis;
-  public boolean bWriteVbrTag;
-  public boolean decode_only;
-  public int quality;
-  public de.sciss.jump3r.mp3.MPEGMode mode;
-  public boolean force_ms;
-  public boolean free_format;
-  public boolean findReplayGain;
-  public boolean decode_on_the_fly;
-  public boolean write_id3tag_automatic;
-  public int brate;
-  public float compression_ratio;
-  public int copyright;
-  public int original;
-  public int extension;
-  public int emphasis;
-  public boolean error_protection;
-  public boolean strict_ISO;
-  public boolean disable_reservoir;
-  public int quant_comp;
-  public int quant_comp_short;
-  public boolean experimentalY;
-  public int experimentalZ;
-  public int exp_nspsytune;
-  public int preset;
-  public de.sciss.jump3r.mp3.VbrMode VBR;
-  public float VBR_q_frac;
-  public int VBR_q;
-  public int VBR_mean_bitrate_kbps;
-  public int VBR_min_bitrate_kbps;
-  public int VBR_max_bitrate_kbps;
-  public int VBR_hard_min;
-  public int lowpassfreq;
-  public int highpassfreq;
-  public int lowpasswidth;
-  public int highpasswidth;
-  public float maskingadjust;
-  public float maskingadjust_short;
-  public boolean ATHonly;
-  public boolean ATHshort;
-  public boolean noATH;
-  public int ATHtype;
-  public float ATHcurve;
-  public float ATHlower;
-  public int athaa_type;
-  public int athaa_loudapprox;
-  public float athaa_sensitivity;
-  public de.sciss.jump3r.mp3.ShortBlock short_blocks;
-  public java.lang.Boolean useTemporal;
-  public float interChRatio;
-  public float msfix;
-  public boolean tune;
-  public float tune_value_a;
-  public int version;
-  public int encoder_delay;
-  public int encoder_padding;
-  public int framesize;
-  public int frameNum;
-  public int lame_allocated_gfp;
-  public de.sciss.jump3r.mp3.LameInternalFlags internal_flags;
-  public de.sciss.jump3r.mp3.LameGlobalFlags();
-}
-=== de.sciss.jump3r.lowlevel.LameEncoder
-Compiled from "LameEncoder.java"
-public class de.sciss.jump3r.lowlevel.LameEncoder {
-  public static final javax.sound.sampled.AudioFormat$Encoding MPEG1L3;
-  public static final javax.sound.sampled.AudioFormat$Encoding MPEG2L3;
-  public static final javax.sound.sampled.AudioFormat$Encoding MPEG2DOT5L3;
-  public static final java.lang.String P_VBR;
-  public static final java.lang.String P_CHMODE;
-  public static final java.lang.String P_BITRATE;
-  public static final java.lang.String P_QUALITY;
-  public static final int MPEG_VERSION_2;
-  public static final int MPEG_VERSION_1;
-  public static final int MPEG_VERSION_2DOT5;
-  public static final int QUALITY_LOWEST;
-  public static final int QUALITY_LOW;
-  public static final int QUALITY_MIDDLE;
-  public static final int QUALITY_HIGH;
-  public static final int QUALITY_HIGHEST;
-  public static final int CHANNEL_MODE_STEREO;
-  public static final int CHANNEL_MODE_JOINT_STEREO;
-  public static final int CHANNEL_MODE_DUAL_CHANNEL;
-  public static final int CHANNEL_MODE_MONO;
-  public static final int CHANNEL_MODE_AUTO;
-  public static final int BITRATE_AUTO;
-  public de.sciss.jump3r.lowlevel.LameEncoder();
-  public de.sciss.jump3r.lowlevel.LameEncoder(javax.sound.sampled.AudioFormat);
-  public de.sciss.jump3r.lowlevel.LameEncoder(javax.sound.sampled.AudioFormat, javax.sound.sampled.AudioFormat);
-  public de.sciss.jump3r.lowlevel.LameEncoder(javax.sound.sampled.AudioFormat, int, int, int, boolean);
-  public void setSourceFormat(javax.sound.sampled.AudioFormat);
-  public void setTargetFormat(javax.sound.sampled.AudioFormat);
-  public void setFormat(javax.sound.sampled.AudioFormat, javax.sound.sampled.AudioFormat);
-  public java.lang.String getEncoderVersion();
-  public int getPCMBufferSize();
-  public int getMP3BufferSize();
-  public int getInputBufferSize();
-  public int getOutputBufferSize();
-  public int encodeBuffer(byte[], int, int, byte[]) throws java.lang.ArrayIndexOutOfBoundsException;
-  public int encodeFinish(byte[]);
-  public void close();
-  public javax.sound.sampled.AudioFormat getEffectiveFormat();
-  public int getEffectiveQuality();
-  public int getEffectiveBitRate();
-  public int getEffectiveChannelMode();
-  public boolean getEffectiveVBR();
-  public int getEffectiveSampleRate();
-  public javax.sound.sampled.AudioFormat$Encoding getEffectiveEncoding();
-  public final float convertByteArrayToFloat(byte[], int, java.nio.ByteOrder);
-  public javax.sound.sampled.AudioFormat getSourceFormat();
-  public javax.sound.sampled.AudioFormat getTargetFormat();
-}
-=== de.sciss.jump3r.mp3.MPEGMode
-Compiled from "MPEGMode.java"
-public final class de.sciss.jump3r.mp3.MPEGMode extends java.lang.Enum<de.sciss.jump3r.mp3.MPEGMode> {
-  public static final de.sciss.jump3r.mp3.MPEGMode STEREO;
-  public static final de.sciss.jump3r.mp3.MPEGMode JOINT_STEREO;
-  public static final de.sciss.jump3r.mp3.MPEGMode DUAL_CHANNEL;
-  public static final de.sciss.jump3r.mp3.MPEGMode MONO;
-  public static final de.sciss.jump3r.mp3.MPEGMode NOT_SET;
-  public static de.sciss.jump3r.mp3.MPEGMode[] values();
-  public static de.sciss.jump3r.mp3.MPEGMode valueOf(java.lang.String);
-}
+=== encode_buffer signatures
+src/de/sciss/jump3r/mp3/Lame.java:1916:	public int lame_encode_buffer_int(final LameGlobalFlags gfp,
+src/de/sciss/jump3r/mp3/Lame.java:1952:	public final int lame_encode_flush_nogap(final LameGlobalFlags gfp,
+src/de/sciss/jump3r/mp3/Lame.java:1986:	public final int lame_encode_flush(final LameGlobalFlags gfp,
+src/de/sciss/jump3r/mp3/Encoder.java:385:	public final int lame_encode_mp3_frame(final LameGlobalFlags gfp,
+src/de/sciss/jump3r/mp3/LameInternalFlags.java:43:	public int lame_encode_frame_init;
