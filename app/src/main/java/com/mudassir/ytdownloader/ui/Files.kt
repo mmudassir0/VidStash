@@ -20,6 +20,13 @@ object Files {
         ctx.startActivity(PlayerActivity.intent(ctx, item))
     }
 
+    /** Plays [items] in the built-in player, starting at [index]; the rest follow. */
+    fun playList(ctx: Context, items: List<DownloadItem>, index: Int) {
+        val item = items.getOrNull(index) ?: return
+        if (!checkExists(ctx, item)) return
+        ctx.startActivity(PlayerActivity.intent(ctx, items, index))
+    }
+
     fun openWith(ctx: Context, item: DownloadItem) {
         if (!checkExists(ctx, item)) return
         val intent = Intent(Intent.ACTION_VIEW)

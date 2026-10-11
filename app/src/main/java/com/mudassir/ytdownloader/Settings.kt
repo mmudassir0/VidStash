@@ -32,6 +32,45 @@ class Settings(ctx: Context) {
     /** Check GitHub for a newer version on launch. */
     val autoUpdateCheck get() = p.getBoolean(K_UPDATE_CHECK, true)
 
+    /** Play the next file in the list when one finishes. */
+    val autoplayNext get() = p.getBoolean(K_AUTOPLAY, true)
+
+    /** "m4a" keeps YouTube's audio as is; "mp3" converts for car stereos and old players. */
+    val audioFormat get() = p.getString(K_AUDIO_FORMAT, "m4a") ?: "m4a"
+
+    /** Offer to download a YouTube link found on the clipboard when the app opens. */
+    val clipboardPrompt get() = p.getBoolean(K_CLIPBOARD, true)
+
+    /** Remember searches and show them as suggestions. */
+    val searchHistory get() = p.getBoolean(K_HISTORY, true)
+
+    /** Player speed, kept between videos. */
+    var playbackSpeed: Float
+        get() = p.getFloat(K_SPEED, 1f)
+        set(v) = p.edit().putFloat(K_SPEED, v).apply()
+
+    /** Library sort order: "date", "name", "size", "length". */
+    var librarySort: String
+        get() = p.getString(K_LIB_SORT, "date") ?: "date"
+        set(v) = p.edit().putString(K_LIB_SORT, v).apply()
+
+    /** Last clipboard link we already asked about, so we don't ask twice. */
+    var lastClipboardLink: String
+        get() = p.getString(K_LAST_CLIP, "") ?: ""
+        set(v) = p.edit().putString(K_LAST_CLIP, v).apply()
+
+    /** Recent searches, newest first. */
+    var recentSearches: List<String>
+        get() = p.getString(K_RECENT, "").orEmpty().split('\n').filter { it.isNotBlank() }
+        set(v) = p.edit().putString(K_RECENT, v.take(MAX_RECENT).joinToString("\n")).apply()
+
+    fun addSearch(q: String) {
+        if (!searchHistory) return
+        val t = q.trim().replace('\n', ' ')
+        if (t.isEmpty()) return
+        recentSearches = listOf(t) + recentSearches.filterNot { it.equals(t, ignoreCase = true) }
+    }
+
     var paused: Boolean
         get() = p.getBoolean(K_PAUSED, false)
         set(v) = p.edit().putBoolean(K_PAUSED, v).apply()
@@ -53,6 +92,16 @@ class Settings(ctx: Context) {
         const val K_WEBM = "allow_webm"
         const val K_AUTO_SYNC = "auto_sync"
         const val K_UPDATE_CHECK = "update_check"
+        const val K_AUTOPLAY = "autoplay_next"
+        const val K_AUDIO_FORMAT = "audio_format"
+        const val K_CLIPBOARD = "clipboard_prompt"
+        const val K_HISTORY = "search_history"
+        const val K_CLEAR_HISTORY = "clear_history"
+        private const val K_SPEED = "playback_speed"
+        private const val K_LIB_SORT = "library_sort"
+        private const val K_LAST_CLIP = "last_clipboard_link"
+        private const val K_RECENT = "recent_searches"
+        private const val MAX_RECENT = 30
         private const val K_PAUSED = "paused"
         private const val K_LAST_UPDATE_CHECK = "last_update_check"
 

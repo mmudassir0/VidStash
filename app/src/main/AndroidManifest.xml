@@ -39,11 +39,16 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <!-- Own task, so it can shrink into a picture-in-picture window while you use the app -->
         <activity
             android:name=".PlayerActivity"
-            android:exported="false"
+            android:autoRemoveFromRecents="true"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
-            android:supportsPictureInPicture="false"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:taskAffinity="com.mudassir.ytdownloader.player"
             android:theme="@style/Theme.YTDownloader.Player" />
 
         <activity
