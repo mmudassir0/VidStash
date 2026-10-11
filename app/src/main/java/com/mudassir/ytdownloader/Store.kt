@@ -27,6 +27,8 @@ data class DownloadItem(
     val durationSec: Long = -1,
     /** Channel name. */
     val uploader: String? = null,
+    /** Audio only: save as MP3 even if the default format is M4A. */
+    val mp3: Boolean = false,
     val status: Status = Status.QUEUED,
     val error: String? = null,
     val attempts: Int = 0,
@@ -46,7 +48,7 @@ data class DownloadItem(
     fun toJson(): JSONObject = JSONObject().apply {
         put("id", id); put("url", url); put("title", title); put("thumbnail", thumbnail)
         put("maxHeight", maxHeight); put("prefix", prefix); put("folder", folder)
-        put("durationSec", durationSec); put("uploader", uploader)
+        put("durationSec", durationSec); put("uploader", uploader); put("mp3", mp3)
         put("status", status.name); put("error", error); put("attempts", attempts)
         put("fileUri", fileUri); put("fileName", fileName); put("mime", mime); put("bytes", bytes)
         put("videoItag", videoItag); put("audioItag", audioItag)
@@ -64,6 +66,7 @@ data class DownloadItem(
             folder = o.str("folder"),
             durationSec = o.optLong("durationSec", -1),
             uploader = o.str("uploader"),
+            mp3 = o.optBoolean("mp3", false),
             status = runCatching { Status.valueOf(o.getString("status")) }.getOrDefault(Status.QUEUED),
             error = o.str("error"),
             attempts = o.optInt("attempts", 0),

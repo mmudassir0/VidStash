@@ -280,6 +280,10 @@ object YouTube {
         )
     }
 
+    /** What YouTube suggests while typing a search. Empty on any error. */
+    fun suggestions(query: String): List<String> =
+        runCatching { service.suggestionExtractor.suggestionList(query) }.getOrDefault(emptyList())
+
     // --- helpers ---
 
     private fun StreamInfoItem.toEntry() = VideoEntry(

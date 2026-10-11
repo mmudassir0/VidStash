@@ -34,6 +34,9 @@ import com.mudassir.ytdownloader.databinding.ItemFooterBinding
 import com.mudassir.ytdownloader.databinding.ViewGetHeaderBinding
 import com.mudassir.ytdownloader.formatBytes
 import com.mudassir.ytdownloader.formatDuration
+import android.os.Build
+import android.view.ViewTreeObserver
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 /** Paste a link or search; shows one video, a playlist/channel to pick from, or search results. */
@@ -49,6 +52,11 @@ class GetFragment : Fragment() {
 
     private val vm: GetViewModel by viewModels()
     private val qualities = Settings.QUALITIES
+
+    companion object {
+        /** Clipboard text already looked at (by its copy time). */
+        private var lastClipStamp = 0L
+    }
 
     /** Text to submit once the view exists (e.g. shared from the YouTube app). */
     private var pending: String? = null
@@ -68,6 +76,7 @@ class GetFragment : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         updateBack()
+        if (!hidden) checkClipboard()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, s: Bundle?): View {
@@ -108,6 +117,12 @@ class GetFragment : Fragment() {
         b.input.setOnEditorActionListener { _, id, _ ->
             if (id == EditorInfo.IME_ACTION_GO) { submit(); true } else false
         }
+        suggestions = SuggestionAdapter(requireContext())
+        b.input.setAdapter(suggestions)
+        b.input.setOnItemClickListener { _, _, _, _ -> submit() }
+        // Tapping the empty box shows recent searches.
+        b.input.setOnClickListener { if (b.input.text.isNullOrEmpty()) showRecent() }
+        view.viewTreeObserver.addOnWindowFocusChangeListener(focusListener)
 
         h.qualitySpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, qualities.map { it.first })
         h.qualitySpinner.onItemSelectedListener = onSelected { updateSizeText() }
@@ -149,13 +164,53 @@ class GetFragment : Fragment() {
     }
 
     private fun submitText(text: String) {
-        b.input.setText(text)
+        b.input.setText(text, false)
         submit()
     }
 
     private fun submit() {
+        b.input.dismissDropDown()
         vm.submit(b.input.text?.toString().orEmpty())
         hideKeyboard()
+    }
+
+    private lateinit var suggestions: SuggestionAdapter
+
+    private fun showRecent() {
+        suggestions.filter.filter("") { count ->
+            if (count > 0 && _b != null && b.input.hasFocus()) b.input.showDropDown()
+        }
+    }
+
+    // ---------- copied link ----------
+
+    private val focusListener = ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
+        if (hasFocus) checkClipboard()
+    }
+
+    /** Offers to open a YouTube link that was copied (e.g. from the YouTube app or a browser). */
+    private fun checkClipboard() {
+        if (_b == null || isHidden) return
+        val ctx = context ?: return
+        val settings = Settings(ctx)
+        if (!settings.clipboardPrompt) return
+        val cm = ctx.getSystemService(ClipboardManager::class.java) ?: return
+        val desc = cm.primaryClipDescription ?: return
+        if (!desc.hasMimeType("text/*")) return
+        // Read each copied text only once (reading shows Android's "pasted" notice).
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (desc.timestamp == lastClipStamp) return
+            lastClipStamp = desc.timestamp
+        }
+        val text = runCatching { cm.primaryClip?.getItemAt(0)?.coerceToText(ctx)?.toString() }.getOrNull() ?: return
+        val url = Regex("https?://\\S+").find(text)?.value ?: return
+        if (url == settings.lastClipboardLink) return
+        if (YouTube.linkType(url) == YouTube.Link.NONE) return
+        settings.lastClipboardLink = url
+        if (b.input.text?.toString()?.contains(url) == true) return
+        Snackbar.make(b.root, "You copied a YouTube link", Snackbar.LENGTH_LONG)
+            .setAction("Open") { if (_b != null) submitText(url) }
+            .show()
     }
 
     private fun paste() {
@@ -354,6 +409,7 @@ class GetFragment : Fragment() {
         PopupMenu(ctx, anchor).apply {
             if (default > 0) menu.add(0, 1, 0, "Download ($label)")
             menu.add(0, 2, 1, "Download audio only")
+            if (Settings(ctx).audioFormat != "mp3") menu.add(0, 6, 1, "Download as MP3")
             menu.add(0, 3, 2, "Choose quality…")
             menu.add(0, 4, 3, "Share link")
             menu.add(0, 5, 4, "Copy link")
@@ -361,6 +417,7 @@ class GetFragment : Fragment() {
                 when (it.itemId) {
                     1 -> vm.quickDownload(v, default)
                     2 -> vm.quickDownload(v, 0)
+                    6 -> vm.quickDownload(v, 0, mp3 = true)
                     3 -> vm.openVideo(v.url)
                     4 -> startActivity(
                         Intent.createChooser(
@@ -397,6 +454,7 @@ class GetFragment : Fragment() {
     private fun toast(msg: String) = Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
 
     override fun onDestroyView() {
+        view?.viewTreeObserver?.takeIf { it.isAlive }?.removeOnWindowFocusChangeListener(focusListener)
         super.onDestroyView()
         b.results.adapter = null
         renderedList = null

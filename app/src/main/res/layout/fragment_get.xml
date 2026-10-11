@@ -21,10 +21,12 @@
             app:endIconMode="clear_text"
             app:startIconDrawable="@drawable/ic_search">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <!-- Suggests recent searches and YouTube search suggestions while typing -->
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:completionThreshold="1"
                 android:imeOptions="actionGo"
                 android:inputType="textUri"
                 android:maxLines="2" />

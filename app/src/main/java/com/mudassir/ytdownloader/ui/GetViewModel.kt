@@ -118,7 +118,10 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
         GetState.Videos(list, list.videos.map { it.id }.toSet(), limit)
     }
 
-    private fun search(query: String) = load(false, "Searching…") { GetState.Search(YouTube.search(query)) }
+    private fun search(query: String) = load(false, "Searching…") {
+        Settings(ctx).addSearch(query)
+        GetState.Search(YouTube.search(query))
+    }
 
     fun loadMoreResults() {
         val s = _state.value as? GetState.Search ?: return
@@ -192,12 +195,16 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /** Queues one video straight from a list (three-dots menu). [maxHeight] 0 = audio only. */
-    fun quickDownload(v: VideoEntry, maxHeight: Int) {
+    fun quickDownload(v: VideoEntry, maxHeight: Int, mp3: Boolean = false) {
         Queue.add(ctx, listOf(DownloadItem(
             url = v.url, title = v.title, thumbnail = v.thumbnail, maxHeight = maxHeight,
-            durationSec = v.durationSec, uploader = v.uploader.ifBlank { null }
+            durationSec = v.durationSec, uploader = v.uploader.ifBlank { null }, mp3 = mp3
         )))
-        _toast.value = if (maxHeight == 0) "Added to downloads (audio)" else "Added to downloads"
+        _toast.value = when {
+            mp3 -> "Added to downloads (MP3)"
+            maxHeight == 0 -> "Added to downloads (audio)"
+            else -> "Added to downloads"
+        }
     }
 
     fun downloadSelected(maxHeight: Int, remember: Boolean) {

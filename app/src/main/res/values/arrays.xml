@@ -21,4 +21,11 @@
         <item></item><item>en</item><item>ur</item><item>hi</item><item>ar</item>
         <item>es</item><item>fr</item><item>de</item><item>tr</item>
     </string-array>
+    <string-array name="audio_format_labels">
+        <item>M4A (original quality, fast)</item>
+        <item>MP3 192 kbps (plays everywhere, slower)</item>
+    </string-array>
+    <string-array name="audio_format_values">
+        <item>m4a</item><item>mp3</item>
+    </string-array>
 </resources>

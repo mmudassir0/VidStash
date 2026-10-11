@@ -2,6 +2,7 @@ package com.mudassir.ytdownloader.ui
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -18,6 +19,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         setPreferencesFromResource(R.xml.preferences, rootKey)
         findPreference<Preference>("check_now")?.setOnPreferenceClickListener {
             (activity as? MainActivity)?.checkForUpdates(manual = true)
+            true
+        }
+        findPreference<Preference>(Settings.K_CLEAR_HISTORY)?.setOnPreferenceClickListener {
+            Settings(requireContext()).recentSearches = emptyList()
+            Toast.makeText(requireContext(), "Search history cleared", Toast.LENGTH_SHORT).show()
             true
         }
         val ctx = requireContext()

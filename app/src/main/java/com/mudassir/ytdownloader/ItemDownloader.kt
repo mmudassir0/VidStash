@@ -9,6 +9,9 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 
 /**
  * Downloads one queue item end to end: look up formats, download (resuming partial files),
@@ -39,11 +42,13 @@ class ItemDownloader(private val ctx: Context) {
         item = updated(item.id) { it.copy(title = details.title, thumbnail = it.thumbnail ?: details.thumbnail) }
 
         val baseName = Storage.sanitize(if (item.prefix != null) "${item.prefix} - ${details.title}" else details.title)
-        val fileName = "$baseName.${opt.extension}"
+        val wantMp3 = opt.kind == Kind.AUDIO && (item.mp3 || settings.audioFormat == "mp3")
+        var fileName = "$baseName.${if (wantMp3) "mp3" else opt.extension}"
+        var mime = if (wantMp3) "audio/mpeg" else opt.mime
 
         // Skip files that are already in the folder (e.g. re-downloading a playlist).
         Storage.find(ctx, fileName, item.folder)?.let { existing ->
-            finish(item, existing.toString(), fileName, opt.mime, -1, note = "Already downloaded")
+            finish(item, existing.toString(), fileName, mime, -1, note = "Already downloaded")
             partial.deleteRecursively()
             return
         }
@@ -74,7 +79,8 @@ class ItemDownloader(private val ctx: Context) {
 
         // ---- post-process ----
         val cuts = if (wantCuts) SponsorBlock.segments(details.id) else emptyList()
-        val out = File(partial, "out.${opt.extension}")
+        var out = File(partial, "out.${opt.extension}")
+        var mp3Note: String? = null
         out.delete()
         when (opt.kind) {
             Kind.MERGE -> {
@@ -97,23 +103,52 @@ class ItemDownloader(private val ctx: Context) {
                 } catch (e: Exception) {
                     a // keep the original if the phone can't remux it
                 }
-                meter.stage("Adding title and cover art…")
-                try {
-                    Mp4Tagger.tag(audio, out, details.title, details.uploader, item.folder ?: details.uploader, cover(details.id))
+                val art = cover(details.id)
+                val mp3Out = File(partial, "out.mp3")
+                val converted = wantMp3 && try {
+                    val ctxJob = currentCoroutineContext()
+                    Mp3Converter.convert(
+                        audio, mp3Out,
+                        Mp3Converter.Tags(details.title, details.uploader, item.folder ?: details.uploader, art),
+                        onProgress = { meter.stage("Converting to MP3… $it%") },
+                        checkCancelled = { ctxJob.ensureActive() }
+                    )
+                    true
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
-                    audio.copyTo(out, overwrite = true) // tags are a nice-to-have; keep the audio
+                    // Keep the audio as M4A rather than failing the download.
+                    mp3Note = "MP3 conversion failed, saved as M4A"
+                    false
+                }
+                if (converted) {
+                    out = mp3Out
+                } else {
+                    if (wantMp3) {
+                        fileName = "$baseName.${opt.extension}"
+                        mime = opt.mime
+                    }
+                    meter.stage("Adding title and cover art…")
+                    try {
+                        Mp4Tagger.tag(audio, out, details.title, details.uploader, item.folder ?: details.uploader, art)
+                    } catch (e: Exception) {
+                        audio.copyTo(out, overwrite = true) // tags are a nice-to-have; keep the audio
+                    }
                 }
             }
         }
 
         // ---- save ----
         meter.stage("Saving…")
-        val uri = Storage.saveToDownloads(ctx, out, fileName, opt.mime, item.folder)
+        val uri = Storage.saveToDownloads(ctx, out, fileName, mime, item.folder)
 
         if (opt.kind != Kind.AUDIO) saveSubtitles(details, baseName, item.folder)
 
-        val note = if (cuts.isNotEmpty()) "Removed ${cuts.size} sponsor segment(s)" else null
-        finish(item, uri.toString(), fileName, opt.mime, out.length(), note)
+        val note = listOfNotNull(
+            if (cuts.isNotEmpty()) "Removed ${cuts.size} sponsor segment(s)" else null,
+            mp3Note
+        ).joinToString(" · ").ifEmpty { null }
+        finish(item, uri.toString(), fileName, mime, out.length(), note)
         partial.deleteRecursively()
     }
 

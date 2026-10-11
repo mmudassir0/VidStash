@@ -56,6 +56,10 @@ android {
 
 dependencies {
     implementation("com.github.teamnewpipe:NewPipeExtractor:v0.26.5")
+    // MP3 encoding (pure Java port of LAME)
+    implementation("de.sciss:jump3r:1.0.5")
+    testImplementation("junit:junit:4.13.2")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.1.5")
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

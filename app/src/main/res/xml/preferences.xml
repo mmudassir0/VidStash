@@ -32,6 +32,45 @@
             app:title="Allow 1440p / 4K" />
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="Audio" app:iconSpaceReserved="false">
+        <ListPreference
+            app:defaultValue="m4a"
+            app:entries="@array/audio_format_labels"
+            app:entryValues="@array/audio_format_values"
+            app:iconSpaceReserved="false"
+            app:key="audio_format"
+            app:title="Audio-only format"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Player" app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="autoplay_next"
+            app:summary="When a file finishes, play the next one in the list"
+            app:title="Autoplay next" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Search" app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="clipboard_prompt"
+            app:summary="When you open the app after copying a YouTube link, offer to open it"
+            app:title="Detect copied links" />
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="search_history"
+            app:summary="Suggest your recent searches"
+            app:title="Remember searches" />
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="clear_history"
+            app:title="Clear search history" />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="Extras" app:iconSpaceReserved="false">
         <ListPreference
             app:defaultValue=""
