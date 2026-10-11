@@ -99,16 +99,7 @@
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="update_check"
-            app:summary="Look for a new version on GitHub when the app opens"
+            app:summary="Look for a new version when the app opens"
             app:title="Check for updates automatically" />
-        <Preference
-            app:iconSpaceReserved="false"
-            app:key="check_now"
-            app:title="Check for updates now" />
-        <Preference
-            app:iconSpaceReserved="false"
-            app:key="version"
-            app:selectable="false"
-            app:title="Version" />
     </PreferenceCategory>
 </PreferenceScreen>

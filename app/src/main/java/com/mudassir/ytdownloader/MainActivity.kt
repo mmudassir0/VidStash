@@ -6,27 +6,24 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.mudassir.ytdownloader.databinding.ActivityMainBinding
 import com.mudassir.ytdownloader.ui.DownloadsFragment
 import com.mudassir.ytdownloader.ui.GetFragment
 import com.mudassir.ytdownloader.ui.LibraryFragment
 import com.mudassir.ytdownloader.ui.SettingsFragment
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -87,6 +84,7 @@ class MainActivity : AppCompatActivity() {
 
         handleIntent(intent)
         maybeCheckForUpdates()
+        watchUpdates()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -143,24 +141,26 @@ class MainActivity : AppCompatActivity() {
     // ---------- updates ----------
 
     private fun maybeCheckForUpdates() {
+        UpdateManager.cleanUp(this)
         val s = Settings(this)
         if (!s.autoUpdateCheck) return
         if (System.currentTimeMillis() - s.lastUpdateCheck < 6 * 3600_000L) return
-        checkForUpdates(manual = false)
+        UpdateManager.check(this) { release -> if (release != null) offerUpdate(release) }
     }
 
-    fun checkForUpdates(manual: Boolean) {
-        if (manual) Toast.makeText(this, "Checking for updates…", Toast.LENGTH_SHORT).show()
+    /** Red dot on the Settings tab while an update is waiting. */
+    private fun watchUpdates() {
         lifecycleScope.launch {
-            val result = runCatching { withContext(Dispatchers.IO) { Updater.latest() } }
-            Settings(this@MainActivity).lastUpdateCheck = System.currentTimeMillis()
-            val release = result.getOrNull()
-            when {
-                release == null && manual ->
-                    Toast.makeText(this@MainActivity, "Couldn't reach GitHub. Try again later.", Toast.LENGTH_SHORT).show()
-                release == null -> {}
-                release.build > Updater.installedBuild(this@MainActivity) -> offerUpdate(release)
-                manual -> Toast.makeText(this@MainActivity, "You're on the latest version", Toast.LENGTH_SHORT).show()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                UpdateManager.state.collect { st ->
+                    val pending = st is UpdateManager.State.Available || st is UpdateManager.State.Downloading ||
+                        st is UpdateManager.State.Ready
+                    if (pending) b.bottomNav.getOrCreateBadge(R.id.nav_settings).apply {
+                        clearNumber()
+                        backgroundColor = ContextCompat.getColor(this@MainActivity, R.color.brand_red)
+                        isVisible = true
+                    } else b.bottomNav.removeBadge(R.id.nav_settings)
+                }
             }
         }
     }
@@ -172,41 +172,12 @@ class MainActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle("Update available (build ${r.build})")
             .setMessage(if (notes.isBlank()) "A newer version is ready to install." else "What's new:\n\n$notes")
-            .setPositiveButton("Update") { _, _ -> downloadUpdate(r) }
+            .setPositiveButton("Update") { _, _ ->
+                UpdateManager.downloadAndInstall(this, r)
+                select(R.id.nav_settings) // progress shows on the App update card
+            }
             .setNegativeButton("Later", null)
             .show()
-    }
-
-    private fun downloadUpdate(r: Updater.Release) {
-        if (!Updater.canInstall(this)) {
-            Toast.makeText(this, "Allow installs from YT Downloader, then tap Update again", Toast.LENGTH_LONG).show()
-            startActivity(Updater.allowInstallsIntent(this))
-            return
-        }
-        val bar = LinearProgressIndicator(this).apply {
-            isIndeterminate = true
-            max = 100
-            val pad = (24 * resources.displayMetrics.density).toInt()
-            setPadding(pad, pad, pad, 0)
-            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
-        val dialog: AlertDialog = MaterialAlertDialogBuilder(this)
-            .setTitle("Downloading update…")
-            .setView(bar)
-            .setCancelable(false)
-            .show()
-        lifecycleScope.launch {
-            val apk = runCatching {
-                withContext(Dispatchers.IO) {
-                    Updater.download(this@MainActivity, r) { pct ->
-                        runOnUiThread { bar.isIndeterminate = false; bar.setProgressCompat(pct, true) }
-                    }
-                }
-            }
-            dialog.dismiss()
-            apk.onSuccess { Updater.install(this@MainActivity, it) }
-                .onFailure { Toast.makeText(this@MainActivity, "Update failed: ${it.message}", Toast.LENGTH_LONG).show() }
-        }
     }
 
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
