@@ -27,6 +27,7 @@ object Sync {
         val items = selected.map { v ->
             DownloadItem(
                 url = v.url, title = v.title, thumbnail = v.thumbnail, maxHeight = maxHeight,
+                durationSec = v.durationSec, uploader = v.uploader.ifBlank { null },
                 prefix = if (list.isChannel) null else "%03d".format(position[v.id] ?: 0),
                 folder = list.name
             )

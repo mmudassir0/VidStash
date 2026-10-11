@@ -23,6 +23,10 @@ data class DownloadItem(
     val prefix: String? = null,
     /** Sub-folder inside Downloads/YTDownloader (playlist or channel name). */
     val folder: String? = null,
+    /** Video length in seconds, -1 if unknown. */
+    val durationSec: Long = -1,
+    /** Channel name. */
+    val uploader: String? = null,
     val status: Status = Status.QUEUED,
     val error: String? = null,
     val attempts: Int = 0,
@@ -42,6 +46,7 @@ data class DownloadItem(
     fun toJson(): JSONObject = JSONObject().apply {
         put("id", id); put("url", url); put("title", title); put("thumbnail", thumbnail)
         put("maxHeight", maxHeight); put("prefix", prefix); put("folder", folder)
+        put("durationSec", durationSec); put("uploader", uploader)
         put("status", status.name); put("error", error); put("attempts", attempts)
         put("fileUri", fileUri); put("fileName", fileName); put("mime", mime); put("bytes", bytes)
         put("videoItag", videoItag); put("audioItag", audioItag)
@@ -57,6 +62,8 @@ data class DownloadItem(
             maxHeight = o.optInt("maxHeight", 720),
             prefix = o.str("prefix"),
             folder = o.str("folder"),
+            durationSec = o.optLong("durationSec", -1),
+            uploader = o.str("uploader"),
             status = runCatching { Status.valueOf(o.getString("status")) }.getOrDefault(Status.QUEUED),
             error = o.str("error"),
             attempts = o.optInt("attempts", 0),

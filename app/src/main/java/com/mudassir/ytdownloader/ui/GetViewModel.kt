@@ -181,6 +181,7 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
             ctx, listOf(
                 DownloadItem(
                     url = s.url, title = d.title, thumbnail = d.thumbnail,
+                    durationSec = d.durationSec, uploader = d.uploader.ifBlank { null },
                     maxHeight = if (option.kind == Kind.AUDIO) 0 else option.height,
                     // Pre-select the exact format chosen in the list.
                     videoItag = option.videoItag, audioItag = option.audioItag
@@ -192,7 +193,10 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
 
     /** Queues one video straight from a list (three-dots menu). [maxHeight] 0 = audio only. */
     fun quickDownload(v: VideoEntry, maxHeight: Int) {
-        Queue.add(ctx, listOf(DownloadItem(url = v.url, title = v.title, thumbnail = v.thumbnail, maxHeight = maxHeight)))
+        Queue.add(ctx, listOf(DownloadItem(
+            url = v.url, title = v.title, thumbnail = v.thumbnail, maxHeight = maxHeight,
+            durationSec = v.durationSec, uploader = v.uploader.ifBlank { null }
+        )))
         _toast.value = if (maxHeight == 0) "Added to downloads (audio)" else "Added to downloads"
     }
 
