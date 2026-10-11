@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mudassir.ytdownloader.Mp3ConverterTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-11T15:49:57.044Z" hostname="runnervmmprz5" time="0.319">
+  <properties/>
+  <testcase name="writesId3TagWithCover" classname="com.mudassir.ytdownloader.Mp3ConverterTest" time="0.016"/>
+  <testcase name="encodesMonoAndFloat" classname="com.mudassir.ytdownloader.Mp3ConverterTest" time="0.145"/>
+  <testcase name="encodesStereoToValidMp3Frames" classname="com.mudassir.ytdownloader.Mp3ConverterTest" time="0.158"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
