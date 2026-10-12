@@ -194,27 +194,6 @@ class ItemDownloader(private val ctx: Context) {
         partial.deleteRecursively()
     }
 
-    /**
-     * Chapter start times in the saved file: chapters inside a removed part start where it
-     * ends, and every removed second before a chapter moves it earlier.
-     */
-    private fun adjustChapters(chapters: List<Chapter>, cuts: List<Cut>, durationSec: Long): List<Chapter> {
-        if (chapters.isEmpty()) return emptyList()
-        val dur = if (durationSec > 0) durationSec.toDouble() else Double.MAX_VALUE
-        val ranges = cuts.map { it.startUs / 1e6 to minOf(it.endUs / 1e6, dur) }.filter { it.second > it.first }
-        val out = sortedMapOf<Long, Chapter>()
-        chapters.forEachIndexed { i, c ->
-            val end = chapters.getOrNull(i + 1)?.startSec?.toDouble() ?: dur
-            var start = c.startSec.toDouble()
-            ranges.forEach { (a, b) -> if (start >= a && start < b) start = b }
-            if (start >= end) return@forEachIndexed
-            val removed = ranges.filter { it.second <= start }.sumOf { it.second - it.first }
-            val t = (start - removed).toLong().coerceAtLeast(0)
-            out[t] = Chapter(c.title, t)
-        }
-        return out.values.toList()
-    }
-
     /** Saves each chapter of [source] as its own file in a folder named after the video. */
     private suspend fun splitIntoChapters(
         item: DownloadItem, details: VideoDetails, source: File, isAudio: Boolean, webm: Boolean,
@@ -336,6 +315,27 @@ class ItemDownloader(private val ctx: Context) {
     private fun partialDir(name: String) = File(ctx.filesDir, "partial/$name")
 
     companion object {
+        /**
+         * Chapter start times in the saved file: chapters inside a removed part start where it
+         * ends, and every removed second before a chapter moves it earlier.
+         */
+        internal fun adjustChapters(chapters: List<Chapter>, cuts: List<Cut>, durationSec: Long): List<Chapter> {
+            if (chapters.isEmpty()) return emptyList()
+            val dur = if (durationSec > 0) durationSec.toDouble() else Double.MAX_VALUE
+            val ranges = cuts.map { it.startUs / 1e6 to minOf(it.endUs / 1e6, dur) }.filter { it.second > it.first }
+            val out = sortedMapOf<Long, Chapter>()
+            chapters.forEachIndexed { i, c ->
+                val end = chapters.getOrNull(i + 1)?.startSec?.toDouble() ?: dur
+                var start = c.startSec.toDouble()
+                ranges.forEach { (a, b) -> if (start >= a && start < b) start = b }
+                if (start >= end) return@forEachIndexed
+                val removed = ranges.filter { it.second <= start }.sumOf { it.second - it.first }
+                val t = (start - removed).toLong().coerceAtLeast(0)
+                out[t] = Chapter(c.title, t)
+            }
+            return out.values.toList()
+        }
+
         fun deletePartial(ctx: Context, id: String) = File(ctx.filesDir, "partial/$id").deleteRecursively()
     }
 
