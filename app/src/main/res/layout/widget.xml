@@ -54,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.3"
-            android:background="@drawable/bg_widget_button_red"
+            android:background="@drawable/bg_widget_button_brand"
             android:gravity="center"
             android:minHeight="44dp"
             android:text="Paste link"
