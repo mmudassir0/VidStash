@@ -4,3 +4,7 @@ app/build/
 local.properties
 .idea/
 *.iml
+
+# Signing material other than the committed, password-protected release key
+*.keystore
+key.properties
