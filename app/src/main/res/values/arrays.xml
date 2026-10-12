@@ -42,4 +42,10 @@
     <string-array name="audio_format_values">
         <item>m4a</item><item>mp3</item>
     </string-array>
+    <string-array name="language_labels">
+        <item>@string/lang_system</item><item>@string/lang_en</item><item>@string/lang_ur</item>
+    </string-array>
+    <string-array name="language_values">
+        <item></item><item>en</item><item>ur</item>
+    </string-array>
 </resources>

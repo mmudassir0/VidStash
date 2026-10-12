@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import com.mudassir.vidstash.BuildConfig
 import com.mudassir.vidstash.R
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -57,6 +58,7 @@ class DownloadsFragment : Fragment() {
             Settings(requireContext()).youtubeTrouble = 0
             b.troubleCard.isVisible = false
         }
+        b.troubleCheck.isVisible = BuildConfig.SELF_UPDATE
         b.troubleCheck.setOnClickListener {
             (activity as? MainActivity)?.openUpdates()
         }

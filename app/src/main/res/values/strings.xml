@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VidStash</string>
+    <string name="app_name" translatable="false">VidStash</string>
     <string name="widget_description">Paste a YouTube link to download it, search, or open your library</string>
 
     <!-- Screens (moved out of the layouts) -->
@@ -20,7 +20,7 @@
     <string name="downloads_check_for_update">Check for update</string>
     <string name="downloads_no_downloads_yet">No downloads yet</string>
     <string name="downloads_videos_you_download_show_up">Videos you download show up here with their progress.</string>
-    <string name="get_vidstash">VidStash</string>
+    <string name="get_vidstash" translatable="false">VidStash</string>
     <string name="get_search_or_paste_a_link">Search or paste a link</string>
     <string name="get_paste_link">Paste link</string>
     <string name="get_save_videos_to_watch_anywhere">Save videos to watch anywhere</string>
@@ -106,7 +106,7 @@
     <string name="pref_about_vidstash">About VidStash</string>
     <string name="pref_opens_a_github_issue_with">Opens a GitHub issue with your phone and app version filled in</string>
     <string name="pref_report_a_problem_or_suggest">Report a problem or suggest a feature</string>
-    <string name="pref_github_com_mmudassir0_vidstash">github.com/mmudassir0/VidStash</string>
+    <string name="pref_github_com_mmudassir0_vidstash" translatable="false">github.com/mmudassir0/VidStash</string>
     <string name="pref_source_code">Source code</string>
     <string name="pref_no_accounts_no_ads_no">No accounts, no ads, no tracking</string>
     <string name="pref_privacy">Privacy</string>
@@ -115,12 +115,12 @@
     <string name="pref_look_for_a_new_version">Look for a new version when the app opens</string>
     <string name="pref_check_for_updates_automatically">Check for updates automatically</string>
     <string name="nav_get">Get</string>
-    <string name="opt_2160p_4k">2160p (4K)</string>
-    <string name="opt_1440p">1440p</string>
-    <string name="opt_1080p">1080p</string>
-    <string name="opt_720p">720p</string>
-    <string name="opt_480p">480p</string>
-    <string name="opt_360p">360p</string>
+    <string name="opt_2160p_4k" translatable="false">2160p (4K)</string>
+    <string name="opt_1440p" translatable="false">1440p</string>
+    <string name="opt_1080p" translatable="false">1080p</string>
+    <string name="opt_720p" translatable="false">720p</string>
+    <string name="opt_480p" translatable="false">480p</string>
+    <string name="opt_360p" translatable="false">360p</string>
     <string name="opt_audio_only">Audio only</string>
     <string name="opt_1_at_a_time">1 at a time</string>
     <string name="opt_2_at_a_time">2 at a time</string>
@@ -305,7 +305,7 @@
     <string name="files_share_n">Share %1$d files</string>
     <string name="files_gone">This file was moved or deleted</string>
     <string name="update_available_title">Update available (build %1$d)</string>
-    <string name="update_ready">A newer version is ready to install.</string>
+    <string name="update_ready">A newer version is available on the VidStash GitHub page. Download it now?</string>
     <string name="update_whats_new">What\'s new:\n\n%1$s</string>
     <string name="update_update">Update</string>
     <string name="update_later">Later</string>
@@ -425,7 +425,7 @@
     <string name="crash_close">Close</string>
 
     <!-- About, downloader stages, backup -->
-    <string name="about_title">VidStash %1$s</string>
+    <string name="about_title" translatable="false">VidStash %1$s</string>
     <string name="about_text">Save videos and audio to watch offline, with a built-in player.\n\nVidStash is free and open-source software under the GNU General Public License v3. You can read, change and share its source code.\n\nVidStash is not affiliated with, endorsed by or connected to YouTube or Google. \"YouTube\" is a trademark of Google LLC.\n\nPlease download only videos you have the right to keep, such as your own uploads, Creative Commons videos, or content the creator allows you to save, and respect copyright where you live.</string>
     <string name="privacy_title">Privacy</string>
     <string name="privacy_text">VidStash has no accounts, no ads, no analytics and no tracking. Nothing about you or what you watch is sent to the developer.\n\nThe app connects only to:\n• YouTube, to find and download the videos you ask for (like a web browser would).\n• SponsorBlock (sponsor.ajay.app), only if you turn on \"Remove sponsor segments\".\n• GitHub, to check for and download app updates.\n\nYour downloads, history, searches and settings stay on your phone. Backups are files you save yourself.</string>
@@ -456,4 +456,11 @@
 
     <!-- selection count -->
     <string name="get_n_of_m_selected">%1$d of %2$d selected</string>
+
+    <!-- Language -->
+    <string name="set_language">Language</string>
+    <string name="lang_system">Phone language</string>
+    <string name="lang_en" translatable="false">English</string>
+    <string name="lang_ur" translatable="false">اردو</string>
+    <string name="upd_by_store">Updates come from the app store you installed VidStash from.</string>
 </resources>

@@ -19,6 +19,9 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -27,6 +30,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.color.MaterialColors
 import com.mudassir.vidstash.Backup
+import com.mudassir.vidstash.BuildConfig
 import com.mudassir.vidstash.FolderImport
 import com.mudassir.vidstash.Queue
 import com.mudassir.vidstash.R
@@ -66,6 +70,14 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             }
         }
         updateFolderSummaries()
+        if (!BuildConfig.SELF_UPDATE) findPreference<Preference>(Settings.K_UPDATE_CHECK)?.isVisible = false
+        findPreference<ListPreference>("app_language")?.apply {
+            value = AppCompatDelegate.getApplicationLocales().get(0)?.language.orEmpty()
+            setOnPreferenceChangeListener { _, v ->
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(v as String))
+                true
+            }
+        }
         mapOf(
             "about" to { About.showAbout(requireContext()) },
             "report" to { About.reportProblem(requireContext()) },
@@ -118,7 +130,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         // Opening Settings checks once by itself, so the card is never stale.
-        if (!hidden && UpdateManager.state.value == UpdateManager.State.Idle) UpdateManager.check(requireContext())
+        if (!hidden && BuildConfig.SELF_UPDATE && UpdateManager.state.value == UpdateManager.State.Idle) UpdateManager.check(requireContext())
     }
 
     private fun renderUpdate(state: UpdateManager.State) {
@@ -126,6 +138,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         val ctx = context ?: return
         val info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
         b.versionText.text = ctx.getString(R.string.set_version, info.versionName, Updater.installedBuild(ctx))
+        if (!BuildConfig.SELF_UPDATE) {
+            // Store builds are updated by the store.
+            b.statusText.text = ctx.getString(R.string.upd_by_store)
+            listOf(b.stateBadge, b.progress, b.notesText, b.mainButton, b.secondButton).forEach { it.isVisible = false }
+            return
+        }
         val red = ContextCompat.getColor(ctx, R.color.error_red)
         val normal = MaterialColors.getColor(b.statusText, com.google.android.material.R.attr.colorOnSurface)
 

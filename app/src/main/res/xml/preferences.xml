@@ -173,6 +173,15 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_app" app:iconSpaceReserved="false">
+        <ListPreference
+            app:defaultValue=""
+            app:entries="@array/language_labels"
+            app:entryValues="@array/language_values"
+            app:iconSpaceReserved="false"
+            app:key="app_language"
+            app:persistent="false"
+            app:title="@string/set_language"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:iconSpaceReserved="false"

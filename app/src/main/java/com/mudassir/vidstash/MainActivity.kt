@@ -151,6 +151,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun maybeCheckForUpdates() {
         UpdateManager.cleanUp(this)
+        if (!BuildConfig.SELF_UPDATE) return
         val s = Settings(this)
         if (!s.autoUpdateCheck) return
         if (System.currentTimeMillis() - s.lastUpdateCheck < 6 * 3600_000L) return
@@ -177,7 +178,7 @@ class MainActivity : AppCompatActivity() {
     /** Settings tab with a fresh update check. */
     fun openUpdates() {
         select(R.id.nav_settings)
-        if (!UpdateManager.busy) UpdateManager.check(this)
+        if (BuildConfig.SELF_UPDATE && !UpdateManager.busy) UpdateManager.check(this)
     }
 
     private fun offerUpdate(r: Updater.Release) {

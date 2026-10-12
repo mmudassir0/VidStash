@@ -31,8 +31,8 @@ jobs:
             exit 1
           fi
           chmod +x gradlew
-          ./gradlew testReleaseUnitTest assembleRelease --no-daemon
-          cp app/build/outputs/apk/release/app-release.apk VidStash.apk
+          ./gradlew testGithubReleaseUnitTest assembleGithubRelease assembleFdroidRelease --no-daemon
+          cp app/build/outputs/apk/github/release/app-github-release.apk VidStash.apk
           # Show which key signed the APK (should be the VidStash key on main).
           signer=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner
           cert=$("$signer" verify --print-certs VidStash.apk | grep -m1 "SHA-256" | awk '{print $NF}')
@@ -48,8 +48,8 @@ jobs:
       - uses: softprops/action-gh-release@v3
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
-          tag_name: build-${{ github.run_number }}
-          name: VidStash build ${{ github.run_number }}
+          tag_name: v1.2.${{ github.run_number }}
+          name: VidStash 1.2.${{ github.run_number }}
           make_latest: true
           # Shown as "What's new" by the in-app updater
           body_path: release-notes.txt

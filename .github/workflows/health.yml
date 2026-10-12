@@ -29,10 +29,10 @@ jobs:
         run: |
           chmod +x gradlew
           set +e
-          ./gradlew testReleaseUnitTest --tests '*HealthCheckTest*' --no-daemon > check.log 2>&1
+          ./gradlew testGithubReleaseUnitTest --tests '*HealthCheckTest*' --no-daemon > check.log 2>&1
           code=$?
           set -e
-          dir=app/build/test-results/testReleaseUnitTest
+          dir=app/build/test-results/testGithubReleaseUnitTest
           failures=$(grep -ho '<failure message="[^"]*"' $dir/*.xml 2>/dev/null | sed 's/<failure message="//; s/"$//' | head -5)
           skipped=$(grep -ho 'skipped="[0-9]*"' $dir/*HealthCheck*.xml 2>/dev/null | head -1 | grep -o '[0-9]*')
           echo "code=$code" >> "$GITHUB_OUTPUT"

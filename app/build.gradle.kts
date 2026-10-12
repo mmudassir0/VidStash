@@ -12,7 +12,9 @@ android {
         minSdk = 24
         targetSdk = 35
         // Every CI build gets a higher number, so each new APK installs as an update.
-        val build = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0
+        // Outside GitHub (e.g. F-Droid) pass it with -PbuildNumber=N.
+        val build = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
+            ?: (project.findProperty("buildNumber") as String?)?.toIntOrNull() ?: 0
         versionCode = 100 + build
         versionName = "1.2.$build"
     }
@@ -26,6 +28,20 @@ android {
             storePassword = pass
             keyAlias = "vidstash"
             keyPassword = pass
+        }
+    }
+
+    // github: the APK on GitHub releases, which can update itself from Settings.
+    // fdroid: for app stores that deliver updates themselves; no self-updater.
+    flavorDimensions += "store"
+    productFlavors {
+        create("github") {
+            dimension = "store"
+            buildConfigField("boolean", "SELF_UPDATE", "true")
+        }
+        create("fdroid") {
+            dimension = "store"
+            buildConfigField("boolean", "SELF_UPDATE", "false")
         }
     }
 
@@ -50,6 +66,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
     packaging {
         resources.excludes += setOf("META-INF/*.kotlin_module", "META-INF/DEPENDENCIES")
