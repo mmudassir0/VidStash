@@ -33,6 +33,10 @@ jobs:
           chmod +x gradlew
           ./gradlew testReleaseUnitTest assembleRelease --no-daemon
           cp app/build/outputs/apk/release/app-release.apk VidStash.apk
+          # Show which key signed the APK (should be the VidStash key on main).
+          signer=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner
+          cert=$("$signer" verify --print-certs VidStash.apk | grep -m1 "SHA-256" | awk '{print $NF}')
+          echo "::notice title=Signed with::$cert"
       - name: Release notes
         run: git log -1 --format=%B > release-notes.txt
       - uses: actions/upload-artifact@v7
