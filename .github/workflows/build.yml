@@ -2,6 +2,9 @@ name: Build APK
 
 on:
   push:
+    paths-ignore:
+      - ".github/workflows/health.yml"
+      - ".github/workflows/update-library.yml"
   workflow_dispatch:
 
 permissions:
@@ -23,6 +26,8 @@ jobs:
           chmod +x gradlew
           ./gradlew testReleaseUnitTest assembleRelease --no-daemon
           cp app/build/outputs/apk/release/app-release.apk YTDownloader.apk
+      - name: Release notes
+        run: git log -1 --format=%B > release-notes.txt
       - uses: actions/upload-artifact@v7
         with:
           name: YTDownloader-apk
@@ -36,5 +41,5 @@ jobs:
           name: YT Downloader build ${{ github.run_number }}
           make_latest: true
           # Shown as "What's new" by the in-app updater
-          body: ${{ github.event.head_commit.message }}
+          body_path: release-notes.txt
           files: YTDownloader.apk
