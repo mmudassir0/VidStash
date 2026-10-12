@@ -10,6 +10,7 @@ import com.mudassir.ytdownloader.Kind
 import com.mudassir.ytdownloader.Queue
 import com.mudassir.ytdownloader.SearchPage
 import com.mudassir.ytdownloader.Settings
+import com.mudassir.ytdownloader.Store
 import com.mudassir.ytdownloader.Sync
 import com.mudassir.ytdownloader.VideoDetails
 import com.mudassir.ytdownloader.VideoList
@@ -222,8 +223,14 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
             _toast.value = "Select at least one video"
             return
         }
-        Sync.queue(ctx, s.list, chosen, maxHeight, remember)
-        _toast.value = "Queued ${chosen.size} video(s)" + if (remember) " · saved for Sync" else ""
+        // Videos already downloaded (or waiting) are left out.
+        val known = Store.knownVideoIds()
+        val fresh = chosen.filter { it.id !in known }
+        Sync.queue(ctx, s.list, fresh, maxHeight, remember)
+        val skipped = chosen.size - fresh.size
+        _toast.value = "Queued ${fresh.size} video(s)" +
+            (if (skipped > 0) " · skipped $skipped you already have" else "") +
+            if (remember) " · saved for Sync" else ""
     }
 
     companion object {

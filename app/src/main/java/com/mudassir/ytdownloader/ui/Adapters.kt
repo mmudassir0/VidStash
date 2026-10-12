@@ -72,6 +72,11 @@ class VideoEntryAdapter(
         set(v) {
             if (field != v) { field = v; notifyItemRangeChanged(0, itemCount) }
         }
+    /** Videos already downloaded or waiting: marked "In your library". */
+    var known: Set<String> = emptySet()
+        set(v) {
+            if (field != v) { field = v; notifyItemRangeChanged(0, itemCount) }
+        }
     var selected: Set<String> = emptySet()
         set(v) {
             if (field != v) { field = v; notifyItemRangeChanged(0, itemCount, PAYLOAD_CHECK) }
@@ -110,8 +115,9 @@ class VideoEntryAdapter(
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val v = getItem(position)
         holder.title.text = v.title
-        holder.meta.text = v.uploader
-        holder.meta.isVisible = v.uploader.isNotBlank()
+        val mark = if (v.id in known) "✓ In your library" else null
+        holder.meta.text = listOfNotNull(mark, v.uploader.ifBlank { null }).joinToString(" · ")
+        holder.meta.isVisible = holder.meta.text.isNotEmpty()
         // Live streams and unknown lengths come as 0 or -1: no badge then.
         holder.duration.text = if (v.durationSec > 0) formatDuration(v.durationSec) else ""
         holder.duration.isVisible = v.durationSec > 0

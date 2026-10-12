@@ -18,7 +18,9 @@ import org.schabi.newpipe.extractor.channel.tabs.ChannelTabs
 import org.schabi.newpipe.extractor.playlist.PlaylistInfo
 import org.schabi.newpipe.extractor.search.SearchInfo
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeSearchQueryHandlerFactory
+import org.schabi.newpipe.extractor.comments.CommentsInfo
 import org.schabi.newpipe.extractor.stream.AudioStream
+import org.schabi.newpipe.extractor.stream.Description
 import org.schabi.newpipe.extractor.stream.AudioTrackType
 import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.Stream
@@ -53,6 +55,18 @@ data class DownloadOption(
         }
 }
 
+/** One comment under a video. */
+data class Comment(val author: String, val text: String, val html: Boolean, val likes: Long, val time: String, val pinned: Boolean)
+
+/** "1.2K", "3.4M": short counts for views and likes. */
+fun formatCount(n: Long): String = when {
+    n < 0 -> ""
+    n < 1_000 -> n.toString()
+    n < 1_000_000 -> String.format(java.util.Locale.US, "%.1fK", n / 1_000.0).replace(".0K", "K")
+    n < 1_000_000_000 -> String.format(java.util.Locale.US, "%.1fM", n / 1_000_000.0).replace(".0M", "M")
+    else -> String.format(java.util.Locale.US, "%.1fB", n / 1_000_000_000.0).replace(".0B", "B")
+}
+
 /** A chapter from the video's description timestamps. */
 data class Chapter(val title: String, val startSec: Long)
 
@@ -68,6 +82,8 @@ data class VideoDetails(
     val subtitles: List<SubtitleTrack>,
     val chapters: List<Chapter> = emptyList(),
     val description: String = "",
+    /** The description is HTML (links, line breaks) rather than plain text. */
+    val descriptionHtml: Boolean = false,
     val viewCount: Long = -1,
     val likeCount: Long = -1,
     val uploadDate: String? = null
@@ -210,6 +226,7 @@ object YouTube {
                     .sortedBy { it.startSec }
             }.getOrDefault(emptyList()),
             description = runCatching { info.description?.content.orEmpty() }.getOrDefault(""),
+            descriptionHtml = runCatching { info.description?.type == Description.HTML }.getOrDefault(false),
             viewCount = runCatching { info.viewCount }.getOrDefault(-1),
             likeCount = runCatching { info.likeCount }.getOrDefault(-1),
             uploadDate = runCatching { info.textualUploadDate }.getOrNull()
@@ -280,6 +297,21 @@ object YouTube {
             next = more.nextPage
         }
         return VideoList(info.name, url, isChannel = true, videos = items.take(limit).map { it.toEntry() })
+    }
+
+    /** First page of a video's comments (top comments). */
+    fun comments(url: String): List<Comment> {
+        val info = CommentsInfo.getInfo(service, url)
+        return info.relatedItems.map {
+            Comment(
+                author = it.uploaderName.orEmpty(),
+                text = it.commentText?.content.orEmpty(),
+                html = it.commentText?.type == Description.HTML,
+                likes = it.likeCount.toLong(),
+                time = it.textualUploadDate.orEmpty(),
+                pinned = it.isPinned
+            )
+        }
     }
 
     fun search(query: String): SearchPage {

@@ -111,7 +111,11 @@ class QuickDownloadActivity : AppCompatActivity() {
             b.duration.text = formatDuration(d.durationSec)
             b.duration.isVisible = d.durationSec > 0
             showChips(defIndex)
-            b.downloadButton.text = "Download"
+            val have = Store.downloaded(YouTube.videoId(url))
+            b.downloadButton.text = if (have != null) "Download again" else "Download"
+            if (have != null) {
+                b.meta.text = "✓ Already in your library · ${d.uploader}"
+            }
             b.downloadButton.setOnClickListener {
                 val c = selected() ?: return@setOnClickListener
                 Queue.add(

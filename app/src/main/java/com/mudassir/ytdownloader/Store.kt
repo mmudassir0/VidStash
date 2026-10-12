@@ -221,6 +221,18 @@ object Store {
         added
     }
 
+    /** A finished download of this YouTube video that is still on the phone, if any. */
+    fun downloaded(videoId: String): DownloadItem? = _items.value.firstOrNull {
+        it.status == Status.DONE && it.fileUri != null && !it.isClip && YouTube.videoId(it.url) == videoId
+    }
+
+    /** Video ids that are downloaded, waiting or downloading. */
+    fun knownVideoIds(): Set<String> = _items.value
+        .filter { (it.status == Status.DONE && it.fileUri != null && !it.isClip) || it.isActive }
+        .map { YouTube.videoId(it.url) }.toSet()
+
+    fun isQueued(videoId: String) = _items.value.any { it.isActive && YouTube.videoId(it.url) == videoId }
+
     fun hasQueued() = _items.value.any { it.status == Status.QUEUED }
 
     fun setProgress(id: String, p: Progress?) {

@@ -41,6 +41,16 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mudassir.ytdownloader.R
 import com.mudassir.ytdownloader.PlayerActivity
+import com.mudassir.ytdownloader.Store
+import com.mudassir.ytdownloader.formatCount
+import com.mudassir.ytdownloader.databinding.ItemCommentBinding
+import com.mudassir.ytdownloader.databinding.SheetCommentsBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import androidx.core.text.HtmlCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.text.DateFormat
+import java.util.Date
 import kotlinx.coroutines.launch
 
 /** Paste a link or search; shows one video, a playlist/channel to pick from, or search results. */
@@ -281,6 +291,7 @@ class GetFragment : Fragment() {
         h.formatRow.isVisible = false
         h.clipRow.isVisible = false
         h.splitSwitch.isVisible = false
+        h.aboutPanel.isVisible = false
         h.qualityRow.isVisible = false
         h.limitRow.isVisible = false
         h.selectRow.isVisible = false
@@ -324,6 +335,7 @@ class GetFragment : Fragment() {
             val def = YouTube.pickBest(d.options, wanted)?.let { d.options.indexOf(it) }?.takeIf { it >= 0 } ?: 0
             h.formatSpinner.setSelection(def)
             setupClip(d.durationSec)
+            descExpanded = false
             h.splitSwitch.setOnCheckedChangeListener(null)
             h.splitSwitch.isChecked = false
             h.splitSwitch.text = "Save each chapter as its own file (${d.chapters.size} chapters)"
@@ -341,6 +353,7 @@ class GetFragment : Fragment() {
         h.downloadButton.isVisible = true
         h.downloadButton.text = "Download"
         h.openPlaylistButton.isVisible = s.playlistUrl != null
+        renderAbout(s)
         h.watchButton.isVisible = true
         h.watchButton.text = "Watch now (no download)"
         h.watchButton.setOnClickListener { PlayerActivity.stream(requireContext(), s.url, d.title, d.thumbnail) }
@@ -403,6 +416,7 @@ class GetFragment : Fragment() {
     private fun showList(items: List<VideoEntry>, selectable: Boolean, key: Any?, resetScroll: Boolean, large: Boolean = false) {
         videos.selectable = selectable
         videos.large = large
+        videos.known = Store.knownVideoIds()
         if (key != null && key === listKey) return
         if (key !is List<*>) shownQuery = null
         listKey = key
@@ -459,7 +473,26 @@ class GetFragment : Fragment() {
         when (val s = vm.state.value) {
             is GetState.Video -> {
                 val opt = s.details.options.getOrNull(h.formatSpinner.selectedItemPosition) ?: return
-                vm.downloadVideo(opt, clipRange(), split = h.splitSwitch.isVisible && h.splitSwitch.isChecked)
+                val clip = clipRange()
+                val split = h.splitSwitch.isVisible && h.splitSwitch.isChecked
+                val go = { vm.downloadVideo(opt, clip, split = split) }
+                val id = YouTube.videoId(s.url)
+                val have = Store.downloaded(id)
+                when {
+                    clip != null || split -> go()
+                    Store.isQueued(id) -> toast("This video is already in the download queue")
+                    have != null -> MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Already downloaded")
+                        .setMessage(
+                            "You saved this on " + DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(have.finishedAt)) +
+                                (have.fileName?.let { " as “$it”" } ?: "") + "."
+                        )
+                        .setPositiveButton("Download again") { _, _ -> go() }
+                        .setNeutralButton("Play it") { _, _ -> Files.play(requireContext(), have) }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                    else -> go()
+                }
             }
             is GetState.Videos -> {
                 val maxHeight = qualities[h.qualitySpinner.selectedItemPosition.coerceAtLeast(0)].second
@@ -506,6 +539,65 @@ class GetFragment : Fragment() {
                 true
             }
         }.show()
+    }
+
+    // ---------- about: stats, description, comments ----------
+
+    private var descExpanded = false
+
+    private fun renderAbout(s: GetState.Video) {
+        val d = s.details
+        val stats = listOfNotNull(
+            d.viewCount.takeIf { it >= 0 }?.let { "${formatCount(it)} views" },
+            d.uploadDate?.takeIf { it.isNotBlank() },
+            d.likeCount.takeIf { it > 0 }?.let { "${formatCount(it)} likes" }
+        ).joinToString(" · ")
+        val desc = if (d.descriptionHtml) HtmlCompat.fromHtml(d.description, HtmlCompat.FROM_HTML_MODE_COMPACT).toString().trim()
+        else d.description.trim()
+        h.aboutPanel.isVisible = stats.isNotEmpty() || desc.isNotEmpty()
+        h.statsText.text = stats
+        h.statsText.isVisible = stats.isNotEmpty()
+        h.descText.text = desc
+        h.descText.isVisible = desc.isNotEmpty()
+        h.descText.maxLines = if (descExpanded) Int.MAX_VALUE else 3
+        h.moreDescButton.isVisible = desc.length > 120 || desc.count { it == '\n' } > 2
+        h.moreDescButton.text = if (descExpanded) "Less" else "More"
+        h.moreDescButton.setOnClickListener {
+            descExpanded = !descExpanded
+            h.descText.maxLines = if (descExpanded) Int.MAX_VALUE else 3
+            h.moreDescButton.text = if (descExpanded) "Less" else "More"
+        }
+        h.commentsButton.setOnClickListener { showComments(s.url) }
+    }
+
+    private fun showComments(url: String) {
+        val ctx = requireContext()
+        val sheet = BottomSheetDialog(ctx)
+        val sb = SheetCommentsBinding.inflate(layoutInflater)
+        sheet.setContentView(sb.root)
+        sheet.behavior.peekHeight = (resources.displayMetrics.heightPixels * 0.7).toInt()
+        sheet.show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = runCatching { withContext(Dispatchers.IO) { YouTube.comments(url) } }
+            sb.progress.isVisible = false
+            val list = result.getOrElse {
+                sb.message.isVisible = true
+                sb.message.text = "Couldn't load comments: ${it.message ?: "unknown error"}"
+                return@launch
+            }
+            if (list.isEmpty()) {
+                sb.message.isVisible = true
+                sb.message.text = "No comments, or comments are turned off for this video."
+            }
+            list.forEach { c ->
+                val row = ItemCommentBinding.inflate(layoutInflater, sb.list, false)
+                row.author.text = listOf(if (c.pinned) "📌 ${c.author}" else c.author, c.time).filter { it.isNotBlank() }.joinToString(" · ")
+                row.text.text = if (c.html) HtmlCompat.fromHtml(c.text, HtmlCompat.FROM_HTML_MODE_COMPACT).toString().trim() else c.text
+                row.likes.text = if (c.likes > 0) "👍 ${formatCount(c.likes)}" else ""
+                row.likes.isVisible = c.likes > 0
+                sb.list.addView(row.root)
+            }
+        }
     }
 
     // ---------- section (clip) ----------
