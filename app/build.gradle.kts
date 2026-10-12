@@ -59,6 +59,7 @@ dependencies {
     // MP3 encoding (pure Java port of LAME)
     implementation("de.sciss:jump3r:1.0.5")
     testImplementation("junit:junit:4.13.2")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.1.5")
 
