@@ -120,6 +120,12 @@ class MainActivity : AppCompatActivity() {
             intent.action = null // don't re-open it after rotation
             return
         }
+        if (intent.getBooleanExtra(EXTRA_SEARCH, false)) {
+            intent.removeExtra(EXTRA_SEARCH)
+            select(R.id.nav_get)
+            (fragment(R.id.nav_get) as? GetFragment)?.focusSearch()
+            return
+        }
         when (intent.getIntExtra(EXTRA_TAB, -1)) {
             TAB_DOWNLOADS -> select(R.id.nav_downloads)
             TAB_LIBRARY -> select(R.id.nav_library)
@@ -190,6 +196,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_TAB = "tab"
+        const val EXTRA_SEARCH = "focus_search"
         const val TAB_DOWNLOADS = 1
         const val TAB_LIBRARY = 2
     }

@@ -17,6 +17,7 @@ class App : Application() {
         CrashReporter.install(this)
         NewPipe.init(OkHttpDownloader.instance)
         Store.init(this)
+        Store.onChange = { WidgetProvider.update(this) }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val nm = getSystemService(NotificationManager::class.java)
             nm.createNotificationChannel(

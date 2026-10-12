@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">YT Downloader</string>
+    <string name="widget_description">Paste a YouTube link to download it, search, or open your library</string>
 </resources>
