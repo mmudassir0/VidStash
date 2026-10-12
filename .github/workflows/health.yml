@@ -1,13 +1,12 @@
 name: YouTube health check
 
 # Every day: can the app still read YouTube? Opens an issue if not (GitHub emails you),
-# and closes it again once things work.
+# and closes it again once things work. YouTube often refuses GitHub's servers; then the
+# result is "inconclusive" and nothing is reported (the app has its own warning banner).
 on:
   schedule:
     - cron: "15 1 * * *" # 06:15 in Pakistan
   workflow_dispatch:
-  push:
-    branches: [feature/big-three] # TEMP: first run
 
 permissions:
   contents: read

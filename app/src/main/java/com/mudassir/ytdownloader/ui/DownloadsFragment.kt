@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.mudassir.ytdownloader.DownloadItem
+import com.mudassir.ytdownloader.MainActivity
 import com.mudassir.ytdownloader.Progress
 import com.mudassir.ytdownloader.Queue
 import com.mudassir.ytdownloader.Settings
@@ -51,6 +52,13 @@ class DownloadsFragment : Fragment() {
         b.list.adapter = adapter
         b.list.itemAnimator = null // progress updates twice a second; no blinking
 
+        b.troubleDismiss.setOnClickListener {
+            Settings(requireContext()).youtubeTrouble = 0
+            b.troubleCard.isVisible = false
+        }
+        b.troubleCheck.setOnClickListener {
+            (activity as? MainActivity)?.openUpdates()
+        }
         b.pauseButton.setOnClickListener {
             val ctx = requireContext()
             if (Settings(ctx).paused) Queue.resumeAll(ctx) else Queue.pauseAll(ctx)
@@ -105,6 +113,8 @@ class DownloadsFragment : Fragment() {
         b.pauseButton.setIconResource(if (paused) R.drawable.ic_play else R.drawable.ic_pause)
         b.pauseButton.isVisible = paused || running + queued > 0
         b.emptyText.isVisible = items.isEmpty()
+        val trouble = Settings(ctx).youtubeTrouble
+        b.troubleCard.isVisible = trouble > 0 && System.currentTimeMillis() - trouble < 7 * 86_400_000L
     }
 
     private fun onWifi(ctx: Context): Boolean {

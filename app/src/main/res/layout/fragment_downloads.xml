@@ -51,6 +51,62 @@
         android:paddingVertical="6dp"
         android:textAppearance="?attr/textAppearanceLabelLarge" />
 
+    <!-- Shown when downloads fail because YouTube changed something -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/troubleCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/red_container">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="YouTube changed something"
+                android:textAppearance="?attr/textAppearanceTitleSmall"
+                android:textColor="@color/on_red_container" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Downloads are failing until the app gets a fix. Fixes usually arrive within a few days and appear in Settings → App update."
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/on_red_container" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/troubleDismiss"
+                    style="@style/Widget.App.Button.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hide"
+                    android:textColor="@color/on_red_container" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/troubleCheck"
+                    style="@style/Widget.App.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Check for update" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

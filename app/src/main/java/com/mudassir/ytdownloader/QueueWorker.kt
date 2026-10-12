@@ -20,6 +20,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicInteger
+import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
+import org.schabi.newpipe.extractor.exceptions.ExtractionException
+import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
 
 /**
  * Background runner for the download queue. Downloads up to N items at once (Settings),
@@ -80,6 +83,7 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
             try {
                 job.await()
                 saved.incrementAndGet()
+                Settings(applicationContext).youtubeTrouble = 0 // reading YouTube works
                 savedIds += item.id
             } catch (e: CancellationException) {
                 if (!isActive) throw e // runner stopped: the finally in doWork re-queues it
@@ -98,6 +102,11 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
 
     private fun onError(item: DownloadItem, e: Exception) {
         val why = e.message ?: e.javaClass.simpleName
+        // The library couldn't make sense of YouTube's page (not a private/removed/region-locked
+        // video, and not a rate limit): usually YouTube changed something and an update is needed.
+        if (e is ExtractionException && e !is ContentNotAvailableException && e !is ReCaptchaException) {
+            Settings(applicationContext).youtubeTrouble = System.currentTimeMillis()
+        }
         val attempts = item.attempts + 1
         val fatal = e is ItemDownloader.Fatal
         Store.update(item.id) {

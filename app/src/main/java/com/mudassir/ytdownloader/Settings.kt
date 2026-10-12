@@ -75,6 +75,11 @@ class Settings(ctx: Context) {
         recentSearches = listOf(t) + recentSearches.filterNot { it.equals(t, ignoreCase = true) }
     }
 
+    /** When downloads last failed because YouTube changed (0 = fine). Shows a banner. */
+    var youtubeTrouble: Long
+        get() = p.getLong(K_YT_TROUBLE, 0)
+        set(v) = p.edit().putLong(K_YT_TROUBLE, v).apply()
+
     var paused: Boolean
         get() = p.getBoolean(K_PAUSED, false)
         set(v) = p.edit().putBoolean(K_PAUSED, v).apply()
@@ -107,6 +112,7 @@ class Settings(ctx: Context) {
         private const val K_RECENT = "recent_searches"
         private const val MAX_RECENT = 30
         private const val K_PAUSED = "paused"
+        const val K_YT_TROUBLE = "youtube_trouble"
         private const val K_LAST_UPDATE_CHECK = "last_update_check"
 
         /** Quality choices shown everywhere: label to max height (0 = audio only). */

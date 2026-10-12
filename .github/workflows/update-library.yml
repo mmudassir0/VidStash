@@ -1,11 +1,11 @@
 name: Update YouTube library
 
-# Every week: if a newer NewPipeExtractor (the library that reads YouTube) is out,
+# Every day: if a newer NewPipeExtractor (the library that reads YouTube) is out,
 # switch to it, check that the app builds and still reads YouTube, then publish a new
 # build. It then shows up in the app's update card.
 on:
   schedule:
-    - cron: "0 2 * * 1" # Mondays 07:00 in Pakistan
+    - cron: "0 2 * * *" # 07:00 in Pakistan
   workflow_dispatch:
 
 permissions:

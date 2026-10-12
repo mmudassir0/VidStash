@@ -165,6 +165,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** Settings tab with a fresh update check. */
+    fun openUpdates() {
+        select(R.id.nav_settings)
+        if (!UpdateManager.busy) UpdateManager.check(this)
+    }
+
     private fun offerUpdate(r: Updater.Release) {
         if (isFinishing) return
         val notes = r.notes.lines().filter { it.isNotBlank() && !it.startsWith("Co-Authored-By") && !it.startsWith("Claude-Session") }
