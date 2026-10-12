@@ -64,11 +64,7 @@ object Files {
 
     private fun deleteFile(ctx: Context, item: DownloadItem): Boolean {
         val uri = item.fileUri?.let(Uri::parse)
-        val ok = when {
-            uri == null -> true
-            uri.scheme == "file" -> File(uri.path!!).let { !it.exists() || it.delete() }
-            else -> runCatching { ctx.contentResolver.delete(uri, null, null) >= 0 }.getOrDefault(false)
-        }
+        val ok = uri == null || Storage.delete(ctx, uri)
         if (ok) Store.remove(item.id)
         return ok
     }

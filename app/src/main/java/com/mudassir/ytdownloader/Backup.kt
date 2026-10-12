@@ -15,7 +15,11 @@ object Backup {
     private const val FORMAT = 1
 
     /** Settings that only make sense on the phone they were made on. */
-    private val SKIP_PREFS = setOf("paused", "last_update_check", "last_clipboard_link")
+    private val SKIP_PREFS = setOf(
+        "paused", "last_update_check", "last_clipboard_link", "youtube_trouble",
+        // Folder access is granted per install; it has to be picked again.
+        "video_folder", "audio_folder"
+    )
 
     data class Restored(val playlists: Int, val files: Int, val missing: Int, val queued: Int)
 

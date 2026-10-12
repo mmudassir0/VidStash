@@ -32,6 +32,17 @@
             app:title="Allow 1440p / 4K" />
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="Save to" app:iconSpaceReserved="false">
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="pick_video_folder"
+            app:title="Videos folder" />
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="pick_audio_folder"
+            app:title="Audio folder" />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="Audio" app:iconSpaceReserved="false">
         <ListPreference
             app:defaultValue="m4a"

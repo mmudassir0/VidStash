@@ -75,6 +75,16 @@ class Settings(ctx: Context) {
         recentSearches = listOf(t) + recentSearches.filterNot { it.equals(t, ignoreCase = true) }
     }
 
+    /** Folder picked for videos (a document tree link), or "" for Downloads/YTDownloader. */
+    var videoFolder: String
+        get() = p.getString(K_VIDEO_FOLDER, "") ?: ""
+        set(v) = p.edit().putString(K_VIDEO_FOLDER, v).apply()
+
+    /** Folder picked for audio, or "" for Downloads/YTDownloader. */
+    var audioFolder: String
+        get() = p.getString(K_AUDIO_FOLDER, "") ?: ""
+        set(v) = p.edit().putString(K_AUDIO_FOLDER, v).apply()
+
     /** When downloads last failed because YouTube changed (0 = fine). Shows a banner. */
     var youtubeTrouble: Long
         get() = p.getLong(K_YT_TROUBLE, 0)
@@ -113,6 +123,8 @@ class Settings(ctx: Context) {
         private const val MAX_RECENT = 30
         private const val K_PAUSED = "paused"
         const val K_YT_TROUBLE = "youtube_trouble"
+        const val K_VIDEO_FOLDER = "video_folder"
+        const val K_AUDIO_FOLDER = "audio_folder"
         private const val K_LAST_UPDATE_CHECK = "last_update_check"
 
         /** Quality choices shown everywhere: label to max height (0 = audio only). */

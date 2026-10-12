@@ -53,7 +53,7 @@ class ItemDownloader(private val ctx: Context) {
         val split = item.splitChapters && !item.isClip && details.chapters.size >= 2
 
         // Skip files that are already in the folder (e.g. re-downloading a playlist).
-        if (!split) Storage.find(ctx, fileName, item.folder)?.let { existing ->
+        if (!split) Storage.find(ctx, fileName, item.folder, mime)?.let { existing ->
             finish(item, existing.toString(), fileName, mime, -1, note = "Already downloaded")
             partial.deleteRecursively()
             return
@@ -61,7 +61,10 @@ class ItemDownloader(private val ctx: Context) {
 
         val total = opt.bytes
         val free = Storage.freeBytes()
-        if (total > 0 && free in 0 until total * 2 + 50_000_000) {
+        // (Space on a picked SD card folder can't be measured here; the phone's own space is
+        // still needed for the temporary files, so only the temporary part is checked then.)
+        val need = if (Storage.usesPickedFolder(ctx, mime)) total + 50_000_000 else total * 2 + 50_000_000
+        if (total > 0 && free in 0 until need) {
             throw Fatal("Not enough space: needs ${formatBytes(total * 2)}, free ${formatBytes(free)}")
         }
 
