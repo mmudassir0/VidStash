@@ -1,5 +1,6 @@
 package com.mudassir.vidstash.ui
 
+import com.mudassir.vidstash.R
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -33,9 +34,9 @@ object Files {
             .setDataAndType(shareable(ctx, item), item.mime ?: "video/*")
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         try {
-            ctx.startActivity(Intent.createChooser(intent, "Open with"))
+            ctx.startActivity(Intent.createChooser(intent, ctx.getString(R.string.files_open_with)))
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(ctx, "No app can open this file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, R.string.files_no_app, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -45,20 +46,20 @@ object Files {
             .setType(item.mime ?: "video/*")
             .putExtra(Intent.EXTRA_STREAM, shareable(ctx, item))
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        ctx.startActivity(Intent.createChooser(intent, "Share"))
+        ctx.startActivity(Intent.createChooser(intent, ctx.getString(R.string.files_share)))
     }
 
     /** Deletes the file from the phone and removes it from the list. */
     fun delete(ctx: Context, item: DownloadItem) {
         val ok = deleteFile(ctx, item)
-        Toast.makeText(ctx, if (ok) "Deleted" else "Couldn't delete the file", Toast.LENGTH_SHORT).show()
+        Toast.makeText(ctx, ctx.getString(if (ok) R.string.files_deleted else R.string.files_delete_failed), Toast.LENGTH_SHORT).show()
     }
 
     /** Deletes several files; shows one message at the end. */
     fun deleteMany(ctx: Context, items: List<DownloadItem>) {
         if (items.size == 1) return delete(ctx, items[0])
         val failed = items.count { !deleteFile(ctx, it) }
-        val msg = if (failed == 0) "Deleted ${items.size} files" else "Deleted ${items.size - failed}, $failed couldn't be deleted"
+        val msg = if (failed == 0) ctx.getString(R.string.files_deleted_n, items.size) else ctx.getString(R.string.files_deleted_some, items.size - failed, failed)
         Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show()
     }
 
@@ -73,7 +74,7 @@ object Files {
     fun shareMany(ctx: Context, items: List<DownloadItem>) {
         val existing = items.filter { Storage.exists(ctx, it.fileUri) }
         if (existing.isEmpty()) {
-            Toast.makeText(ctx, "These files were moved or deleted", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, R.string.files_gone_n, Toast.LENGTH_SHORT).show()
             return
         }
         if (existing.size == 1) return share(ctx, existing[0])
@@ -88,7 +89,7 @@ object Files {
             .setType(type)
             .putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(existing.map { shareable(ctx, it) }))
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        ctx.startActivity(Intent.createChooser(intent, "Share ${existing.size} files"))
+        ctx.startActivity(Intent.createChooser(intent, ctx.getString(R.string.files_share_n, existing.size)))
     }
 
     /** Uri other apps can read: content:// as-is, file:// (Android 9 and older) via FileProvider. */
@@ -100,7 +101,7 @@ object Files {
 
     private fun checkExists(ctx: Context, item: DownloadItem): Boolean {
         if (Storage.exists(ctx, item.fileUri)) return true
-        Toast.makeText(ctx, "This file was moved or deleted", Toast.LENGTH_SHORT).show()
+        Toast.makeText(ctx, R.string.files_gone, Toast.LENGTH_SHORT).show()
         return false
     }
 }

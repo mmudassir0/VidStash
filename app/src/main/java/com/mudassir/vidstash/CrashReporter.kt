@@ -84,13 +84,13 @@ class CrashActivity : Activity() {
 
         val pad = (16 * resources.displayMetrics.density).toInt()
         val title = TextView(this).apply {
-            text = "VidStash crashed"
+            text = getString(R.string.crash_title)
             textSize = 20f
             setTypeface(typeface, Typeface.BOLD)
             setPadding(pad, pad * 2, pad, pad / 2)
         }
         val hint = TextView(this).apply {
-            text = "Tap Report to send it to the developer on GitHub, or Copy to share it yourself."
+            text = getString(R.string.crash_hint)
             setPadding(pad, 0, pad, pad / 2)
         }
         val details = TextView(this).apply {
@@ -104,15 +104,15 @@ class CrashActivity : Activity() {
             addView(HorizontalScrollView(this@CrashActivity).apply { addView(details) })
         }
         val copy = Button(this).apply {
-            text = "Copy"
+            text = getString(R.string.crash_copy)
             setOnClickListener {
                 getSystemService(ClipboardManager::class.java)
                     .setPrimaryClip(ClipData.newPlainText("VidStash crash", report))
-                Toast.makeText(this@CrashActivity, "Copied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CrashActivity, R.string.crash_copied, Toast.LENGTH_SHORT).show()
             }
         }
         val restart = Button(this).apply {
-            text = "Restart app"
+            text = getString(R.string.crash_restart)
             setOnClickListener {
                 startActivity(
                     Intent(this@CrashActivity, MainActivity::class.java)
@@ -123,11 +123,11 @@ class CrashActivity : Activity() {
             }
         }
         val reportButton = Button(this).apply {
-            text = "Report"
+            text = getString(R.string.crash_report)
             setOnClickListener { com.mudassir.vidstash.ui.About.reportProblem(this@CrashActivity, report) }
         }
         val close = Button(this).apply {
-            text = "Close"
+            text = getString(R.string.crash_close)
             setOnClickListener { finish() }
         }
         val buttons = LinearLayout(this).apply {

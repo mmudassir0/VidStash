@@ -52,7 +52,7 @@ object UpdateManager {
             Settings(app).lastUpdateCheck = System.currentTimeMillis()
             val release = result.getOrNull()
             _state.value = when {
-                result.isFailure || release == null -> State.Failed("Couldn't reach GitHub. Check your internet and try again.", null)
+                result.isFailure || release == null -> State.Failed(app.getString(R.string.upd_no_github), null)
                 release.build > Updater.installedBuild(app) -> State.Available(release)
                 else -> State.UpToDate(System.currentTimeMillis())
             }
@@ -82,7 +82,7 @@ object UpdateManager {
                 _state.value = State.Ready(release, it)
                 install(app)
             }.onFailure {
-                _state.value = State.Failed("Download failed: ${it.message ?: "unknown error"}", release)
+                _state.value = State.Failed(app.getString(R.string.upd_download_failed, it.message ?: app.getString(R.string.common_unknown_error)), release)
             }
         }
     }

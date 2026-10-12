@@ -192,7 +192,7 @@ class PlayerActivity : AppCompatActivity() {
                     )
                 )
             )
-            Toast.makeText(this, "Added to downloads", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.player_added, Toast.LENGTH_SHORT).show()
         }
         b.sleepText.setOnClickListener { showSleepMenu() }
         b.rotateButton.setOnClickListener { rotate() }
@@ -375,7 +375,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun showSpeedMenu() {
         PopupMenu(this, b.speedButton).apply {
-            SPEEDS.forEachIndexed { i, s -> menu.add(0, i, i, speedLabel(s) + if (s == 1f) "  (normal)" else "") }
+            SPEEDS.forEachIndexed { i, s -> menu.add(0, i, i, speedLabel(s) + if (s == 1f) getString(R.string.player_normal) else "") }
             setOnMenuItemClickListener {
                 controller?.setPlaybackSpeed(SPEEDS[it.itemId])
                 Settings(this@PlayerActivity).playbackSpeed = SPEEDS[it.itemId]
@@ -393,9 +393,9 @@ class PlayerActivity : AppCompatActivity() {
     private fun showSleepMenu() {
         PopupMenu(this, b.sleepButton).apply {
             val active = SleepTimer.state.value != SleepTimer.State.Off
-            if (active) menu.add(0, 0, 0, "Turn off sleep timer")
-            SLEEP_MINUTES.forEachIndexed { i, m -> menu.add(0, i + 1, i + 1, "Stop in $m minutes") }
-            menu.add(0, 100, 100, "Stop at end of this video")
+            if (active) menu.add(0, 0, 0, getString(R.string.player_sleep_off_action))
+            SLEEP_MINUTES.forEachIndexed { i, m -> menu.add(0, i + 1, i + 1, getString(R.string.player_stop_in, m)) }
+            menu.add(0, 100, 100, getString(R.string.player_stop_end))
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     0 -> SleepTimer.cancel()
@@ -403,9 +403,9 @@ class PlayerActivity : AppCompatActivity() {
                     else -> SleepTimer.set(SLEEP_MINUTES[it.itemId - 1])
                 }
                 val msg = when (it.itemId) {
-                    0 -> "Sleep timer off"
-                    100 -> "Will stop at the end of this video"
-                    else -> "Will stop in ${SLEEP_MINUTES[it.itemId - 1]} minutes"
+                    0 -> getString(R.string.player_sleep_off)
+                    100 -> getString(R.string.player_will_stop_end)
+                    else -> getString(R.string.player_will_stop_in, SLEEP_MINUTES[it.itemId - 1])
                 }
                 Toast.makeText(this@PlayerActivity, msg, Toast.LENGTH_SHORT).show()
                 true
@@ -416,8 +416,8 @@ class PlayerActivity : AppCompatActivity() {
     private fun updateSleep() {
         val text = when (SleepTimer.state.value) {
             SleepTimer.State.Off -> null
-            SleepTimer.State.EndOfItem -> "end"
-            is SleepTimer.State.At -> "${SleepTimer.minutesLeft()}m"
+            SleepTimer.State.EndOfItem -> getString(R.string.player_sleep_end)
+            is SleepTimer.State.At -> getString(R.string.player_sleep_min, SleepTimer.minutesLeft() ?: 0)
         }
         b.sleepText.text = text
         b.sleepText.isVisible = text != null
@@ -438,7 +438,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun enterPip() {
         if (!canPip() || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         runCatching { enterPictureInPictureMode(pipParams()) }
-            .onFailure { Toast.makeText(this, "Picture-in-picture is turned off for this app in phone settings", Toast.LENGTH_LONG).show() }
+            .onFailure { Toast.makeText(this, R.string.player_pip_off, Toast.LENGTH_LONG).show() }
     }
 
     private fun updatePip() {
@@ -462,10 +462,10 @@ class PlayerActivity : AppCompatActivity() {
             .setAspectRatio(ratio)
             .setActions(
                 listOf(
-                    pipAction(PIP_BACK, android.R.drawable.ic_media_rew, "Back 10 seconds"),
-                    if (playing) pipAction(PIP_PLAY_PAUSE, android.R.drawable.ic_media_pause, "Pause")
-                    else pipAction(PIP_PLAY_PAUSE, android.R.drawable.ic_media_play, "Play"),
-                    pipAction(PIP_FORWARD, android.R.drawable.ic_media_ff, "Forward 10 seconds")
+                    pipAction(PIP_BACK, android.R.drawable.ic_media_rew, getString(R.string.player_back_10)),
+                    if (playing) pipAction(PIP_PLAY_PAUSE, android.R.drawable.ic_media_pause, getString(R.string.player_pause))
+                    else pipAction(PIP_PLAY_PAUSE, android.R.drawable.ic_media_play, getString(R.string.action_play)),
+                    pipAction(PIP_FORWARD, android.R.drawable.ic_media_ff, getString(R.string.player_forward_10))
                 )
             )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

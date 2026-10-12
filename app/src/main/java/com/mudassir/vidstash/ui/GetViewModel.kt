@@ -1,5 +1,6 @@
 package com.mudassir.vidstash.ui
 
+import com.mudassir.vidstash.R
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -73,7 +74,7 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
             YouTube.Link.VIDEO -> openVideo(url, push = false)
             YouTube.Link.PLAYLIST -> openPlaylist(url, push = false)
             YouTube.Link.CHANNEL -> openChannel(url, DEFAULT_CHANNEL_LIMIT, push = false)
-            YouTube.Link.NONE -> _state.value = GetState.Error("That isn't a YouTube video, playlist or channel link.")
+            YouTube.Link.NONE -> _state.value = GetState.Error(ctx.getString(R.string.vm_not_youtube))
         }
     }
 
@@ -105,21 +106,21 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun openVideo(url: String, push: Boolean = true) = load(push, "Fetching video…") {
+    fun openVideo(url: String, push: Boolean = true) = load(push, ctx.getString(R.string.vm_fetching_video)) {
         GetState.Video(YouTube.getVideo(url, Settings(ctx).allowWebm), url, YouTube.playlistOf(url))
     }
 
-    fun openPlaylist(url: String, push: Boolean = true) = load(push, "Loading playlist…") {
-        val list = YouTube.getPlaylist(url) { n -> _state.value = GetState.Loading("Loading playlist… $n videos") }
+    fun openPlaylist(url: String, push: Boolean = true) = load(push, ctx.getString(R.string.vm_loading_playlist)) {
+        val list = YouTube.getPlaylist(url) { n -> _state.value = GetState.Loading(ctx.getString(R.string.vm_loading_playlist_n, n)) }
         GetState.Videos(list, list.videos.map { it.id }.toSet(), 0)
     }
 
-    fun openChannel(url: String, limit: Int, push: Boolean = true) = load(push, "Loading channel…") {
-        val list = YouTube.getChannel(url, limit) { n -> _state.value = GetState.Loading("Loading channel… $n videos") }
+    fun openChannel(url: String, limit: Int, push: Boolean = true) = load(push, ctx.getString(R.string.vm_loading_channel)) {
+        val list = YouTube.getChannel(url, limit) { n -> _state.value = GetState.Loading(ctx.getString(R.string.vm_loading_channel_n, n)) }
         GetState.Videos(list, list.videos.map { it.id }.toSet(), limit)
     }
 
-    private fun search(query: String) = load(false, "Searching…") {
+    private fun search(query: String) = load(false, ctx.getString(R.string.vm_searching)) {
         Settings(ctx).addSearch(query)
         GetState.Search(YouTube.search(query))
     }
@@ -197,9 +198,9 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
             )
         )
         _toast.value = when {
-            split -> "Added: will be saved as ${d.chapters.size} chapter files"
-            clip != null -> "Added the section to downloads"
-            else -> "Added to downloads"
+            split -> ctx.getString(R.string.vm_added_chapters, d.chapters.size)
+            clip != null -> ctx.getString(R.string.vm_added_section)
+            else -> ctx.getString(R.string.vm_added)
         }
     }
 
@@ -210,9 +211,9 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
             durationSec = v.durationSec, uploader = v.uploader.ifBlank { null }, mp3 = mp3
         )))
         _toast.value = when {
-            mp3 -> "Added to downloads (MP3)"
-            maxHeight == 0 -> "Added to downloads (audio)"
-            else -> "Added to downloads"
+            mp3 -> ctx.getString(R.string.vm_added_mp3)
+            maxHeight == 0 -> ctx.getString(R.string.vm_added_audio)
+            else -> ctx.getString(R.string.vm_added)
         }
     }
 
@@ -220,7 +221,7 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
         val s = _state.value as? GetState.Videos ?: return
         val chosen = s.list.videos.filter { it.id in s.selected }
         if (chosen.isEmpty()) {
-            _toast.value = "Select at least one video"
+            _toast.value = ctx.getString(R.string.vm_select_one)
             return
         }
         // Videos already downloaded (or waiting) are left out.
@@ -228,9 +229,9 @@ class GetViewModel(app: Application) : AndroidViewModel(app) {
         val fresh = chosen.filter { it.id !in known }
         Sync.queue(ctx, s.list, fresh, maxHeight, remember)
         val skipped = chosen.size - fresh.size
-        _toast.value = "Queued ${fresh.size} video(s)" +
-            (if (skipped > 0) " · skipped $skipped you already have" else "") +
-            if (remember) " · saved for Sync" else ""
+        _toast.value = ctx.getString(R.string.vm_queued_n, fresh.size) +
+            (if (skipped > 0) ctx.getString(R.string.vm_skipped_have, skipped) else "") +
+            if (remember) ctx.getString(R.string.vm_saved_for_sync) else ""
     }
 
     companion object {

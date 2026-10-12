@@ -22,7 +22,7 @@
         android:layout_height="240dp"
         android:layout_gravity="center"
         android:layout_marginBottom="80dp"
-        android:contentDescription="Cover"
+        android:contentDescription="@string/player_cover"
         android:scaleType="centerCrop"
         android:visibility="gone" />
 
@@ -57,7 +57,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
+            android:contentDescription="@string/player_back"
             android:src="@drawable/ic_back" />
 
         <LinearLayout
@@ -94,7 +94,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Download"
+            android:contentDescription="@string/player_download"
             android:src="@drawable/ic_download"
             android:visibility="gone" />
 
@@ -103,7 +103,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Chapters"
+            android:contentDescription="@string/player_chapters"
             android:src="@drawable/ic_playlist"
             android:visibility="gone" />
 
@@ -112,7 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Playback speed"
+            android:contentDescription="@string/player_playback_speed"
             android:gravity="center"
             android:minWidth="44dp"
             android:paddingHorizontal="6dp"
@@ -133,7 +133,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Sleep timer"
+            android:contentDescription="@string/player_sleep_timer"
             android:src="@drawable/ic_timer" />
 
         <ImageButton
@@ -141,7 +141,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Rotate"
+            android:contentDescription="@string/player_rotate"
             android:src="@drawable/ic_rotate" />
 
         <ImageButton
@@ -149,7 +149,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Picture in picture"
+            android:contentDescription="@string/player_picture_in_picture"
             android:src="@drawable/ic_pip" />
     </LinearLayout>
 </FrameLayout>

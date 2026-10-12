@@ -27,13 +27,13 @@ object Storage {
     }
 
     /** "SD card/Music/YT" style name for a picked folder. */
-    fun describeFolder(value: String): String {
-        if (value.isEmpty()) return "Downloads/$FOLDER (default)"
+    fun describeFolder(ctx: Context, value: String): String {
+        if (value.isEmpty()) return ctx.getString(R.string.folder_default)
         return runCatching {
             val id = DocumentsContract.getTreeDocumentId(Uri.parse(value))
             val (volume, path) = id.split(':', limit = 2).let { it[0] to it.getOrElse(1) { "" } }
-            (if (volume == "primary") "Phone" else "SD card") + (if (path.isNotEmpty()) "/$path" else "")
-        }.getOrDefault("Chosen folder")
+            ctx.getString(if (volume == "primary") R.string.folder_phone else R.string.folder_sd) + (if (path.isNotEmpty()) "/$path" else "")
+        }.getOrDefault(ctx.getString(R.string.folder_chosen))
     }
 
     private fun treeDir(ctx: Context, tree: Uri, subFolder: String?, create: Boolean): DocumentFile? {

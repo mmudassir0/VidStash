@@ -1,5 +1,6 @@
 package com.mudassir.vidstash.ui
 
+import com.mudassir.vidstash.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,7 +116,7 @@ class VideoEntryAdapter(
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val v = getItem(position)
         holder.title.text = v.title
-        val mark = if (v.id in known) "✓ In your library" else null
+        val mark = if (v.id in known) holder.itemView.context.getString(R.string.lib_in_library) else null
         holder.meta.text = listOfNotNull(mark, v.uploader.ifBlank { null }).joinToString(" · ")
         holder.meta.isVisible = holder.meta.text.isNotEmpty()
         // Live streams and unknown lengths come as 0 or -1: no badge then.

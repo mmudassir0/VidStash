@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="20dp"
         android:paddingTop="16dp"
-        android:text="Library"
+        android:text="@string/library_library"
         android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
     <LinearLayout
@@ -38,14 +38,14 @@
                 style="@style/Widget.App.Segment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Files" />
+                android:text="@string/library_files" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/playlistsTab"
                 style="@style/Widget.App.Segment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Synced lists" />
+                android:text="@string/library_synced_lists" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <com.google.android.material.button.MaterialButton
@@ -53,7 +53,7 @@
             style="@style/Widget.App.Button.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sync all"
+            android:text="@string/library_sync_all"
             app:icon="@drawable/ic_retry"
             app:iconSize="18dp"
             android:visibility="gone" />
@@ -88,7 +88,7 @@
                     android:id="@+id/searchInput"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:hint="Search your files"
+                    android:hint="@string/library_search_your_files"
                     android:imeOptions="actionSearch"
                     android:paddingTop="0dp"
                     android:paddingBottom="0dp"
@@ -102,7 +102,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="4dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Sort"
+                android:contentDescription="@string/library_sort"
                 android:src="@drawable/ic_sort" />
         </LinearLayout>
 
@@ -152,7 +152,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Cancel selection"
+            android:contentDescription="@string/library_cancel_selection"
             android:src="@drawable/ic_close" />
 
         <TextView
@@ -168,7 +168,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Select all"
+            android:contentDescription="@string/library_select_all"
             android:src="@drawable/ic_select_all" />
 
         <ImageButton
@@ -176,7 +176,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Play selected"
+            android:contentDescription="@string/library_play_selected"
             android:src="@drawable/ic_play" />
 
         <ImageButton
@@ -184,7 +184,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Share selected"
+            android:contentDescription="@string/library_share_selected"
             android:src="@drawable/ic_share" />
 
         <ImageButton
@@ -192,7 +192,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Delete selected"
+            android:contentDescription="@string/library_delete_selected"
             android:src="@drawable/ic_delete" />
     </LinearLayout>
 

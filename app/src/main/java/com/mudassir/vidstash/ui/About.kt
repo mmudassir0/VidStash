@@ -9,6 +9,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.mudassir.vidstash.R
 import com.mudassir.vidstash.Updater
 
 /** About VidStash: source code, problem reports, privacy, disclaimer and open-source licences. */
@@ -43,31 +44,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     fun showAbout(ctx: Context) {
         val info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
         text(
-            ctx, "VidStash ${info.versionName}",
-            """
-            Save videos and audio to watch offline, with a built-in player.
-
-            VidStash is free and open-source software under the GNU General Public License v3. You can read, change and share its source code.
-
-            VidStash is not affiliated with, endorsed by or connected to YouTube or Google. "YouTube" is a trademark of Google LLC.
-
-            Please download only videos you have the right to keep, such as your own uploads, Creative Commons videos, or content the creator allows you to save, and respect copyright where you live.
-            """.trimIndent()
+            ctx, ctx.getString(R.string.about_title, info.versionName), ctx.getString(R.string.about_text)
         )
     }
 
     fun showPrivacy(ctx: Context) = text(
-        ctx, "Privacy",
-        """
-        VidStash has no accounts, no ads, no analytics and no tracking. Nothing about you or what you watch is sent to the developer.
-
-        The app connects only to:
-        • YouTube, to find and download the videos you ask for (like a web browser would).
-        • SponsorBlock (sponsor.ajay.app), only if you turn on "Remove sponsor segments".
-        • GitHub, to check for and download app updates.
-
-        Your downloads, history, searches and settings stay on your phone. Backups are files you save yourself.
-        """.trimIndent()
+        ctx, ctx.getString(R.string.privacy_title), ctx.getString(R.string.privacy_text)
     )
 
     fun openSource(ctx: Context) = open(ctx, SOURCE_URL)
@@ -97,23 +79,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     fun showLicenses(ctx: Context) {
         val names = LIBS.map { "${it.name}\n${it.license} · ${it.author}" }.toTypedArray()
         MaterialAlertDialogBuilder(ctx)
-            .setTitle("Open-source licences")
+            .setTitle(R.string.licenses_title)
             .setItems(names) { _, i ->
                 val lib = LIBS[i]
                 val body = when {
                     lib.asset != null -> runCatching {
                         ctx.assets.open("licenses/${lib.asset}").bufferedReader().readText()
-                    }.getOrDefault("See ${lib.url}")
+                    }.getOrDefault(ctx.getString(R.string.licenses_see, lib.url))
                     lib.license == "MIT" -> MIT
-                    else -> "Licensed under ${lib.license}.\n\nDetails: ${lib.url}"
+                    else -> ctx.getString(R.string.licenses_under, lib.license, lib.url)
                 }
                 text(ctx, lib.name, "${lib.url}\n\n$body", small = true)
             }
-            .setNeutralButton("VidStash licence (GPL-3.0)") { _, _ ->
+            .setNeutralButton(R.string.licenses_app) { _, _ ->
                 val gpl = runCatching { ctx.assets.open("licenses/GPL-3.0.txt").bufferedReader().readText() }.getOrDefault("")
                 text(ctx, "GNU GPL v3", gpl, small = true)
             }
-            .setPositiveButton("Close", null)
+            .setPositiveButton(R.string.common_close, null)
             .show()
     }
 
@@ -129,7 +111,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         MaterialAlertDialogBuilder(ctx)
             .setTitle(title)
             .setView(ScrollView(ctx).apply { addView(tv) })
-            .setPositiveButton("OK", null)
+            .setPositiveButton(R.string.common_ok, null)
             .show()
     }
 
@@ -137,7 +119,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         try {
             ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(ctx, "No browser found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, ctx.getString(R.string.no_browser), Toast.LENGTH_SHORT).show()
         }
     }
 }

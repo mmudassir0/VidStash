@@ -42,7 +42,7 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            setForeground(foregroundInfo("Starting downloads…", -1))
+            setForeground(foregroundInfo(applicationContext.getString(R.string.notif_starting), -1))
         } catch (e: Exception) {
             // Android 12+ may refuse a foreground start from the background (e.g. nightly sync).
             // Keep going: the system may stop us early, and the queue then resumes later.
@@ -95,7 +95,7 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
             } catch (e: CancellationException) {
                 if (!isActive) throw e // runner stopped: the finally in doWork re-queues it
                 // Only this item was cancelled: skipped (or removed) from the Downloads screen.
-                Store.update(item.id) { it.copy(status = Status.SKIPPED, error = "Skipped") }
+                Store.update(item.id) { it.copy(status = Status.SKIPPED, error = applicationContext.getString(R.string.dl_skipped)) }
                 Store.setProgress(item.id, null)
                 ItemDownloader.deletePartial(applicationContext, item.id)
             } catch (e: Exception) {
@@ -117,7 +117,7 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
         val attempts = item.attempts + 1
         val fatal = e is ItemDownloader.Fatal
         Store.update(item.id) {
-            if (!fatal && attempts < MAX_ATTEMPTS) it.copy(status = Status.QUEUED, attempts = attempts, error = "Retrying: $why")
+            if (!fatal && attempts < MAX_ATTEMPTS) it.copy(status = Status.QUEUED, attempts = attempts, error = applicationContext.getString(R.string.notif_retrying, why))
             else it.copy(status = Status.FAILED, attempts = attempts, error = why, finishedAt = System.currentTimeMillis())
         }
         Store.setProgress(item.id, null)
@@ -137,15 +137,15 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
         val pct = if (total > 0) ((bytes * 100) / total).toInt() else -1
 
         val title = when (running.size) {
-            0 -> "Preparing…"
+            0 -> applicationContext.getString(R.string.notif_preparing)
             1 -> running[0].title
-            else -> "Downloading ${running.size} videos"
+            else -> applicationContext.getString(R.string.notif_downloading_n, running.size)
         }
         val parts = mutableListOf<String>()
         if (total > 0) parts += "${formatBytes(bytes)} / ${formatBytes(total)}"
-        if (speed > 0) parts += "${formatBytes(speed)}/s"
-        if (speed > 0 && total > bytes) parts += "${formatDuration((total - bytes) / speed)} left"
-        if (queued > 0) parts += "$queued waiting"
+        if (speed > 0) parts += applicationContext.getString(R.string.dl_speed, formatBytes(speed))
+        if (speed > 0 && total > bytes) parts += applicationContext.getString(R.string.dl_left, formatDuration((total - bytes) / speed))
+        if (queued > 0) parts += applicationContext.getString(R.string.dl_waiting_n, queued)
         val stage = running.singleOrNull()?.let { prog[it.id]?.stage }?.takeIf { it.endsWith("…") }
         return base(title, stage ?: parts.joinToString(" · "), pct)
     }
@@ -160,7 +160,7 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
             .setSilent(true)
             .setProgress(100, pct.coerceAtLeast(0), pct < 0)
             .setContentIntent(App.openApp(applicationContext, MainActivity.TAB_DOWNLOADS))
-            .addAction(android.R.drawable.ic_media_pause, "Pause all", control(Queue.ACTION_PAUSE))
+            .addAction(android.R.drawable.ic_media_pause, applicationContext.getString(R.string.notif_pause_all), control(Queue.ACTION_PAUSE))
 
     private fun control(action: String) = PendingIntent.getBroadcast(
         applicationContext, action.hashCode(),
@@ -182,38 +182,38 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
         if (s + f == 0 && !paused) return
         val waiting = !paused && Store.hasQueued() // e.g. stopped because Wi-Fi was lost
         val text = buildList {
-            if (s > 0) add("$s saved")
-            if (f > 0) add("$f failed")
-            if (paused) add("queue paused")
+            if (s > 0) add(applicationContext.getString(R.string.notif_saved_n, s))
+            if (f > 0) add(applicationContext.getString(R.string.dl_failed_n, f))
+            if (paused) add(applicationContext.getString(R.string.notif_queue_paused))
         }.joinToString(" · ")
         val b = NotificationCompat.Builder(applicationContext, App.CH_DONE)
             .setSmallIcon(android.R.drawable.stat_sys_download_done)
             .setContentTitle(
                 when {
-                    paused -> "Downloads paused"
-                    waiting -> "Downloads waiting for network"
-                    else -> "Downloads finished"
+                    paused -> applicationContext.getString(R.string.notif_paused)
+                    waiting -> applicationContext.getString(R.string.notif_waiting_network)
+                    else -> applicationContext.getString(R.string.notif_finished)
                 }
             )
             .setContentText(text)
             .setContentIntent(App.openApp(applicationContext, if (f == 0 && !paused) MainActivity.TAB_LIBRARY else MainActivity.TAB_DOWNLOADS))
             .setAutoCancel(true)
-        if (paused) b.addAction(android.R.drawable.ic_media_play, "Resume", control(Queue.ACTION_RESUME))
+        if (paused) b.addAction(android.R.drawable.ic_media_play, applicationContext.getString(R.string.dl_resume), control(Queue.ACTION_RESUME))
 
         // Play straight from the notification.
         val done = savedIds.toList().mapNotNull { Store.get(it) }.filter { it.status == Status.DONE && it.fileUri != null }
         if (done.isNotEmpty()) {
             if (done.size == 1) {
-                b.setContentTitle("Saved: ${done[0].title}")
-                b.setContentText(listOfNotNull(done[0].folder, if (f > 0) "$f failed" else null).joinToString(" · ").ifEmpty { "Ready to watch offline" })
+                b.setContentTitle(applicationContext.getString(R.string.notif_saved_title, done[0].title))
+                b.setContentText(listOfNotNull(done[0].folder, if (f > 0) applicationContext.getString(R.string.dl_failed_n, f) else null).joinToString(" · ").ifEmpty { applicationContext.getString(R.string.notif_ready_offline) })
             }
             val play = PendingIntent.getActivity(
                 applicationContext, 3001,
                 PlayerActivity.intent(applicationContext, done, 0).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
-            b.addAction(android.R.drawable.ic_media_play, if (done.size == 1) "Play" else "Play all", play)
-            b.addAction(android.R.drawable.ic_menu_agenda, "Library", App.openApp(applicationContext, MainActivity.TAB_LIBRARY))
+            b.addAction(android.R.drawable.ic_media_play, applicationContext.getString(if (done.size == 1) R.string.action_play else R.string.notif_play_all), play)
+            b.addAction(android.R.drawable.ic_menu_agenda, applicationContext.getString(R.string.notif_library), App.openApp(applicationContext, MainActivity.TAB_LIBRARY))
         }
         nm.notify(NOTIF_DONE, b.build())
     }

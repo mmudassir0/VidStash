@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="Getting video details…"
+            android:text="@string/quick_getting_video_details"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
@@ -60,7 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/surface_2"
-                    android:contentDescription="Thumbnail"
+                    android:contentDescription="@string/download_thumbnail"
                     android:scaleType="centerCrop"
                     app:shapeAppearance="@style/Shape.App.Thumb" />
 
@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
             android:layout_marginTop="20dp"
-            android:text="Quality"
+            android:text="@string/quick_quality"
             android:textAppearance="@style/TextAppearance.App.Overline" />
 
         <HorizontalScrollView
@@ -143,7 +143,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Download"
+            android:text="@string/player_download"
             app:icon="@drawable/ic_download" />
     </LinearLayout>
 
@@ -162,5 +162,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="More options in the app" />
+        android:text="@string/quick_more_options_in_the_app" />
 </LinearLayout>

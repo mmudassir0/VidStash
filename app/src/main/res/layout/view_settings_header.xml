@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="4dp"
         android:paddingTop="16dp"
-        android:text="Settings"
+        android:text="@string/settings_header_settings"
         android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
     <com.google.android.material.card.MaterialCardView
@@ -49,7 +49,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="App update"
+                        android:text="@string/settings_header_app_update"
                         android:textAppearance="?attr/textAppearanceTitleMedium" />
 
                     <TextView
@@ -114,7 +114,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Check for updates"
+                    android:text="@string/settings_header_check_for_updates"
                     app:icon="@drawable/ic_retry" />
 
                 <com.google.android.material.button.MaterialButton
@@ -123,7 +123,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Cancel"
+                    android:text="@string/settings_header_cancel"
                     android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>

@@ -54,7 +54,7 @@ class ItemDownloader(private val ctx: Context) {
 
         // Skip files that are already in the folder (e.g. re-downloading a playlist).
         if (!split) Storage.find(ctx, fileName, item.folder, mime)?.let { existing ->
-            finish(item, existing.toString(), fileName, mime, -1, note = "Already downloaded")
+            finish(item, existing.toString(), fileName, mime, -1, note = ctx.getString(R.string.note_already))
             partial.deleteRecursively()
             return
         }
@@ -65,7 +65,7 @@ class ItemDownloader(private val ctx: Context) {
         // still needed for the temporary files, so only the temporary part is checked then.)
         val need = if (Storage.usesPickedFolder(ctx, mime)) total + 50_000_000 else total * 2 + 50_000_000
         if (total > 0 && free in 0 until need) {
-            throw Fatal("Not enough space: needs ${formatBytes(total * 2)}, free ${formatBytes(free)}")
+            throw Fatal(ctx.getString(R.string.err_no_space, formatBytes(total * 2), formatBytes(free)))
         }
 
         val meter = SpeedMeter(item.id, total)
@@ -102,16 +102,16 @@ class ItemDownloader(private val ctx: Context) {
             Kind.MERGE -> {
                 meter.stage(
                     when {
-                        item.isClip -> "Merging and cutting your section…"
-                        cuts.isEmpty() -> "Merging video + audio…"
-                        else -> "Merging, removing ${cuts.size} sponsor segment(s)…"
+                        item.isClip -> ctx.getString(R.string.stg_merge_cut)
+                        cuts.isEmpty() -> ctx.getString(R.string.stg_merge)
+                        else -> ctx.getString(R.string.stg_merge_sponsor, cuts.size)
                     }
                 )
                 Remux.run(listOf(Remux.Source(v, "video/"), Remux.Source(a, "audio/")), out, webm, cuts)
             }
             Kind.SINGLE_VIDEO -> {
                 if (item.isClip || (cuts.isNotEmpty() && opt.extension == "mp4")) {
-                    meter.stage(if (item.isClip) "Cutting your section…" else "Removing ${cuts.size} sponsor segment(s)…")
+                    meter.stage(if (item.isClip) ctx.getString(R.string.stg_cut) else ctx.getString(R.string.stg_sponsor, cuts.size))
                     Remux.run(listOf(Remux.Source(v, "video/"), Remux.Source(v, "audio/")), out, webm, cuts)
                 } else v.renameTo(out)
             }
@@ -119,9 +119,9 @@ class ItemDownloader(private val ctx: Context) {
                 // YouTube serves fragmented MP4; a plain MP4 seeks better and shows tags everywhere.
                 meter.stage(
                     when {
-                        item.isClip -> "Cutting your section…"
-                        cuts.isEmpty() -> "Preparing audio…"
-                        else -> "Removing ${cuts.size} sponsor segment(s)…"
+                        item.isClip -> ctx.getString(R.string.stg_cut)
+                        cuts.isEmpty() -> ctx.getString(R.string.stg_prep_audio)
+                        else -> ctx.getString(R.string.stg_sponsor, cuts.size)
                     }
                 )
                 val remuxed = File(partial, "remux.m4a")
@@ -144,7 +144,7 @@ class ItemDownloader(private val ctx: Context) {
                     Mp3Converter.convert(
                         audio, mp3Out,
                         Mp3Converter.Tags(details.title, details.uploader, item.folder ?: details.uploader, art),
-                        onProgress = { meter.stage("Converting to MP3… $it%") },
+                        onProgress = { meter.stage(ctx.getString(R.string.stg_mp3, it)) },
                         checkCancelled = { ctxJob.ensureActive() }
                     )
                     true
@@ -152,7 +152,7 @@ class ItemDownloader(private val ctx: Context) {
                     throw e
                 } catch (e: Exception) {
                     // Keep the audio as M4A rather than failing the download.
-                    mp3Note = "MP3 conversion failed, saved as M4A"
+                    mp3Note = ctx.getString(R.string.note_mp3_failed)
                     false
                 }
                 if (converted) {
@@ -162,7 +162,7 @@ class ItemDownloader(private val ctx: Context) {
                         fileName = "$baseName.${opt.extension}"
                         mime = opt.mime
                     }
-                    meter.stage("Adding title and cover art…")
+                    meter.stage(ctx.getString(R.string.stg_tags))
                     try {
                         Mp4Tagger.tag(audio, out, details.title, details.uploader, item.folder ?: details.uploader, art)
                     } catch (e: Exception) {
@@ -179,15 +179,15 @@ class ItemDownloader(private val ctx: Context) {
         }
 
         // ---- save ----
-        meter.stage("Saving…")
+        meter.stage(ctx.getString(R.string.stg_saving))
         val uri = Storage.saveToDownloads(ctx, out, fileName, mime, item.folder)
 
         // Subtitles would be out of sync with a cut-out section, so only for whole videos.
         if (opt.kind != Kind.AUDIO && !item.isClip) saveSubtitles(details, baseName, item.folder)
 
         val note = listOfNotNull(
-            if (item.isClip) "Section ${formatDuration(item.clipStartSec)}–${formatDuration(item.clipEndSec)}" else null,
-            if (sponsorCuts.isNotEmpty()) "Removed ${sponsorCuts.size} sponsor segment(s)" else null,
+            if (item.isClip) ctx.getString(R.string.note_section, formatDuration(item.clipStartSec), formatDuration(item.clipEndSec)) else null,
+            if (sponsorCuts.isNotEmpty()) ctx.getString(R.string.note_sponsor_removed, sponsorCuts.size) else null,
             mp3Note
         ).joinToString(" · ").ifEmpty { null }
         finish(item, uri.toString(), fileName, mime, out.length(), note)
@@ -212,7 +212,7 @@ class ItemDownloader(private val ctx: Context) {
             job.ensureActive()
             val end = chs.getOrNull(i + 1)?.startSec ?: dur
             if (end <= ch.startSec) continue
-            meter.stage("Splitting into chapters… ${i + 1} of ${chs.size}")
+            meter.stage(ctx.getString(R.string.stg_split, i + 1, chs.size))
             val cuts = listOf(Cut(0, ch.startSec * 1_000_000), Cut(end * 1_000_000, Long.MAX_VALUE))
             val name = Storage.sanitize("%02d - %s".format(i + 1, ch.title)).take(110)
             val ext: String
@@ -230,7 +230,7 @@ class ItemDownloader(private val ctx: Context) {
                 val asMp3 = wantMp3 && runCatching {
                     Mp3Converter.convert(
                         m4a, mp3, Mp3Converter.Tags(ch.title, details.uploader, details.title, art),
-                        onProgress = { meter.stage("Splitting into chapters… ${i + 1} of ${chs.size} (MP3 $it%)") },
+                        onProgress = { meter.stage(ctx.getString(R.string.stg_split_mp3, i + 1, chs.size, it)) },
                         checkCancelled = { job.ensureActive() }
                     )
                 }.onFailure { if (it is CancellationException) throw it }.isSuccess
@@ -260,7 +260,7 @@ class ItemDownloader(private val ctx: Context) {
         }
         Store.update(item.id) {
             it.copy(
-                status = Status.DONE, error = "Split into $count chapter files in “$folder”", fileUri = null,
+                status = Status.DONE, error = ctx.getString(R.string.note_split, count, folder), fileUri = null,
                 finishedAt = System.currentTimeMillis()
             )
         }

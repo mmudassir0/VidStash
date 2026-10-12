@@ -53,13 +53,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Sync" />
+        android:text="@string/playlist_sync" />
 
     <ImageButton
         android:id="@+id/moreButton"
         android:layout_width="40dp"
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="More"
+        android:contentDescription="@string/downloads_more"
         android:src="@drawable/ic_more" />
 </LinearLayout>

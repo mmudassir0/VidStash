@@ -11,5 +11,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:paddingHorizontal="28dp"
-        android:text="Load more results" />
+        android:text="@string/footer_load_more_results" />
 </FrameLayout>

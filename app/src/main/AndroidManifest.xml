@@ -51,6 +51,10 @@
         </activity>
         <!-- Own task, so it can shrink into a picture-in-picture window while you use the app -->
         <activity
+            android:name=".WelcomeActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".PlayerActivity"
             android:autoRemoveFromRecents="true"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"

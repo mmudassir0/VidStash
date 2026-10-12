@@ -57,7 +57,7 @@ object Backup {
     fun restore(ctx: Context, text: String): Restored {
         val root = JSONObject(text)
         // Backups from before the rename (YT Downloader) work too.
-        require(root.optString("app") in setOf("VidStash", "YT Downloader")) { "This isn't a VidStash backup file." }
+        require(root.optString("app") in setOf("VidStash", "YT Downloader")) { ctx.getString(R.string.err_not_backup) }
 
         val store = root.optJSONObject("store") ?: JSONObject()
         val itemsJson = store.optJSONArray("items") ?: JSONArray()

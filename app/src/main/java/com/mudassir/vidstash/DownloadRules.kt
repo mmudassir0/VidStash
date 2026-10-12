@@ -81,9 +81,9 @@ object DownloadRules {
 
     /** Why queued downloads are waiting, for the Downloads screen (null = not held back). */
     fun waitingReason(ctx: Context): String? = when {
-        nightOnly(ctx) && !inNightWindow() -> "Waiting for night (12 AM – 7 AM)"
-        Settings(ctx).onlyWhileCharging && !charging(ctx) -> "Waiting for the charger"
-        onMobileData(ctx) && overMobileLimit(ctx) -> "Today's mobile data limit is used up · waiting for Wi-Fi"
+        nightOnly(ctx) && !inNightWindow() -> ctx.getString(R.string.rules_night)
+        Settings(ctx).onlyWhileCharging && !charging(ctx) -> ctx.getString(R.string.rules_charger)
+        onMobileData(ctx) && overMobileLimit(ctx) -> ctx.getString(R.string.rules_data_limit)
         else -> null
     }
 }

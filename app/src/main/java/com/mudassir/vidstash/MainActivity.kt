@@ -56,7 +56,10 @@ class MainActivity : AppCompatActivity() {
         // The bar is inside a card that already handles insets; don't pad it again.
         ViewCompat.setOnApplyWindowInsetsListener(b.bottomNav) { _, _ -> WindowInsetsCompat.CONSUMED }
 
-        requestNeededPermissions()
+        // First start: the welcome screen (it also asks for notifications).
+        if (!Settings(this).welcomed && savedInstanceState == null) {
+            startActivity(android.content.Intent(this, WelcomeActivity::class.java))
+        } else requestNeededPermissions()
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -182,13 +185,13 @@ class MainActivity : AppCompatActivity() {
         val notes = r.notes.lines().filter { it.isNotBlank() && !it.startsWith("Co-Authored-By") && !it.startsWith("Claude-Session") }
             .joinToString("\n").take(800)
         MaterialAlertDialogBuilder(this)
-            .setTitle("Update available (build ${r.build})")
-            .setMessage(if (notes.isBlank()) "A newer version is ready to install." else "What's new:\n\n$notes")
-            .setPositiveButton("Update") { _, _ ->
+            .setTitle(getString(R.string.update_available_title, r.build))
+            .setMessage(if (notes.isBlank()) getString(R.string.update_ready) else getString(R.string.update_whats_new, notes))
+            .setPositiveButton(R.string.update_update) { _, _ ->
                 UpdateManager.downloadAndInstall(this, r)
                 select(R.id.nav_settings) // progress shows on the App update card
             }
-            .setNegativeButton("Later", null)
+            .setNegativeButton(R.string.update_later, null)
             .show()
     }
 

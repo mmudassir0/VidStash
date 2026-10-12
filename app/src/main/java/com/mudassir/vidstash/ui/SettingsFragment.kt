@@ -90,7 +90,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
         findPreference<Preference>(Settings.K_CLEAR_HISTORY)?.setOnPreferenceClickListener {
             Settings(requireContext()).recentSearches = emptyList()
-            Toast.makeText(requireContext(), "Search history cleared", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.set_history_cleared, Toast.LENGTH_SHORT).show()
             true
         }
     }
@@ -125,7 +125,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         val b = card ?: return
         val ctx = context ?: return
         val info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
-        b.versionText.text = "Version ${info.versionName} · build ${Updater.installedBuild(ctx)}"
+        b.versionText.text = ctx.getString(R.string.set_version, info.versionName, Updater.installedBuild(ctx))
         val red = ContextCompat.getColor(ctx, R.color.error_red)
         val normal = MaterialColors.getColor(b.statusText, com.google.android.material.R.attr.colorOnSurface)
 
@@ -153,63 +153,63 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             val text = r.notes.lines()
                 .filter { it.isNotBlank() && !it.startsWith("Co-Authored-By") && !it.startsWith("Claude-Session") }
                 .joinToString("\n").trim()
-            b.notesText.text = if (text.isEmpty()) "No notes for this version." else "What's new\n\n$text"
+            b.notesText.text = if (text.isEmpty()) ctx.getString(R.string.upd_no_notes) else ctx.getString(R.string.upd_whats_new, text)
             b.notesText.isVisible = true
         }
 
         when (state) {
             UpdateManager.State.Idle -> {
-                b.statusText.text = "Check whether a newer version is available."
-                main("Check for updates", R.drawable.ic_retry) { UpdateManager.check(ctx) }
+                b.statusText.text = ctx.getString(R.string.upd_check_prompt)
+                main(ctx.getString(R.string.upd_check), R.drawable.ic_retry) { UpdateManager.check(ctx) }
             }
             UpdateManager.State.Checking -> {
-                b.statusText.text = "Checking for updates…"
+                b.statusText.text = ctx.getString(R.string.upd_checking)
                 b.progress.isIndeterminate = true
                 b.progress.isVisible = true
-                main("Checking…", R.drawable.ic_retry) {}
+                main(ctx.getString(R.string.upd_checking_short), R.drawable.ic_retry) {}
                 b.mainButton.isEnabled = false
             }
             is UpdateManager.State.UpToDate -> {
-                badge("Up to date", false)
+                badge(ctx.getString(R.string.upd_up_to_date), false)
                 val ago = DateUtils.getRelativeTimeSpanString(state.checkedAt, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
-                b.statusText.text = "You have the latest version. Checked ${ago.toString().lowercase()}."
-                main("Check again", R.drawable.ic_retry) { UpdateManager.check(ctx) }
+                b.statusText.text = ctx.getString(R.string.upd_latest, ago.toString().lowercase())
+                main(ctx.getString(R.string.upd_check_again), R.drawable.ic_retry) { UpdateManager.check(ctx) }
             }
             is UpdateManager.State.Available -> {
-                badge("New", true)
-                b.statusText.text = "Build ${state.release.build} is ready to download."
+                badge(ctx.getString(R.string.upd_new), true)
+                b.statusText.text = ctx.getString(R.string.upd_ready_build, state.release.build)
                 notes(state.release)
-                main("Download & install", R.drawable.ic_download) { UpdateManager.downloadAndInstall(ctx, state.release) }
+                main(ctx.getString(R.string.upd_download_install), R.drawable.ic_download) { UpdateManager.downloadAndInstall(ctx, state.release) }
             }
             is UpdateManager.State.Downloading -> {
-                badge("New", true)
+                badge(ctx.getString(R.string.upd_new), true)
                 b.progress.isVisible = true
                 if (state.percent < 0) {
                     b.progress.isIndeterminate = true
-                    b.statusText.text = "Downloading build ${state.release.build}…"
+                    b.statusText.text = ctx.getString(R.string.upd_downloading_build, state.release.build)
                 } else {
                     b.progress.isIndeterminate = false
                     b.progress.setProgressCompat(state.percent, true)
-                    b.statusText.text = "Downloading build ${state.release.build}… ${state.percent}%"
+                    b.statusText.text = ctx.getString(R.string.upd_downloading_build_pct, state.release.build, state.percent)
                 }
-                main("Downloading…", R.drawable.ic_download) {}
+                main(ctx.getString(R.string.upd_downloading), R.drawable.ic_download) {}
                 b.mainButton.isEnabled = false
-                b.secondButton.text = "Cancel"
+                b.secondButton.text = ctx.getString(R.string.common_cancel)
                 b.secondButton.isVisible = true
                 b.secondButton.setOnClickListener { UpdateManager.cancel() }
             }
             is UpdateManager.State.Ready -> {
-                badge("New", true)
-                b.statusText.text = if (Updater.canInstall(ctx)) "Downloaded. Tap Install to finish updating."
-                else "Downloaded. Android will ask you once to allow installs from VidStash, then come back and tap Install."
-                main("Install", R.drawable.ic_download) { UpdateManager.install(ctx) }
+                badge(ctx.getString(R.string.upd_new), true)
+                b.statusText.text = if (Updater.canInstall(ctx)) ctx.getString(R.string.upd_downloaded)
+                else ctx.getString(R.string.upd_downloaded_allow)
+                main(ctx.getString(R.string.upd_install), R.drawable.ic_download) { UpdateManager.install(ctx) }
             }
             is UpdateManager.State.Failed -> {
                 b.statusText.text = state.message
                 b.statusText.setTextColor(red)
                 val r = state.release
-                if (r != null) main("Try again", R.drawable.ic_retry) { UpdateManager.downloadAndInstall(ctx, r) }
-                else main("Try again", R.drawable.ic_retry) { UpdateManager.check(ctx) }
+                if (r != null) main(ctx.getString(R.string.upd_try_again), R.drawable.ic_retry) { UpdateManager.downloadAndInstall(ctx, r) }
+                else main(ctx.getString(R.string.upd_try_again), R.drawable.ic_retry) { UpdateManager.check(ctx) }
             }
         }
     }
@@ -218,8 +218,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private fun updateFolderSummaries() {
         val s = Settings(requireContext())
-        findPreference<Preference>("pick_video_folder")?.summary = Storage.describeFolder(s.videoFolder)
-        findPreference<Preference>("pick_audio_folder")?.summary = Storage.describeFolder(s.audioFolder)
+        findPreference<Preference>("pick_video_folder")?.summary = Storage.describeFolder(requireContext(), s.videoFolder)
+        findPreference<Preference>("pick_audio_folder")?.summary = Storage.describeFolder(requireContext(), s.audioFolder)
     }
 
     private fun chooseFolder(audio: Boolean) {
@@ -227,18 +227,18 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         val current = if (audio) s.audioFolder else s.videoFolder
         if (current.isEmpty()) return launchPicker(audio)
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(if (audio) "Audio folder" else "Videos folder")
-            .setMessage("Now saving to ${Storage.describeFolder(current)}.")
-            .setPositiveButton("Choose another") { _, _ -> launchPicker(audio) }
-            .setNegativeButton("Use default") { _, _ -> setFolder(audio, "") }
-            .setNeutralButton("Cancel", null)
+            .setTitle(if (audio) R.string.folder_audio else R.string.folder_videos)
+            .setMessage(getString(R.string.folder_now_saving, Storage.describeFolder(requireContext(), current)))
+            .setPositiveButton(R.string.folder_choose_another) { _, _ -> launchPicker(audio) }
+            .setNegativeButton(R.string.folder_use_default) { _, _ -> setFolder(audio, "") }
+            .setNeutralButton(R.string.common_cancel, null)
             .show()
     }
 
     private fun launchPicker(audio: Boolean) {
         pickingAudio = audio
         runCatching { pickFolder.launch(null) }
-            .onFailure { Toast.makeText(requireContext(), "This phone has no folder picker", Toast.LENGTH_LONG).show() }
+            .onFailure { Toast.makeText(requireContext(), R.string.folder_no_picker, Toast.LENGTH_LONG).show() }
     }
 
     private fun setFolder(audio: Boolean, value: String) {
@@ -248,7 +248,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         if (value.isNotEmpty()) {
             runCatching { ctx.contentResolver.takePersistableUriPermission(Uri.parse(value), flags) }.onFailure {
-                Toast.makeText(ctx, "Couldn't get access to that folder", Toast.LENGTH_LONG).show()
+                Toast.makeText(ctx, R.string.folder_no_access, Toast.LENGTH_LONG).show()
                 return
             }
         }
@@ -258,7 +258,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             runCatching { ctx.contentResolver.releasePersistableUriPermission(Uri.parse(old), flags) }
         }
         updateFolderSummaries()
-        Toast.makeText(ctx, "New ${if (audio) "audio" else "videos"} will be saved to ${Storage.describeFolder(value)}", Toast.LENGTH_LONG).show()
+        Toast.makeText(ctx, ctx.getString(if (audio) R.string.folder_new_audio else R.string.folder_new_videos, Storage.describeFolder(ctx, value)), Toast.LENGTH_LONG).show()
     }
 
     private fun runFolderImport(uri: Uri) {
@@ -269,17 +269,17 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 uri, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             )
         }
-        Toast.makeText(ctx, "Importing… this can take a moment for big folders", Toast.LENGTH_SHORT).show()
+        Toast.makeText(ctx, R.string.import_running, Toast.LENGTH_SHORT).show()
         lifecycleScope.launch {
             val result = runCatching { withContext(Dispatchers.IO) { FolderImport.import(ctx, uri) } }
             Toast.makeText(
                 ctx,
                 result.fold(
                     { r ->
-                        if (r.added == 0 && r.alreadyThere == 0) "No videos or audio found in that folder"
-                        else "Added ${r.added} file(s) to your library" + if (r.alreadyThere > 0) " · ${r.alreadyThere} were already there" else ""
+                        if (r.added == 0 && r.alreadyThere == 0) ctx.getString(R.string.import_none)
+                        else ctx.getString(R.string.import_added, r.added) + if (r.alreadyThere > 0) ctx.getString(R.string.import_already, r.alreadyThere) else ""
                     },
-                    { "Import failed: ${it.message}" }
+                    { ctx.getString(R.string.import_failed, it.message ?: "") }
                 ),
                 Toast.LENGTH_LONG
             ).show()
@@ -299,7 +299,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             }
             Toast.makeText(
                 ctx,
-                result.fold({ "Backup saved" }, { "Backup failed: ${it.message}" }),
+                result.fold({ ctx.getString(R.string.backup_saved) }, { ctx.getString(R.string.backup_failed, it.message ?: "") }),
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -307,13 +307,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private fun confirmRestore(uri: Uri) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Restore this backup?")
+            .setTitle(R.string.restore_title)
             .setMessage(
-                "Playlists and downloads from the backup are added to what you have now. " +
-                    "Your settings are replaced by the ones in the backup."
+                R.string.restore_msg
             )
-            .setPositiveButton("Restore") { _, _ -> runRestore(uri) }
-            .setNegativeButton("Cancel", null)
+            .setPositiveButton(R.string.restore_restore) { _, _ -> runRestore(uri) }
+            .setNegativeButton(R.string.common_cancel, null)
             .show()
     }
 
@@ -329,18 +328,18 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             val msg = result.fold(
                 { r ->
                     buildList {
-                        add("Restored ${r.playlists} synced list(s) and ${r.files} file(s)")
-                        if (r.queued > 0) add("${r.queued} download(s) back in the queue")
-                        if (r.missing > 0) add("${r.missing} file(s) not on this phone were skipped")
+                        add(ctx.getString(R.string.restore_done, r.playlists, r.files))
+                        if (r.queued > 0) add(ctx.getString(R.string.restore_queued, r.queued))
+                        if (r.missing > 0) add(ctx.getString(R.string.restore_missing, r.missing))
                     }.joinToString(". ") + "."
                 },
-                { "Couldn't restore: ${it.message}" }
+                { ctx.getString(R.string.restore_failed_msg, it.message ?: "") }
             )
             if (!isAdded) return@launch
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle(if (result.isSuccess) "Backup restored" else "Restore failed")
+                .setTitle(if (result.isSuccess) R.string.restore_ok_title else R.string.restore_failed_title)
                 .setMessage(msg)
-                .setPositiveButton("OK", null)
+                .setPositiveButton(R.string.common_ok, null)
                 .show()
             // Show restored settings (switches, lists) right away.
             onCreatePreferences(null, null)

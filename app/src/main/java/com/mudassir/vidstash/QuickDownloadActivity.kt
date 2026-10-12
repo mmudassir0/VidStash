@@ -59,7 +59,7 @@ class QuickDownloadActivity : AppCompatActivity() {
     private fun handle(intent: Intent) {
         if (intent.action == ACTION_PASTE) {
             pendingPaste = true
-            showLoading("Reading the copied link…")
+            showLoading(getString(R.string.quick_reading_link))
             b.root.viewTreeObserver.addOnWindowFocusChangeListener { focus -> if (focus) readClipboard() }
             b.root.postDelayed({ readClipboard() }, 400)
             return
@@ -75,7 +75,7 @@ class QuickDownloadActivity : AppCompatActivity() {
             // Not readable yet (no focus) — the focus listener tries again.
             if (b.root.hasWindowFocus()) {
                 pendingPaste = false
-                showError("Copy a YouTube link first, then tap Paste link.")
+                showError(getString(R.string.quick_copy_first))
             }
             return
         }
@@ -88,30 +88,30 @@ class QuickDownloadActivity : AppCompatActivity() {
         val url = Regex("https?://\\S+").find(sharedText)?.value
         if (url == null) {
             // Plain text: treat it as a search in the app.
-            if (sharedText.isNotEmpty()) openInApp() else showError("Nothing to download in what was shared.")
+            if (sharedText.isNotEmpty()) openInApp() else showError(getString(R.string.quick_nothing))
             return
         }
         when (YouTube.linkType(url)) {
             YouTube.Link.VIDEO -> loadVideo(url)
             YouTube.Link.PLAYLIST -> loadPlaylist(url)
             YouTube.Link.CHANNEL -> openInApp()
-            YouTube.Link.NONE -> showError("That isn't a YouTube video or playlist link.")
+            YouTube.Link.NONE -> showError(getString(R.string.quick_not_youtube))
         }
     }
 
     // ---------- one video ----------
 
     private fun loadVideo(url: String) {
-        showLoading("Getting video details…")
+        showLoading(getString(R.string.quick_getting_details))
         val settings = Settings(this)
         lifecycleScope.launch {
             val result = runCatching { withContext(Dispatchers.IO) { YouTube.getVideo(url, settings.allowWebm) } }
             val d = result.getOrElse {
-                showError("Couldn't load this video: ${it.message ?: "unknown error"}")
+                showError(getString(R.string.quick_video_failed, it.message ?: getString(R.string.common_unknown_error)))
                 return@launch
             }
             if (d.options.isEmpty()) {
-                showError("No downloadable formats found for this video.")
+                showError(getString(R.string.get_no_formats))
                 return@launch
             }
             // One chip per resolution (best file for each), then audio.
@@ -125,9 +125,9 @@ class QuickDownloadActivity : AppCompatActivity() {
                 if (audio != null) {
                     // Audio in the default format, plus MP3 if that isn't already the default.
                     val mp3Default = settings.audioFormat == "mp3"
-                    add(Choice(if (mp3Default) "MP3" else "Audio M4A", 0, audio.bytes, mp3 = mp3Default,
+                    add(Choice(getString(if (mp3Default) R.string.quick_mp3 else R.string.quick_audio_m4a), 0, audio.bytes, mp3 = mp3Default,
                         audioItag = audio.audioItag, videoItag = audio.videoItag))
-                    if (!mp3Default) add(Choice("MP3", 0, audio.bytes, mp3 = true, audioItag = audio.audioItag, videoItag = audio.videoItag))
+                    if (!mp3Default) add(Choice(getString(R.string.quick_mp3), 0, audio.bytes, mp3 = true, audioItag = audio.audioItag, videoItag = audio.videoItag))
                 }
             }
             val default = YouTube.pickBest(d.options, settings.defaultQuality)
@@ -142,9 +142,9 @@ class QuickDownloadActivity : AppCompatActivity() {
             b.duration.isVisible = d.durationSec > 0
             showChips(defIndex)
             val have = Store.downloaded(YouTube.videoId(url))
-            b.downloadButton.text = if (have != null) "Download again" else "Download"
+            b.downloadButton.text = getString(if (have != null) R.string.get_download_again else R.string.common_download)
             if (have != null) {
-                b.meta.text = "✓ Already in your library · ${d.uploader}"
+                b.meta.text = getString(R.string.quick_already, d.uploader)
             }
             b.downloadButton.setOnClickListener {
                 val c = selected() ?: return@setOnClickListener
@@ -157,7 +157,7 @@ class QuickDownloadActivity : AppCompatActivity() {
                         )
                     )
                 )
-                done("Downloading “${d.title}”")
+                done(getString(R.string.quick_downloading, d.title))
             }
             showContent()
         }
@@ -166,38 +166,38 @@ class QuickDownloadActivity : AppCompatActivity() {
     // ---------- playlist ----------
 
     private fun loadPlaylist(url: String) {
-        showLoading("Loading playlist…")
+        showLoading(getString(R.string.quick_loading_playlist))
         lifecycleScope.launch {
             val result = runCatching {
                 withContext(Dispatchers.IO) {
-                    YouTube.getPlaylist(url) { n -> lifecycleScope.launch { b.loadingText.text = "Loading playlist… $n videos" } }
+                    YouTube.getPlaylist(url) { n -> lifecycleScope.launch { b.loadingText.text = getString(R.string.quick_loading_playlist_n, n) } }
                 }
             }
             val list = result.getOrElse {
-                showError("Couldn't load this playlist: ${it.message ?: "unknown error"}")
+                showError(getString(R.string.quick_playlist_failed, it.message ?: getString(R.string.common_unknown_error)))
                 return@launch
             }
             if (list.videos.isEmpty()) {
-                showError("This playlist has no videos.")
+                showError(getString(R.string.quick_playlist_empty))
                 return@launch
             }
             val settings = Settings(this@QuickDownloadActivity)
             choices = Settings.QUALITIES.filter { it.second in listOf(1080, 720, 480, 360, 0) }
-                .map { (label, h) -> Choice(if (h == 0) "Audio" else label, h, -1) }
+                .map { (label, h) -> Choice(if (h == 0) getString(R.string.quick_audio) else label, h, -1) }
             val defIndex = choices.indexOfFirst { it.maxHeight == settings.defaultQuality }.coerceAtLeast(0)
             val total = list.videos.sumOf { maxOf(it.durationSec, 0L) }
             b.title.text = list.name
-            b.meta.text = "Playlist · ${list.videos.size} videos · ${formatDuration(total)}"
+            b.meta.text = getString(R.string.quick_playlist_meta, list.videos.size, formatDuration(total))
             b.thumb.load(list.videos.first().thumbnail) { crossfade(true) }
             b.duration.text = "${list.videos.size}"
             b.duration.isVisible = true
             showChips(defIndex)
-            b.sizeText.text = "Each video downloads at this quality or the closest lower one."
-            b.downloadButton.text = "Download all ${list.videos.size} videos"
+            b.sizeText.text = getString(R.string.quick_closest_quality)
+            b.downloadButton.text = getString(R.string.quick_download_all, list.videos.size)
             b.downloadButton.setOnClickListener {
                 val c = selected() ?: return@setOnClickListener
                 Sync.queue(this@QuickDownloadActivity, list, list.videos, c.maxHeight, remember = false)
-                done("Queued ${list.videos.size} videos from “${list.name}”")
+                done(getString(R.string.quick_queued_from, list.videos.size, list.name))
             }
             showContent()
         }
@@ -229,7 +229,7 @@ class QuickDownloadActivity : AppCompatActivity() {
         val c = selected() ?: return
         if (c.bytes <= 0) return
         val free = Storage.freeBytes()
-        b.sizeText.text = "Size: ${formatBytes(c.bytes)}" + if (free >= 0) "   •   Free on phone: ${formatBytes(free)}" else ""
+        b.sizeText.text = getString(R.string.quick_size, formatBytes(c.bytes)) + if (free >= 0) getString(R.string.quick_free, formatBytes(free)) else ""
         b.sizeText.isVisible = true
     }
 

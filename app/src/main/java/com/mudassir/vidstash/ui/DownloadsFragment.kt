@@ -67,8 +67,8 @@ class DownloadsFragment : Fragment() {
         }
         b.menuButton.setOnClickListener { v ->
             PopupMenu(requireContext(), v).apply {
-                menu.add(0, 1, 0, "Retry failed & skipped")
-                menu.add(0, 2, 1, "Clear finished from list")
+                menu.add(0, 1, 0, getString(R.string.dl_retry_failed))
+                menu.add(0, 2, 1, getString(R.string.dl_clear_finished))
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         1 -> Queue.retryAllFailed(requireContext())
@@ -103,17 +103,17 @@ class DownloadsFragment : Fragment() {
         val speed = prog.values.sumOf { it.speed }
         val parts = mutableListOf<String>()
         when {
-            paused && (running + queued) > 0 -> parts += "Paused"
-            running > 0 -> parts += "Downloading $running" + if (speed > 0) " · ${formatBytes(speed)}/s" else ""
+            paused && (running + queued) > 0 -> parts += getString(R.string.dl_paused)
+            running > 0 -> parts += getString(R.string.dl_downloading_n, running) + if (speed > 0) " · " + getString(R.string.dl_speed, formatBytes(speed)) else ""
             queued > 0 && DownloadRules.waitingReason(ctx) != null -> parts += DownloadRules.waitingReason(ctx)!!
-            queued > 0 && Settings(ctx).wifiOnly && !onWifi(ctx) -> parts += "Waiting for Wi-Fi"
-            queued > 0 -> parts += "Starting…"
+            queued > 0 && Settings(ctx).wifiOnly && !onWifi(ctx) -> parts += getString(R.string.dl_waiting_wifi)
+            queued > 0 -> parts += getString(R.string.dl_starting)
         }
-        if (queued > 0) parts += "$queued waiting"
-        if (failed > 0) parts += "$failed failed"
+        if (queued > 0) parts += getString(R.string.dl_waiting_n, queued)
+        if (failed > 0) parts += getString(R.string.dl_failed_n, failed)
         b.summaryText.text = parts.joinToString(" · ")
         b.summaryText.isVisible = parts.isNotEmpty()
-        b.pauseButton.text = if (paused) "Resume" else "Pause"
+        b.pauseButton.text = if (paused) getString(R.string.dl_resume) else getString(R.string.dl_pause)
         b.pauseButton.setIconResource(if (paused) R.drawable.ic_play else R.drawable.ic_pause)
         b.pauseButton.isVisible = paused || running + queued > 0
         b.emptyText.isVisible = items.isEmpty()
@@ -159,9 +159,9 @@ class DownloadsFragment : Fragment() {
             val pct = p?.percent ?: -1
             val badge = when (item.status) {
                 Status.RUNNING -> if (pct >= 0) "$pct%" else null
-                Status.QUEUED -> "Waiting"
-                Status.FAILED -> "Failed"
-                Status.SKIPPED -> "Skipped"
+                Status.QUEUED -> ctx.getString(R.string.dl_waiting)
+                Status.FAILED -> ctx.getString(R.string.dl_failed)
+                Status.SKIPPED -> ctx.getString(R.string.dl_skipped)
                 Status.DONE -> if (item.durationSec > 0) formatDuration(item.durationSec) else null
             }
             b.badge.text = badge
@@ -185,19 +185,19 @@ class DownloadsFragment : Fragment() {
             // A video split into chapter files has no single file to play.
             b.actionButton.isVisible = !(item.status == Status.DONE && item.fileUri == null)
             when (item.status) {
-                Status.RUNNING, Status.QUEUED -> button(b, "Skip", R.drawable.ic_close) { Queue.skip(item.id) }
-                Status.FAILED, Status.SKIPPED -> button(b, "Retry", R.drawable.ic_retry) { Queue.retry(ctx, item.id) }
-                Status.DONE -> button(b, "Play", R.drawable.ic_play) { Files.play(ctx, item) }
+                Status.RUNNING, Status.QUEUED -> button(b, ctx.getString(R.string.dl_skip), R.drawable.ic_close) { Queue.skip(item.id) }
+                Status.FAILED, Status.SKIPPED -> button(b, ctx.getString(R.string.dl_retry), R.drawable.ic_retry) { Queue.retry(ctx, item.id) }
+                Status.DONE -> button(b, ctx.getString(R.string.action_play), R.drawable.ic_play) { Files.play(ctx, item) }
             }
 
             b.root.setOnClickListener { if (item.status == Status.DONE) Files.play(ctx, item) }
             b.moreButton.setOnClickListener { v ->
                 PopupMenu(ctx, v).apply {
                     if (item.status == Status.DONE) {
-                        menu.add(0, 1, 0, "Open with…")
-                        menu.add(0, 2, 1, "Share")
+                        menu.add(0, 1, 0, ctx.getString(R.string.action_open_with))
+                        menu.add(0, 2, 1, ctx.getString(R.string.action_share))
                     }
-                    menu.add(0, 3, 2, "Remove from list")
+                    menu.add(0, 3, 2, ctx.getString(R.string.dl_remove))
                     setOnMenuItemClickListener {
                         when (it.itemId) {
                             1 -> Files.openWith(ctx, item)
@@ -217,14 +217,14 @@ class DownloadsFragment : Fragment() {
         }
 
         private fun statusText(item: DownloadItem, p: Progress?): String = when (item.status) {
-            Status.QUEUED -> item.error ?: "Waiting"
+            Status.QUEUED -> item.error ?: getString(R.string.dl_waiting)
             Status.RUNNING -> when {
-                p == null -> "Starting…"
+                p == null -> getString(R.string.dl_starting)
                 p.stage.endsWith("…") -> p.stage
                 else -> buildList {
                     add(if (p.total > 0) "${formatBytes(p.done)} / ${formatBytes(p.total)}" else formatBytes(p.done))
-                    if (p.speed > 0) add("${formatBytes(p.speed)}/s")
-                    if (p.etaSec >= 0) add("${formatDuration(p.etaSec)} left")
+                    if (p.speed > 0) add(getString(R.string.dl_speed, formatBytes(p.speed)))
+                    if (p.etaSec >= 0) add(getString(R.string.dl_left, formatDuration(p.etaSec)))
                     add(p.stage)
                 }.joinToString(" · ")
             }
@@ -232,9 +232,9 @@ class DownloadsFragment : Fragment() {
                 if (item.bytes > 0) formatBytes(item.bytes) else null,
                 item.folder,
                 item.error // notes like "Removed 2 sponsor segment(s)" or "Already downloaded"
-            ).joinToString(" · ").ifEmpty { "Saved" }
-            Status.FAILED -> "Failed: ${item.error ?: "unknown error"}"
-            Status.SKIPPED -> "Skipped"
+            ).joinToString(" · ").ifEmpty { getString(R.string.dl_saved) }
+            Status.FAILED -> getString(R.string.dl_failed_reason, item.error ?: getString(R.string.common_unknown_error))
+            Status.SKIPPED -> getString(R.string.dl_skipped)
         }
     }
 

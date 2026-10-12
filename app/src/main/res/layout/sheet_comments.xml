@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="20dp"
         android:paddingBottom="8dp"
-        android:text="Comments"
+        android:text="@string/comments_comments"
         android:textAppearance="?attr/textAppearanceTitleLarge" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
