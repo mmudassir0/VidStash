@@ -279,6 +279,7 @@ class GetFragment : Fragment() {
         h.card.isVisible = false
         h.formatRow.isVisible = false
         h.clipRow.isVisible = false
+        h.splitSwitch.isVisible = false
         h.qualityRow.isVisible = false
         h.limitRow.isVisible = false
         h.selectRow.isVisible = false
@@ -305,7 +306,10 @@ class GetFragment : Fragment() {
         h.thumb.isVisible = true
         h.thumb.load(d.thumbnail) { crossfade(true) }
         h.titleText.text = d.title
-        h.subtitleText.text = listOf(d.uploader, formatDuration(d.durationSec)).filter { it.isNotBlank() }.joinToString(" · ")
+        h.subtitleText.text = listOf(
+            d.uploader, formatDuration(d.durationSec),
+            if (d.chapters.size >= 2) "${d.chapters.size} chapters" else ""
+        ).filter { it.isNotBlank() }.joinToString(" · ")
         showList(emptyList(), selectable = false, key = null, resetScroll = true)
         if (d.options.isEmpty()) {
             h.sizeText.isVisible = true
@@ -318,10 +322,19 @@ class GetFragment : Fragment() {
             val def = YouTube.pickBest(d.options, wanted)?.let { d.options.indexOf(it) }?.takeIf { it >= 0 } ?: 0
             h.formatSpinner.setSelection(def)
             setupClip(d.durationSec)
+            h.splitSwitch.setOnCheckedChangeListener(null)
+            h.splitSwitch.isChecked = false
+            h.splitSwitch.text = "Save each chapter as its own file (${d.chapters.size} chapters)"
+            h.splitSwitch.setOnCheckedChangeListener { _, on ->
+                // A section and chapter files don't mix.
+                if (on) h.clipSwitch.isChecked = false
+                h.clipRow.isVisible = !on && d.durationSec > 1
+            }
             renderedList = d
         }
         h.formatRow.isVisible = true
-        h.clipRow.isVisible = d.durationSec > 1
+        h.splitSwitch.isVisible = d.chapters.size >= 2
+        h.clipRow.isVisible = d.durationSec > 1 && !h.splitSwitch.isChecked
         h.sizeText.isVisible = true
         h.downloadButton.isVisible = true
         h.downloadButton.text = "Download"
@@ -441,7 +454,7 @@ class GetFragment : Fragment() {
         when (val s = vm.state.value) {
             is GetState.Video -> {
                 val opt = s.details.options.getOrNull(h.formatSpinner.selectedItemPosition) ?: return
-                vm.downloadVideo(opt, clipRange())
+                vm.downloadVideo(opt, clipRange(), split = h.splitSwitch.isVisible && h.splitSwitch.isChecked)
             }
             is GetState.Videos -> {
                 val maxHeight = qualities[h.qualitySpinner.selectedItemPosition.coerceAtLeast(0)].second

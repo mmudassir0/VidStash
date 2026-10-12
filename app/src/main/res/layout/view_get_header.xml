@@ -215,6 +215,16 @@
         </FrameLayout>
     </LinearLayout>
 
+            <!-- One file per chapter (videos with chapters) -->
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/splitSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="10dp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:visibility="gone" />
+
             <!-- Download only part of a video -->
             <LinearLayout
                 android:id="@+id/clipRow"
