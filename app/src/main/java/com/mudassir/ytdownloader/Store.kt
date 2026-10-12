@@ -29,6 +29,10 @@ data class DownloadItem(
     val uploader: String? = null,
     /** Audio only: save as MP3 even if the default format is M4A. */
     val mp3: Boolean = false,
+    /** Chapters of the saved file (times already adjusted for cuts). */
+    val chapters: List<Chapter> = emptyList(),
+    /** Save each chapter as its own file. */
+    val splitChapters: Boolean = false,
     /** Only save this part of the video (seconds); -1 = whole video. */
     val clipStartSec: Long = -1,
     val clipEndSec: Long = -1,
@@ -54,6 +58,8 @@ data class DownloadItem(
         put("maxHeight", maxHeight); put("prefix", prefix); put("folder", folder)
         put("durationSec", durationSec); put("uploader", uploader); put("mp3", mp3)
         put("clipStartSec", clipStartSec); put("clipEndSec", clipEndSec)
+        put("splitChapters", splitChapters)
+        put("chapters", JSONArray(chapters.map { JSONObject().put("t", it.title).put("s", it.startSec) }))
         put("status", status.name); put("error", error); put("attempts", attempts)
         put("fileUri", fileUri); put("fileName", fileName); put("mime", mime); put("bytes", bytes)
         put("videoItag", videoItag); put("audioItag", audioItag)
@@ -74,6 +80,12 @@ data class DownloadItem(
             mp3 = o.optBoolean("mp3", false),
             clipStartSec = o.optLong("clipStartSec", -1),
             clipEndSec = o.optLong("clipEndSec", -1),
+            splitChapters = o.optBoolean("splitChapters", false),
+            chapters = o.optJSONArray("chapters")?.let { a ->
+                (0 until a.length()).mapNotNull { i ->
+                    a.optJSONObject(i)?.let { c -> Chapter(c.optString("t", "Chapter"), c.optLong("s", 0)) }
+                }
+            } ?: emptyList(),
             status = runCatching { Status.valueOf(o.getString("status")) }.getOrDefault(Status.QUEUED),
             error = o.str("error"),
             attempts = o.optInt("attempts", 0),

@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true"
+        app:ad_marker_color="#E6FFFFFF"
+        app:played_ad_marker_color="#99FFFFFF"
         app:repeat_toggle_modes="one|all"
         app:show_buffering="when_playing"
         app:show_shuffle_button="true" />
@@ -58,16 +60,42 @@
             android:contentDescription="Back"
             android:src="@drawable/ic_back" />
 
-        <TextView
-            android:id="@+id/titleText"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
+
+            <!-- Current chapter -->
+            <TextView
+                android:id="@+id/chapterText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#B3FFFFFF"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/chaptersButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Chapters"
+            android:src="@drawable/ic_playlist"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/speedButton"

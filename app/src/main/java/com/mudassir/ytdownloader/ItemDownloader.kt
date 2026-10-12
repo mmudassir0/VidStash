@@ -49,8 +49,11 @@ class ItemDownloader(private val ctx: Context) {
         var fileName = "$baseName.${if (wantMp3) "mp3" else opt.extension}"
         var mime = if (wantMp3) "audio/mpeg" else opt.mime
 
+        // Save every chapter as its own file (whole videos with 2+ chapters only).
+        val split = item.splitChapters && !item.isClip && details.chapters.size >= 2
+
         // Skip files that are already in the folder (e.g. re-downloading a playlist).
-        Storage.find(ctx, fileName, item.folder)?.let { existing ->
+        if (!split) Storage.find(ctx, fileName, item.folder)?.let { existing ->
             finish(item, existing.toString(), fileName, mime, -1, note = "Already downloaded")
             partial.deleteRecursively()
             return
@@ -65,7 +68,8 @@ class ItemDownloader(private val ctx: Context) {
         val meter = SpeedMeter(item.id, total)
         val label = opt.label
         val webm = opt.extension == "webm"
-        val wantCuts = settings.sponsorBlock
+        // Sponsor cuts would shift chapter times, so they're skipped when splitting.
+        val wantCuts = settings.sponsorBlock && !split
 
         // ---- download ----
         val v = File(partial, "v.part")
@@ -125,6 +129,11 @@ class ItemDownloader(private val ctx: Context) {
                     if (item.isClip) throw e // without remuxing the section can't be cut
                     a // keep the original if the phone can't remux it
                 }
+                if (split) {
+                    splitIntoChapters(item, details, audio, isAudio = true, webm = false, wantMp3 = wantMp3, meter = meter, partial = partial)
+                    partial.deleteRecursively()
+                    return
+                }
                 val art = cover(details.id)
                 val mp3Out = File(partial, "out.mp3")
                 val converted = wantMp3 && try {
@@ -160,6 +169,12 @@ class ItemDownloader(private val ctx: Context) {
             }
         }
 
+        if (split) {
+            splitIntoChapters(item, details, out, isAudio = false, webm = webm, wantMp3 = false, meter = meter, partial = partial)
+            partial.deleteRecursively()
+            return
+        }
+
         // ---- save ----
         meter.stage("Saving…")
         val uri = Storage.saveToDownloads(ctx, out, fileName, mime, item.folder)
@@ -173,7 +188,101 @@ class ItemDownloader(private val ctx: Context) {
             mp3Note
         ).joinToString(" · ").ifEmpty { null }
         finish(item, uri.toString(), fileName, mime, out.length(), note)
+        // Chapters for the player, moved to match what was cut out.
+        val chapters = adjustChapters(details.chapters, cuts, details.durationSec)
+        if (chapters.size >= 2) Store.update(item.id) { it.copy(chapters = chapters) }
         partial.deleteRecursively()
+    }
+
+    /**
+     * Chapter start times in the saved file: chapters inside a removed part start where it
+     * ends, and every removed second before a chapter moves it earlier.
+     */
+    private fun adjustChapters(chapters: List<Chapter>, cuts: List<Cut>, durationSec: Long): List<Chapter> {
+        if (chapters.isEmpty()) return emptyList()
+        val dur = if (durationSec > 0) durationSec.toDouble() else Double.MAX_VALUE
+        val ranges = cuts.map { it.startUs / 1e6 to minOf(it.endUs / 1e6, dur) }.filter { it.second > it.first }
+        val out = sortedMapOf<Long, Chapter>()
+        chapters.forEachIndexed { i, c ->
+            val end = chapters.getOrNull(i + 1)?.startSec?.toDouble() ?: dur
+            var start = c.startSec.toDouble()
+            ranges.forEach { (a, b) -> if (start >= a && start < b) start = b }
+            if (start >= end) return@forEachIndexed
+            val removed = ranges.filter { it.second <= start }.sumOf { it.second - it.first }
+            val t = (start - removed).toLong().coerceAtLeast(0)
+            out[t] = Chapter(c.title, t)
+        }
+        return out.values.toList()
+    }
+
+    /** Saves each chapter of [source] as its own file in a folder named after the video. */
+    private suspend fun splitIntoChapters(
+        item: DownloadItem, details: VideoDetails, source: File, isAudio: Boolean, webm: Boolean,
+        wantMp3: Boolean, meter: SpeedMeter, partial: File
+    ) {
+        val chs = details.chapters
+        val dur = details.durationSec
+        val folder = item.folder ?: Storage.sanitize(details.title).take(80)
+        val art = if (isAudio) cover(details.id) else null
+        val job = currentCoroutineContext()
+        var count = 0
+        for ((i, ch) in chs.withIndex()) {
+            job.ensureActive()
+            val end = chs.getOrNull(i + 1)?.startSec ?: dur
+            if (end <= ch.startSec) continue
+            meter.stage("Splitting into chapters… ${i + 1} of ${chs.size}")
+            val cuts = listOf(Cut(0, ch.startSec * 1_000_000), Cut(end * 1_000_000, Long.MAX_VALUE))
+            val name = Storage.sanitize("%02d - %s".format(i + 1, ch.title)).take(110)
+            val ext: String
+            val mime: String
+            val file: File
+            if (!isAudio) {
+                ext = if (webm) "webm" else "mp4"
+                mime = if (webm) "video/webm" else "video/mp4"
+                file = File(partial, "ch$i.$ext").apply { delete() }
+                Remux.run(listOf(Remux.Source(source, "video/"), Remux.Source(source, "audio/")), file, webm, cuts)
+            } else {
+                val m4a = File(partial, "ch$i.m4a").apply { delete() }
+                Remux.run(listOf(Remux.Source(source, "audio/")), m4a, false, cuts)
+                val mp3 = File(partial, "ch$i.mp3")
+                val asMp3 = wantMp3 && runCatching {
+                    Mp3Converter.convert(
+                        m4a, mp3, Mp3Converter.Tags(ch.title, details.uploader, details.title, art),
+                        onProgress = { meter.stage("Splitting into chapters… ${i + 1} of ${chs.size} (MP3 $it%)") },
+                        checkCancelled = { job.ensureActive() }
+                    )
+                }.onFailure { if (it is CancellationException) throw it }.isSuccess
+                if (asMp3) {
+                    ext = "mp3"; mime = "audio/mpeg"; file = mp3
+                } else {
+                    ext = "m4a"; mime = "audio/mp4"
+                    file = File(partial, "ch$i.tagged.m4a").apply { delete() }
+                    runCatching { Mp4Tagger.tag(m4a, file, ch.title, details.uploader, details.title, art) }
+                        .onFailure { m4a.copyTo(file, overwrite = true) }
+                }
+            }
+            val uri = Storage.saveToDownloads(ctx, file, "$name.$ext", mime, folder)
+            Store.add(
+                listOf(
+                    DownloadItem(
+                        url = item.url, title = ch.title, thumbnail = item.thumbnail ?: details.thumbnail,
+                        maxHeight = item.maxHeight, folder = folder, status = Status.DONE,
+                        fileUri = uri.toString(), fileName = "$name.$ext", mime = mime, bytes = file.length(),
+                        durationSec = end - ch.startSec, uploader = details.uploader.ifBlank { null },
+                        prefix = "%02d".format(i + 1), finishedAt = System.currentTimeMillis()
+                    )
+                )
+            )
+            file.delete()
+            count++
+        }
+        Store.update(item.id) {
+            it.copy(
+                status = Status.DONE, error = "Split into $count chapter files in “$folder”", fileUri = null,
+                finishedAt = System.currentTimeMillis()
+            )
+        }
+        Store.setProgress(item.id, null)
     }
 
     private fun saveSubtitles(details: VideoDetails, baseName: String, folder: String?) {

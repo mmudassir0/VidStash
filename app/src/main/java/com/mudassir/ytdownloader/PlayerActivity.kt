@@ -84,6 +84,16 @@ class PlayerActivity : AppCompatActivity() {
         override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) = updateSpeed()
     }
 
+    /** Chapters of the file playing now (empty if it has none). */
+    private var chapters: List<Chapter> = emptyList()
+
+    private val chapterTicker = object : Runnable {
+        override fun run() {
+            updateChapterText()
+            handler.postDelayed(this, 1000)
+        }
+    }
+
     private val sleepRefresher = object : Runnable {
         override fun run() {
             updateSleep()
@@ -170,6 +180,7 @@ class PlayerActivity : AppCompatActivity() {
         b.backButton.setOnClickListener { finish() }
         b.speedButton.setOnClickListener { showSpeedMenu() }
         b.sleepButton.setOnClickListener { showSleepMenu() }
+        b.chaptersButton.setOnClickListener { showChaptersMenu() }
         b.sleepText.setOnClickListener { showSleepMenu() }
         b.rotateButton.setOnClickListener { rotate() }
         b.pipButton.isVisible = pipSupported
@@ -197,6 +208,7 @@ class PlayerActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         handler.post(sleepRefresher)
+        handler.post(chapterTicker)
         val token = SessionToken(this, ComponentName(this, PlaybackService::class.java))
         val f = MediaController.Builder(this, token).buildAsync()
         future = f
@@ -216,6 +228,7 @@ class PlayerActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         handler.removeCallbacks(sleepRefresher)
+        handler.removeCallbacks(chapterTicker)
         // Video pauses when you leave; audio keeps playing in the background.
         val current = currentEntry()
         controller?.let { c ->
@@ -293,12 +306,50 @@ class PlayerActivity : AppCompatActivity() {
     private fun updateForCurrent() {
         val e = currentEntry()
         b.titleText.text = e?.title ?: controller?.mediaMetadata?.title ?: ""
+        chapters = e?.let { chaptersFor(it.uri) }.orEmpty()
+        b.chaptersButton.isVisible = chapters.size >= 2
+        // Chapter starts as small marks on the seek bar.
+        val marks = chapters.map { it.startSec * 1000 }.filter { it > 0 }
+        b.playerView.setExtraAdGroupMarkers(marks.toLongArray(), BooleanArray(marks.size))
+        updateChapterText()
         val audio = e?.isAudio == true
         b.artwork.isVisible = audio
         if (audio) b.artwork.load(e?.thumb)
         b.playerView.controllerShowTimeoutMs = if (audio) 0 else 3000 // keep controls up for music
         b.rotateButton.isVisible = !audio
         b.pipButton.isVisible = pipSupported && !audio
+    }
+
+    // ---------- chapters ----------
+
+    private fun chaptersFor(uri: String): List<Chapter> =
+        Store.items.value.firstOrNull { it.fileUri == uri }?.chapters?.takeIf { it.isNotEmpty() }
+            ?: StreamCache.chapters(uri)
+
+    private fun currentChapterIndex(): Int {
+        val pos = (controller?.currentPosition ?: return -1) / 1000
+        return chapters.indexOfLast { it.startSec <= pos }
+    }
+
+    private fun updateChapterText() {
+        val i = if (chapters.size >= 2) currentChapterIndex() else -1
+        val text = chapters.getOrNull(i)?.let { "${i + 1}/${chapters.size} · ${it.title}" }
+        b.chapterText.text = text
+        b.chapterText.isVisible = text != null
+    }
+
+    private fun showChaptersMenu() {
+        val current = currentChapterIndex()
+        PopupMenu(this, b.chaptersButton).apply {
+            chapters.forEachIndexed { i, c ->
+                menu.add(0, i, i, (if (i == current) "▶  " else "") + "${formatDuration(c.startSec)}   ${c.title}")
+            }
+            setOnMenuItemClickListener {
+                controller?.seekTo(chapters[it.itemId].startSec * 1000)
+                updateChapterText()
+                true
+            }
+        }.show()
     }
 
     // ---------- speed ----------

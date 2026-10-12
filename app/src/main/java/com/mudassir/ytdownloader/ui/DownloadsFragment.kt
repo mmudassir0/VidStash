@@ -178,6 +178,8 @@ class DownloadsFragment : Fragment() {
                 }
             }
 
+            // A video split into chapter files has no single file to play.
+            b.actionButton.isVisible = !(item.status == Status.DONE && item.fileUri == null)
             when (item.status) {
                 Status.RUNNING, Status.QUEUED -> button(b, "Skip", R.drawable.ic_close) { Queue.skip(item.id) }
                 Status.FAILED, Status.SKIPPED -> button(b, "Retry", R.drawable.ic_retry) { Queue.retry(ctx, item.id) }
