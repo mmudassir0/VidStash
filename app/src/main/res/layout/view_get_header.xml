@@ -314,8 +314,8 @@
                         android:valueFrom="0"
                         android:valueTo="1"
                         app:labelBehavior="floating"
-                        app:thumbColor="@color/brand_red"
-                        app:trackColorActive="@color/brand_red"
+                        app:thumbColor="@color/brand"
+                        app:trackColorActive="@color/brand"
                         app:trackColorInactive="@color/surface_3" />
 
                     <LinearLayout

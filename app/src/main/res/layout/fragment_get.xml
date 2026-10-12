@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
-            android:text="YT Downloader"
+            android:text="VidStash"
             android:textAppearance="?attr/textAppearanceTitleLarge"
             android:textSize="21sp" />
     </LinearLayout>
@@ -151,7 +151,7 @@
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:lineSpacingExtra="2dp"
-                    android:text="Search above, or paste a link to a video, playlist or channel. You can also tap Share in the YouTube app and pick YT Downloader."
+                    android:text="Search above, or paste a link to a video, playlist or channel. You can also tap Share in the YouTube app and pick VidStash."
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant" />
 

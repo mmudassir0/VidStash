@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.mudassir.ytdownloader"
+    namespace = "com.mudassir.vidstash"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.mudassir.ytdownloader"
+        applicationId = "com.mudassir.vidstash"
         minSdk = 24
         targetSdk = 35
         // Every CI build gets a higher number, so each new APK installs as an update.
@@ -18,14 +18,14 @@ android {
     }
 
     signingConfigs {
-        // A fixed key committed with the app. GitHub's runners make a brand-new debug key
-        // on every build, and Android refuses to update an app signed with a different key.
-        // Personal-use app only: this key is public, like a debug key.
-        create("personal") {
-            storeFile = file("ytdownloader.keystore")
-            storePassword = "ytdownloader"
-            keyAlias = "ytdownloader"
-            keyPassword = "ytdownloader"
+        // Release key. The key file is protected by a long random password that only exists
+        // as the SIGNING_PASSWORD secret on GitHub (and in the owner's backup).
+        create("release") {
+            val pass = System.getenv("SIGNING_PASSWORD").orEmpty()
+            storeFile = file("vidstash-release.jks")
+            storePassword = pass
+            keyAlias = "vidstash"
+            keyPassword = pass
         }
     }
 
@@ -33,7 +33,9 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("personal")
+            // Without the password (e.g. a local build) the APK is signed with the debug key.
+            signingConfig = if (System.getenv("SIGNING_PASSWORD").isNullOrEmpty()) signingConfigs.getByName("debug")
+            else signingConfigs.getByName("release")
         }
     }
 
@@ -78,6 +80,7 @@ dependencies {
     implementation("androidx.documentfile:documentfile:1.0.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("io.coil-kt:coil:2.7.0")
+    implementation("io.coil-kt:coil-video:2.7.0") // thumbnails for imported video files
 
     // Built-in player with background audio
     implementation("androidx.media3:media3-exoplayer:1.4.1")

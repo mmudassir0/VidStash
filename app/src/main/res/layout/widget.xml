@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="YT Downloader"
+            android:text="VidStash"
             android:textColor="@color/on_bg"
             android:textSize="15sp"
             android:textStyle="bold" />

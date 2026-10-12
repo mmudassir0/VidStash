@@ -1,17 +1,17 @@
 <resources>
     <!-- Dark-cinematic look: near-black (or white in light mode), YouTube red accent, rounded everything. -->
-    <style name="Base.Theme.YTDownloader" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/brand_red</item>
+    <style name="Base.Theme.VidStash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand</item>
         <item name="colorOnPrimary">@color/on_brand</item>
-        <item name="colorPrimaryContainer">@color/red_container</item>
-        <item name="colorOnPrimaryContainer">@color/on_red_container</item>
-        <item name="colorPrimaryInverse">@color/brand_red</item>
-        <item name="colorSecondary">@color/brand_red</item>
+        <item name="colorPrimaryContainer">@color/brand_container</item>
+        <item name="colorOnPrimaryContainer">@color/on_brand_container</item>
+        <item name="colorPrimaryInverse">@color/brand</item>
+        <item name="colorSecondary">@color/brand</item>
         <item name="colorOnSecondary">@color/on_brand</item>
         <item name="colorSecondaryContainer">@color/surface_3</item>
         <item name="colorOnSecondaryContainer">@color/on_bg</item>
-        <item name="colorTertiary">@color/brand_red</item>
-        <item name="colorError">#FF4E45</item>
+        <item name="colorTertiary">@color/brand</item>
+        <item name="colorError">@color/error_red</item>
 
         <item name="android:colorBackground">@color/bg</item>
         <item name="colorOnBackground">@color/on_bg</item>
@@ -58,10 +58,10 @@
         <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
     </style>
 
-    <style name="Theme.YTDownloader" parent="Base.Theme.YTDownloader" />
+    <style name="Theme.VidStash" parent="Base.Theme.VidStash" />
 
     <!-- Quick download sheet: transparent window over the app you shared from -->
-    <style name="Theme.YTDownloader.Translucent" parent="Theme.YTDownloader">
+    <style name="Theme.VidStash.Translucent" parent="Theme.VidStash">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
@@ -88,8 +88,8 @@
     </style>
 
     <!-- Player: always dark, whatever the phone setting. -->
-    <style name="Theme.YTDownloader.Player" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">@color/brand_red</item>
+    <style name="Theme.VidStash.Player" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/brand</item>
         <item name="colorOnPrimary">@color/on_brand</item>
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:statusBarColor">@android:color/black</item>
@@ -240,7 +240,7 @@
     <style name="Widget.App.Progress" parent="Widget.Material3.LinearProgressIndicator">
         <item name="trackCornerRadius">3dp</item>
         <item name="trackThickness">5dp</item>
-        <item name="indicatorColor">@color/brand_red</item>
+        <item name="indicatorColor">@color/brand</item>
         <item name="trackColor">@color/surface_3</item>
         <item name="trackStopIndicatorSize">0dp</item>
     </style>
@@ -281,7 +281,7 @@
         <item name="elevation">0dp</item>
     </style>
     <style name="Widget.App.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/red_container</item>
+        <item name="android:color">@color/brand_container</item>
         <item name="android:width">56dp</item>
         <item name="android:height">30dp</item>
     </style>

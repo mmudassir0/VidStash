@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Light mode. Dark mode values are in values-night/colors.xml. -->
 <resources>
-    <color name="brand_red">#FF0033</color>
-    <color name="brand_red_dark">#CC0029</color>
+    <!-- VidStash violet -->
+    <color name="brand">#6C3CF5</color>
+    <color name="brand_dark">#5B2EE0</color>
+    <!-- Errors and failed downloads -->
+    <color name="error_red">#E5383B</color>
     <color name="on_brand">#FFFFFF</color>
 
     <color name="bg">#FFFFFF</color>
@@ -13,8 +16,8 @@
     <color name="on_bg_muted">#606060</color>
     <color name="outline">#D6D6D6</color>
     <color name="nav_bg">#FAFAFA</color>
-    <color name="red_container">#FFE1E7</color>
-    <color name="on_red_container">#8A0019</color>
+    <color name="brand_container">#ECE5FF</color>
+    <color name="on_brand_container">#2D1179</color>
 
     <color name="badge_bg">#D9000000</color>
     <color name="scrim_top">#00000000</color>

@@ -59,7 +59,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone"
-        app:cardBackgroundColor="@color/red_container">
+        app:cardBackgroundColor="@color/brand_container">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:text="YouTube changed something"
                 android:textAppearance="?attr/textAppearanceTitleSmall"
-                android:textColor="@color/on_red_container" />
+                android:textColor="@color/on_brand_container" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -80,7 +80,7 @@
                 android:layout_marginTop="4dp"
                 android:text="Downloads are failing until the app gets a fix. Fixes usually arrive within a few days and appear in Settings → App update."
                 android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="@color/on_red_container" />
+                android:textColor="@color/on_brand_container" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Hide"
-                    android:textColor="@color/on_red_container" />
+                    android:textColor="@color/on_brand_container" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/troubleCheck"

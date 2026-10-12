@@ -22,24 +22,31 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v6
       - name: Test and build release APK
+        env:
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
+          # Public releases must be signed with the VidStash key.
+          if [ -z "$SIGNING_PASSWORD" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "::error::Add the SIGNING_PASSWORD secret (repo Settings → Secrets and variables → Actions)"
+            exit 1
+          fi
           chmod +x gradlew
           ./gradlew testReleaseUnitTest assembleRelease --no-daemon
-          cp app/build/outputs/apk/release/app-release.apk YTDownloader.apk
+          cp app/build/outputs/apk/release/app-release.apk VidStash.apk
       - name: Release notes
         run: git log -1 --format=%B > release-notes.txt
       - uses: actions/upload-artifact@v7
         with:
-          name: YTDownloader-apk
-          path: YTDownloader.apk
+          name: VidStash-apk
+          path: VidStash.apk
       # Publishes the APK as a "latest" release so it can be downloaded directly on a phone.
       # Only builds of main are published; other branches just check that the app builds.
       - uses: softprops/action-gh-release@v3
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
           tag_name: build-${{ github.run_number }}
-          name: YT Downloader build ${{ github.run_number }}
+          name: VidStash build ${{ github.run_number }}
           make_latest: true
           # Shown as "What's new" by the in-app updater
           body_path: release-notes.txt
-          files: YTDownloader.apk
+          files: VidStash.apk

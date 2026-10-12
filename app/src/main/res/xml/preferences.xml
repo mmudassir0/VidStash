@@ -135,9 +135,41 @@
             app:title="Back up to a file" />
         <Preference
             app:iconSpaceReserved="false"
+            app:key="folder_import"
+            app:summary="Add videos already on your phone to the library, e.g. the old Download/YTDownloader folder"
+            app:title="Import videos from a folder" />
+        <Preference
+            app:iconSpaceReserved="false"
             app:key="backup_import"
             app:summary="Bring a backup back, e.g. after reinstalling or on a new phone"
             app:title="Restore from a file" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="About" app:iconSpaceReserved="false">
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="about"
+            app:summary="Free and open-source · not affiliated with YouTube"
+            app:title="About VidStash" />
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="report"
+            app:summary="Opens a GitHub issue with your phone and app version filled in"
+            app:title="Report a problem or suggest a feature" />
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="source"
+            app:summary="github.com/mmudassir0/VidStash"
+            app:title="Source code" />
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="privacy"
+            app:summary="No accounts, no ads, no tracking"
+            app:title="Privacy" />
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="licenses"
+            app:title="Open-source licences" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="App" app:iconSpaceReserved="false">

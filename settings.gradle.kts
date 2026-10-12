@@ -15,5 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "YTDownloader"
+rootProject.name = "VidStash"
 include(":app")

@@ -40,6 +40,7 @@ jobs:
         if: steps.ver.outputs.newer == 'true'
         env:
           YT_HEALTH: "1"
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
           sed -i "s/NewPipeExtractor:${{ steps.ver.outputs.current }}/NewPipeExtractor:${{ steps.ver.outputs.latest }}/" app/build.gradle.kts
           chmod +x gradlew
@@ -49,7 +50,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "YT Downloader bot"
+          git config user.name "VidStash bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -am "Update the YouTube library to ${{ steps.ver.outputs.latest }}
 

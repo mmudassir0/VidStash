@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:contentDescription="@null"
             android:src="@drawable/ic_playlist"
-            app:tint="@color/on_red_container" />
+            app:tint="@color/on_brand_container" />
     </FrameLayout>
 
     <LinearLayout

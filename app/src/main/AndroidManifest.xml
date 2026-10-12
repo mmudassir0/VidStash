@@ -22,7 +22,7 @@
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
-        android:theme="@style/Theme.YTDownloader">
+        android:theme="@style/Theme.VidStash">
 
         <activity
             android:name=".MainActivity"
@@ -34,15 +34,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Tap "Share" in the YouTube app and pick YT Downloader: a small sheet opens on top -->
+        <!-- Tap "Share" in the YouTube app and pick VidStash: a small sheet opens on top -->
         <activity
             android:name=".QuickDownloadActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:taskAffinity="com.mudassir.ytdownloader.quick"
-            android:theme="@style/Theme.YTDownloader.Translucent">
+            android:taskAffinity="com.mudassir.vidstash.quick"
+            android:theme="@style/Theme.VidStash.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -58,8 +58,8 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="com.mudassir.ytdownloader.player"
-            android:theme="@style/Theme.YTDownloader.Player" />
+            android:taskAffinity="com.mudassir.vidstash.player"
+            android:theme="@style/Theme.VidStash.Player" />
 
         <activity
             android:name=".CrashActivity"
@@ -71,7 +71,7 @@
         <receiver
             android:name=".WidgetProvider"
             android:exported="true"
-            android:label="YT Downloader">
+            android:label="VidStash">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
