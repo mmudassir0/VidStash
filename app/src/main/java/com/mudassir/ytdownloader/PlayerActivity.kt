@@ -181,6 +181,19 @@ class PlayerActivity : AppCompatActivity() {
         b.speedButton.setOnClickListener { showSpeedMenu() }
         b.sleepButton.setOnClickListener { showSleepMenu() }
         b.chaptersButton.setOnClickListener { showChaptersMenu() }
+        b.downloadButton.setOnClickListener {
+            val e = currentEntry() ?: return@setOnClickListener
+            if (!StreamCache.isStream(e.uri)) return@setOnClickListener
+            Queue.add(
+                this, listOf(
+                    DownloadItem(
+                        url = StreamCache.urlOf(e.uri), title = e.title, thumbnail = e.thumb,
+                        maxHeight = Settings(this).defaultQuality
+                    )
+                )
+            )
+            Toast.makeText(this, "Added to downloads", Toast.LENGTH_SHORT).show()
+        }
         b.sleepText.setOnClickListener { showSleepMenu() }
         b.rotateButton.setOnClickListener { rotate() }
         b.pipButton.isVisible = pipSupported
@@ -308,6 +321,7 @@ class PlayerActivity : AppCompatActivity() {
         b.titleText.text = e?.title ?: controller?.mediaMetadata?.title ?: ""
         chapters = e?.let { chaptersFor(it.uri) }.orEmpty()
         b.chaptersButton.isVisible = chapters.size >= 2
+        b.downloadButton.isVisible = e != null && StreamCache.isStream(e.uri)
         // Chapter starts as small marks on the seek bar.
         val marks = chapters.map { it.startSec * 1000 }.filter { it > 0 }
         b.playerView.setExtraAdGroupMarkers(marks.toLongArray(), BooleanArray(marks.size))
@@ -528,5 +542,17 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         fun intent(ctx: Context, item: DownloadItem) = intent(ctx, listOf(item), 0)
+
+        /** Watch YouTube videos online in the built-in player (no download). */
+        fun streamIntent(ctx: Context, videos: List<Triple<String, String, String?>>, start: Int = 0): Intent =
+            Intent(ctx, PlayerActivity::class.java)
+                .putStringArrayListExtra(EXTRA_URIS, ArrayList(videos.map { StreamCache.idFor(it.first) }))
+                .putStringArrayListExtra(EXTRA_TITLES, ArrayList(videos.map { it.second }))
+                .putStringArrayListExtra(EXTRA_MIMES, ArrayList(videos.map { "video/stream" }))
+                .putStringArrayListExtra(EXTRA_THUMBS, ArrayList(videos.map { it.third.orEmpty() }))
+                .putExtra(EXTRA_START, start)
+
+        fun stream(ctx: Context, url: String, title: String, thumb: String?) =
+            ctx.startActivity(streamIntent(ctx, listOf(Triple(url, title, thumb))))
     }
 }

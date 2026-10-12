@@ -1,6 +1,22 @@
 package com.mudassir.ytdownloader
 
 import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.widget.Toast
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.drm.DrmSessionManagerProvider
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.MergingMediaSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.SettableFuture
+import java.util.concurrent.Executors
 import android.os.Handler
 import android.os.Looper
 import androidx.media3.common.AudioAttributes
@@ -18,6 +34,7 @@ import androidx.media3.session.MediaSessionService
  * It remembers where you stopped in every file, plays the next file in the list,
  * and carries out the sleep timer.
  */
+@OptIn(UnstableApi::class)
 class PlaybackService : MediaSessionService() {
 
     private var session: MediaSession? = null
@@ -42,6 +59,7 @@ class PlaybackService : MediaSessionService() {
         super.onCreate()
         settings = Settings(this)
         player = ExoPlayer.Builder(this)
+            .setMediaSourceFactory(mediaSourceFactory())
             .setAudioAttributes(
                 AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(),
                 /* handleAudioFocus = */ true
@@ -106,7 +124,88 @@ class PlaybackService : MediaSessionService() {
                 }
             }
         })
-        session = MediaSession.Builder(this, player).build()
+        session = MediaSession.Builder(this, player).setCallback(object : MediaSession.Callback {
+            // Online videos ("yt:" items) are looked up here, off the main thread.
+            override fun onAddMediaItems(
+                mediaSession: MediaSession,
+                controller: MediaSession.ControllerInfo,
+                mediaItems: MutableList<MediaItem>
+            ): ListenableFuture<MutableList<MediaItem>> {
+                if (mediaItems.none { StreamCache.isStream(it.mediaId) }) return Futures.immediateFuture(mediaItems)
+                val future = SettableFuture.create<MutableList<MediaItem>>()
+                resolver.execute {
+                    try {
+                        future.set(mediaItems.map { resolve(it) }.toMutableList())
+                    } catch (e: Exception) {
+                        handler.post {
+                            Toast.makeText(this@PlaybackService, "Couldn't play online: ${e.message ?: "unknown error"}", Toast.LENGTH_LONG).show()
+                        }
+                        future.setException(e)
+                    }
+                }
+                return future
+            }
+        }).build()
+    }
+
+    private val resolver = Executors.newSingleThreadExecutor()
+
+    /** Turns a "yt:<link>" item into playable stream links (video + audio). */
+    private fun resolve(item: MediaItem): MediaItem {
+        if (!StreamCache.isStream(item.mediaId)) return item
+        val d = YouTube.getVideo(StreamCache.urlOf(item.mediaId), allowWebm = false)
+        StreamCache.putChapters(item.mediaId, d.chapters)
+        // Default quality, but at most 1080p for smooth streaming.
+        val wanted = settings.defaultQuality.let { if (it == 0) 0 else it.coerceAtMost(1080) }
+        val opt = YouTube.pickBest(d.options, wanted) ?: throw IllegalStateException("No playable format")
+        val (videoUrl, audioUrl) = when (opt.kind) {
+            Kind.MERGE -> opt.videoUrl to opt.audioUrl
+            Kind.SINGLE_VIDEO -> opt.videoUrl to null
+            Kind.AUDIO -> opt.audioUrl to null
+        }
+        val meta = item.mediaMetadata.buildUpon()
+            .setTitle(item.mediaMetadata.title ?: d.title)
+            .setArtist(d.uploader)
+            .apply { if (item.mediaMetadata.artworkUri == null) setArtworkUri(d.thumbnail?.let(Uri::parse)) }
+            .build()
+        return item.buildUpon()
+            .setUri(videoUrl)
+            .setMediaMetadata(meta)
+            .setRequestMetadata(
+                MediaItem.RequestMetadata.Builder()
+                    .setExtras(Bundle().apply { if (audioUrl != null) putString(EXTRA_AUDIO_URL, audioUrl) })
+                    .build()
+            )
+            .build()
+    }
+
+    /** Files and normal links as usual; online videos as video + audio played together. */
+    private fun mediaSourceFactory(): MediaSource.Factory {
+        val data = DefaultDataSource.Factory(this, YtDataSource.Factory())
+        val default = DefaultMediaSourceFactory(data)
+        val progressive = ProgressiveMediaSource.Factory(data)
+        return object : MediaSource.Factory {
+            override fun setDrmSessionManagerProvider(provider: DrmSessionManagerProvider): MediaSource.Factory {
+                default.setDrmSessionManagerProvider(provider)
+                return this
+            }
+
+            override fun setLoadErrorHandlingPolicy(policy: LoadErrorHandlingPolicy): MediaSource.Factory {
+                default.setLoadErrorHandlingPolicy(policy)
+                return this
+            }
+
+            override fun getSupportedTypes(): IntArray = default.supportedTypes
+
+            override fun createMediaSource(mediaItem: MediaItem): MediaSource {
+                val audio = mediaItem.requestMetadata.extras?.getString(EXTRA_AUDIO_URL)
+                    ?: return default.createMediaSource(mediaItem)
+                return MergingMediaSource(
+                    progressive.createMediaSource(mediaItem),
+                    progressive.createMediaSource(MediaItem.fromUri(audio))
+                )
+            }
+        }
     }
 
     private fun tick() {
@@ -141,6 +240,7 @@ class PlaybackService : MediaSessionService() {
     }
 
     override fun onDestroy() {
+        resolver.shutdownNow()
         handler.removeCallbacks(ticker)
         savePosition()
         session?.run {
@@ -149,5 +249,9 @@ class PlaybackService : MediaSessionService() {
         }
         session = null
         super.onDestroy()
+    }
+
+    companion object {
+        private const val EXTRA_AUDIO_URL = "audio_url"
     }
 }

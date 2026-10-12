@@ -387,6 +387,16 @@
             app:icon="@drawable/ic_download" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/watchButton"
+            style="@style/Widget.App.Button.Tonal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Watch now"
+            android:visibility="gone"
+            app:icon="@drawable/ic_play" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/openPlaylistButton"
             style="@style/Widget.App.Button.Tonal"
             android:layout_width="match_parent"

@@ -40,6 +40,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mudassir.ytdownloader.R
+import com.mudassir.ytdownloader.PlayerActivity
 import kotlinx.coroutines.launch
 
 /** Paste a link or search; shows one video, a playlist/channel to pick from, or search results. */
@@ -288,6 +289,7 @@ class GetFragment : Fragment() {
         h.calcSizeButton.isVisible = false
         h.downloadButton.isVisible = false
         h.openPlaylistButton.isVisible = false
+        h.watchButton.isVisible = false
         h.listTitle.isVisible = false
         // The footer is set once per render (hiding and re-showing it in one frame upsets the list).
         footerAdapter.shown = state is GetState.Search && state.page.next != null && state.page.videos.isNotEmpty()
@@ -339,6 +341,9 @@ class GetFragment : Fragment() {
         h.downloadButton.isVisible = true
         h.downloadButton.text = "Download"
         h.openPlaylistButton.isVisible = s.playlistUrl != null
+        h.watchButton.isVisible = true
+        h.watchButton.text = "Watch now (no download)"
+        h.watchButton.setOnClickListener { PlayerActivity.stream(requireContext(), s.url, d.title, d.thumbnail) }
         updateSizeText()
     }
 
@@ -473,6 +478,7 @@ class GetFragment : Fragment() {
             if (default > 0) menu.add(0, 1, 0, "Download ($label)")
             menu.add(0, 2, 1, "Download audio only")
             if (Settings(ctx).audioFormat != "mp3") menu.add(0, 6, 1, "Download as MP3")
+            menu.add(0, 7, 0, "Watch now")
             menu.add(0, 3, 2, "Choose quality…")
             menu.add(0, 4, 3, "Share link")
             menu.add(0, 5, 4, "Copy link")
@@ -482,6 +488,7 @@ class GetFragment : Fragment() {
                     2 -> vm.quickDownload(v, 0)
                     6 -> vm.quickDownload(v, 0, mp3 = true)
                     3 -> vm.openVideo(v.url)
+                    7 -> PlayerActivity.stream(ctx, v.url, v.title, v.thumbnail)
                     4 -> startActivity(
                         Intent.createChooser(
                             Intent(Intent.ACTION_SEND).setType("text/plain")
