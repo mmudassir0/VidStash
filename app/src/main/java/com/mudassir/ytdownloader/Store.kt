@@ -153,6 +153,14 @@ object Store {
     private val _progress = MutableStateFlow<Map<String, Progress>>(emptyMap())
     val progress: StateFlow<Map<String, Progress>> = _progress.asStateFlow()
 
+    /** Called after every change (e.g. to refresh the home-screen widget). */
+    var onChange: (() -> Unit)? = null
+
+    /** Loads the store if the app process started without App.onCreate having run it yet. */
+    fun ensureLoaded(ctx: Context) {
+        if (!::file.isInitialized) init(ctx.applicationContext)
+    }
+
     fun init(ctx: Context) {
         file = File(ctx.filesDir, "store.json")
         synchronized(lock) {
@@ -263,5 +271,6 @@ object Store {
         val tmp = File(file.parentFile, "store.json.tmp")
         tmp.writeText(root.toString())
         tmp.renameTo(file)
+        runCatching { onChange?.invoke() }
     }
 }

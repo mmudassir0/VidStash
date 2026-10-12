@@ -172,6 +172,16 @@ class GetFragment : Fragment() {
         pending = null
     }
 
+    /** From the widget: put the cursor in the search box with the keyboard open. */
+    fun focusSearch() {
+        val input = _b?.input ?: return
+        input.post {
+            input.requestFocus()
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
     /** Called by MainActivity for links shared from other apps. */
     fun openShared(text: String) {
         if (_b == null) pending = text else submitText(text)

@@ -53,8 +53,38 @@ class QuickDownloadActivity : AppCompatActivity() {
         handle(intent)
     }
 
+    /** Widget's "Paste link": read the clipboard once our sheet has focus. */
+    private var pendingPaste = false
+
     private fun handle(intent: Intent) {
-        sharedText = intent.getStringExtra(Intent.EXTRA_TEXT).orEmpty().trim()
+        if (intent.action == ACTION_PASTE) {
+            pendingPaste = true
+            showLoading("Reading the copied link…")
+            b.root.viewTreeObserver.addOnWindowFocusChangeListener { focus -> if (focus) readClipboard() }
+            b.root.postDelayed({ readClipboard() }, 400)
+            return
+        }
+        handleText(intent.getStringExtra(Intent.EXTRA_TEXT).orEmpty())
+    }
+
+    private fun readClipboard() {
+        if (!pendingPaste) return
+        val cm = getSystemService(android.content.ClipboardManager::class.java)
+        val text = runCatching { cm?.primaryClip?.getItemAt(0)?.coerceToText(this)?.toString() }.getOrNull()
+        if (text.isNullOrBlank()) {
+            // Not readable yet (no focus) — the focus listener tries again.
+            if (b.root.hasWindowFocus()) {
+                pendingPaste = false
+                showError("Copy a YouTube link first, then tap Paste link.")
+            }
+            return
+        }
+        pendingPaste = false
+        handleText(text)
+    }
+
+    private fun handleText(text: String) {
+        sharedText = text.trim()
         val url = Regex("https?://\\S+").find(sharedText)?.value
         if (url == null) {
             // Plain text: treat it as a search in the app.
@@ -238,6 +268,10 @@ class QuickDownloadActivity : AppCompatActivity() {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
         sheet.dismiss()
+    }
+
+    companion object {
+        const val ACTION_PASTE = "com.mudassir.ytdownloader.PASTE"
     }
 
     override fun onDestroy() {
