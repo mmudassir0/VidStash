@@ -55,7 +55,7 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
                         delay(1000)
                     }
                 }
-                while (Store.hasQueued() && !Settings(applicationContext).paused) {
+                while (Store.hasQueued() && !Settings(applicationContext).paused && DownloadRules.canStartNow(applicationContext)) {
                     val slots = Settings(applicationContext).parallel
                     (1..slots).map { launch { slotLoop() } }.forEach { it.join() }
                     delay(1500) // pick up anything added while the last items finished
@@ -70,6 +70,10 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
             }
             nm.cancel(NOTIF_PROGRESS)
             summary()
+            // Held back by the rules (night, charger, data limit): run again when allowed.
+            if (!Settings(applicationContext).paused && Store.hasQueued() && !DownloadRules.canStartNow(applicationContext)) {
+                Queue.kickAfterCurrent(applicationContext)
+            }
         }
         Result.success()
     }
@@ -77,6 +81,8 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
     // supervisorScope: a failed download must not cancel the slot (or the other slots).
     private suspend fun slotLoop() = supervisorScope {
         while (isActive && !Settings(applicationContext).paused) {
+            // Night-only / charger / mobile data limit: finish what's running, start nothing new.
+            if (!DownloadRules.canStartNow(applicationContext)) break
             val item = Store.claimNext() ?: break
             val job = async { downloader.process(item) }
             Queue.running[item.id] = job
@@ -84,6 +90,7 @@ class QueueWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx,
                 job.await()
                 saved.incrementAndGet()
                 Settings(applicationContext).youtubeTrouble = 0 // reading YouTube works
+                Store.get(item.id)?.let { DownloadRules.addMobileUsage(applicationContext, it.bytes) }
                 savedIds += item.id
             } catch (e: CancellationException) {
                 if (!isActive) throw e // runner stopped: the finally in doWork re-queues it

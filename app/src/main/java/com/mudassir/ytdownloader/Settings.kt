@@ -75,6 +75,23 @@ class Settings(ctx: Context) {
         recentSearches = listOf(t) + recentSearches.filterNot { it.equals(t, ignoreCase = true) }
     }
 
+    /** Only download while the phone is charging. */
+    val onlyWhileCharging get() = p.getBoolean(K_CHARGING, false)
+
+    /** "any" or "night" (12 AM – 7 AM). */
+    val downloadTime get() = p.getString(K_DOWNLOAD_TIME, "any") ?: "any"
+
+    /** Daily mobile-data budget in bytes; 0 = no limit. */
+    val mobileDataLimitBytes get() = (p.getString(K_DATA_LIMIT, "0")?.toLongOrNull() ?: 0L) * 1_000_000
+
+    var mobileDataDay: String
+        get() = p.getString(K_DATA_DAY, "") ?: ""
+        set(v) = p.edit().putString(K_DATA_DAY, v).apply()
+
+    var mobileDataBytes: Long
+        get() = p.getLong(K_DATA_BYTES, 0)
+        set(v) = p.edit().putLong(K_DATA_BYTES, v).apply()
+
     /** Folder picked for videos (a document tree link), or "" for Downloads/YTDownloader. */
     var videoFolder: String
         get() = p.getString(K_VIDEO_FOLDER, "") ?: ""
@@ -124,6 +141,11 @@ class Settings(ctx: Context) {
         private const val K_PAUSED = "paused"
         const val K_YT_TROUBLE = "youtube_trouble"
         const val K_VIDEO_FOLDER = "video_folder"
+        const val K_CHARGING = "only_charging"
+        const val K_DOWNLOAD_TIME = "download_time"
+        const val K_DATA_LIMIT = "mobile_data_limit"
+        private const val K_DATA_DAY = "mobile_data_day"
+        private const val K_DATA_BYTES = "mobile_data_bytes"
         const val K_AUDIO_FOLDER = "audio_folder"
         private const val K_LAST_UPDATE_CHECK = "last_update_check"
 

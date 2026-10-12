@@ -21,6 +21,20 @@
         <item></item><item>en</item><item>ur</item><item>hi</item><item>ar</item>
         <item>es</item><item>fr</item><item>de</item><item>tr</item>
     </string-array>
+    <string-array name="download_time_labels">
+        <item>Any time</item>
+        <item>At night only (12 AM – 7 AM)</item>
+    </string-array>
+    <string-array name="download_time_values">
+        <item>any</item><item>night</item>
+    </string-array>
+    <string-array name="data_limit_labels">
+        <item>No limit</item><item>250 MB a day</item><item>500 MB a day</item>
+        <item>1 GB a day</item><item>2 GB a day</item><item>5 GB a day</item>
+    </string-array>
+    <string-array name="data_limit_values">
+        <item>0</item><item>250</item><item>500</item><item>1000</item><item>2000</item><item>5000</item>
+    </string-array>
     <string-array name="audio_format_labels">
         <item>M4A (original quality, fast)</item>
         <item>MP3 192 kbps (plays everywhere, slower)</item>

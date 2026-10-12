@@ -25,6 +25,28 @@
             app:summary="Wait for Wi-Fi instead of using mobile data"
             app:title="Wi-Fi only" />
         <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="only_charging"
+            app:summary="Wait for the charger before downloading"
+            app:title="Only while charging" />
+        <ListPreference
+            app:defaultValue="any"
+            app:entries="@array/download_time_labels"
+            app:entryValues="@array/download_time_values"
+            app:iconSpaceReserved="false"
+            app:key="download_time"
+            app:title="When to download"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            app:defaultValue="0"
+            app:entries="@array/data_limit_labels"
+            app:entryValues="@array/data_limit_values"
+            app:iconSpaceReserved="false"
+            app:key="mobile_data_limit"
+            app:title="Daily mobile data limit"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="allow_webm"

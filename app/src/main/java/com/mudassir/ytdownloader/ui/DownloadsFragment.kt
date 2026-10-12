@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.mudassir.ytdownloader.DownloadItem
 import com.mudassir.ytdownloader.MainActivity
+import com.mudassir.ytdownloader.DownloadRules
 import com.mudassir.ytdownloader.Progress
 import com.mudassir.ytdownloader.Queue
 import com.mudassir.ytdownloader.Settings
@@ -102,6 +103,7 @@ class DownloadsFragment : Fragment() {
         when {
             paused && (running + queued) > 0 -> parts += "Paused"
             running > 0 -> parts += "Downloading $running" + if (speed > 0) " · ${formatBytes(speed)}/s" else ""
+            queued > 0 && DownloadRules.waitingReason(ctx) != null -> parts += DownloadRules.waitingReason(ctx)!!
             queued > 0 && Settings(ctx).wifiOnly && !onWifi(ctx) -> parts += "Waiting for Wi-Fi"
             queued > 0 -> parts += "Starting…"
         }

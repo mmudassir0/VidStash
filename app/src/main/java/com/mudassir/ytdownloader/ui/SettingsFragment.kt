@@ -330,7 +330,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         val ctx = context ?: return
         when (key) {
             Settings.K_WIFI_ONLY -> { Queue.restart(ctx); Sync.schedule(ctx) }
-            Settings.K_PARALLEL -> Queue.restart(ctx)
+            Settings.K_PARALLEL, Settings.K_CHARGING, Settings.K_DOWNLOAD_TIME, Settings.K_DATA_LIMIT -> Queue.restart(ctx)
             Settings.K_AUTO_SYNC -> Sync.schedule(ctx)
         }
     }

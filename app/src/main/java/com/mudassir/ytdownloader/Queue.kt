@@ -32,23 +32,39 @@ object Queue {
     fun kick(ctx: Context) {
         val settings = Settings(ctx)
         if (settings.paused || !Store.hasQueued()) return
-        WorkManager.getInstance(ctx).enqueueUniqueWork(RUNNER, ExistingWorkPolicy.KEEP, request(settings))
+        WorkManager.getInstance(ctx).enqueueUniqueWork(RUNNER, ExistingWorkPolicy.KEEP, request(ctx))
+    }
+
+    /** Runs again once the current run ends (used when the rules paused the queue for now). */
+    fun kickAfterCurrent(ctx: Context) {
+        val settings = Settings(ctx)
+        if (settings.paused || !Store.hasQueued()) return
+        WorkManager.getInstance(ctx).enqueueUniqueWork(RUNNER, ExistingWorkPolicy.APPEND_OR_REPLACE, request(ctx))
     }
 
     /** Restarts the runner so changed settings (Wi-Fi only, parallel) apply. Downloads resume. */
     fun restart(ctx: Context) {
         val settings = Settings(ctx)
         if (settings.paused || !Store.hasQueued()) return
-        WorkManager.getInstance(ctx).enqueueUniqueWork(RUNNER, ExistingWorkPolicy.REPLACE, request(settings))
+        WorkManager.getInstance(ctx).enqueueUniqueWork(RUNNER, ExistingWorkPolicy.REPLACE, request(ctx))
     }
 
-    private fun request(settings: Settings) = OneTimeWorkRequestBuilder<QueueWorker>()
-        .setConstraints(
-            Constraints.Builder()
-                .setRequiredNetworkType(if (settings.wifiOnly) NetworkType.UNMETERED else NetworkType.CONNECTED)
-                .build()
-        )
-        .build()
+    /** Network, charging and time-of-day rules for the runner. */
+    private fun request(ctx: Context): androidx.work.OneTimeWorkRequest {
+        val settings = Settings(ctx)
+        // Over today's mobile-data limit: wait for Wi-Fi.
+        val unmetered = settings.wifiOnly || DownloadRules.overMobileLimit(ctx)
+        val b = OneTimeWorkRequestBuilder<QueueWorker>()
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(if (unmetered) NetworkType.UNMETERED else NetworkType.CONNECTED)
+                    .setRequiresCharging(settings.onlyWhileCharging)
+                    .build()
+            )
+        val delay = DownloadRules.delayUntilAllowed(ctx)
+        if (delay > 0) b.setInitialDelay(delay, java.util.concurrent.TimeUnit.MILLISECONDS)
+        return b.build()
+    }
 
     fun pauseAll(ctx: Context) {
         Settings(ctx).paused = true
