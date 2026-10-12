@@ -102,6 +102,11 @@ class Settings(ctx: Context) {
         get() = p.getString(K_AUDIO_FOLDER, "") ?: ""
         set(v) = p.edit().putString(K_AUDIO_FOLDER, v).apply()
 
+    /** The first-run welcome screen has been seen. */
+    var welcomed: Boolean
+        get() = p.getBoolean(K_WELCOMED, false)
+        set(v) = p.edit().putBoolean(K_WELCOMED, v).apply()
+
     /** When downloads last failed because YouTube changed (0 = fine). Shows a banner. */
     var youtubeTrouble: Long
         get() = p.getLong(K_YT_TROUBLE, 0)
@@ -141,6 +146,7 @@ class Settings(ctx: Context) {
         private const val K_PAUSED = "paused"
         const val K_YT_TROUBLE = "youtube_trouble"
         const val K_VIDEO_FOLDER = "video_folder"
+        private const val K_WELCOMED = "welcomed"
         const val K_CHARGING = "only_charging"
         const val K_DOWNLOAD_TIME = "download_time"
         const val K_DATA_LIMIT = "mobile_data_limit"

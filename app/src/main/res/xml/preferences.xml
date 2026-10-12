@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="Downloads" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/downloads_downloads" app:iconSpaceReserved="false">
         <ListPreference
             app:defaultValue="720"
             app:entries="@array/quality_labels"
             app:entryValues="@array/quality_values"
             app:iconSpaceReserved="false"
             app:key="default_quality"
-            app:title="Default quality"
+            app:title="@string/pref_default_quality"
             app:useSimpleSummaryProvider="true" />
         <ListPreference
             app:defaultValue="1"
@@ -16,27 +16,27 @@
             app:entryValues="@array/parallel_values"
             app:iconSpaceReserved="false"
             app:key="parallel"
-            app:title="Download at the same time"
+            app:title="@string/pref_download_at_the_same_time"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="wifi_only"
-            app:summary="Wait for Wi-Fi instead of using mobile data"
-            app:title="Wi-Fi only" />
+            app:summary="@string/pref_wait_for_wi_fi_instead"
+            app:title="@string/pref_wi_fi_only" />
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="only_charging"
-            app:summary="Wait for the charger before downloading"
-            app:title="Only while charging" />
+            app:summary="@string/pref_wait_for_the_charger_before"
+            app:title="@string/pref_only_while_charging" />
         <ListPreference
             app:defaultValue="any"
             app:entries="@array/download_time_labels"
             app:entryValues="@array/download_time_values"
             app:iconSpaceReserved="false"
             app:key="download_time"
-            app:title="When to download"
+            app:title="@string/pref_when_to_download"
             app:useSimpleSummaryProvider="true" />
         <ListPreference
             app:defaultValue="0"
@@ -44,140 +44,149 @@
             app:entryValues="@array/data_limit_values"
             app:iconSpaceReserved="false"
             app:key="mobile_data_limit"
-            app:title="Daily mobile data limit"
+            app:title="@string/pref_daily_mobile_data_limit"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="allow_webm"
-            app:summary="1440p and 4K come as WebM (VP9). Off = MP4 only, up to 1080p"
-            app:title="Allow 1440p / 4K" />
+            app:summary="@string/pref_1440p_and_4k_come_as"
+            app:title="@string/pref_allow_1440p_4k" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Save to" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/pref_save_to" app:iconSpaceReserved="false">
         <Preference
             app:iconSpaceReserved="false"
             app:key="pick_video_folder"
-            app:title="Videos folder" />
+            app:title="@string/pref_videos_folder" />
         <Preference
             app:iconSpaceReserved="false"
             app:key="pick_audio_folder"
-            app:title="Audio folder" />
+            app:title="@string/pref_audio_folder" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Audio" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/pref_audio" app:iconSpaceReserved="false">
         <ListPreference
             app:defaultValue="m4a"
             app:entries="@array/audio_format_labels"
             app:entryValues="@array/audio_format_values"
             app:iconSpaceReserved="false"
             app:key="audio_format"
-            app:title="Audio-only format"
+            app:title="@string/pref_audio_only_format"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Player" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/pref_player" app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="autoplay_next"
-            app:summary="When a file finishes, play the next one in the list"
-            app:title="Autoplay next" />
+            app:summary="@string/pref_when_a_file_finishes_play"
+            app:title="@string/pref_autoplay_next" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Search" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/widget_search" app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="clipboard_prompt"
-            app:summary="When you open the app after copying a YouTube link, offer to open it"
-            app:title="Detect copied links" />
+            app:summary="@string/pref_when_you_open_the_app"
+            app:title="@string/pref_detect_copied_links" />
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="search_history"
-            app:summary="Suggest your recent searches"
-            app:title="Remember searches" />
+            app:summary="@string/pref_suggest_your_recent_searches"
+            app:title="@string/pref_remember_searches" />
         <Preference
             app:iconSpaceReserved="false"
             app:key="clear_history"
-            app:title="Clear search history" />
+            app:title="@string/pref_clear_search_history" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Extras" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/pref_extras" app:iconSpaceReserved="false">
         <ListPreference
             app:defaultValue=""
             app:entries="@array/subtitle_labels"
             app:entryValues="@array/subtitle_values"
             app:iconSpaceReserved="false"
             app:key="subtitle_lang"
-            app:title="Save subtitles (.srt)"
+            app:title="@string/pref_save_subtitles_srt"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="sponsorblock"
-            app:summary="Cut out sponsor, self-promo, intro and outro segments (SponsorBlock)"
-            app:title="Remove sponsor segments" />
+            app:summary="@string/pref_cut_out_sponsor_self_promo"
+            app:title="@string/pref_remove_sponsor_segments" />
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="auto_sync"
-            app:summary="Every night, queue new videos from your synced playlists and channels"
-            app:title="Auto-sync playlists" />
+            app:summary="@string/pref_every_night_queue_new_videos"
+            app:title="@string/pref_auto_sync_playlists" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Backup" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/pref_backup" app:iconSpaceReserved="false">
         <Preference
             app:iconSpaceReserved="false"
             app:key="backup_export"
-            app:summary="Download list, synced playlists, settings, search history and watch positions"
-            app:title="Back up to a file" />
+            app:summary="@string/pref_download_list_synced_playlists_settings"
+            app:title="@string/pref_back_up_to_a_file" />
         <Preference
             app:iconSpaceReserved="false"
             app:key="folder_import"
-            app:summary="Add videos already on your phone to the library, e.g. the old Download/YTDownloader folder"
-            app:title="Import videos from a folder" />
+            app:summary="@string/pref_add_videos_already_on_your"
+            app:title="@string/pref_import_videos_from_a_folder" />
         <Preference
             app:iconSpaceReserved="false"
             app:key="backup_import"
-            app:summary="Bring a backup back, e.g. after reinstalling or on a new phone"
-            app:title="Restore from a file" />
+            app:summary="@string/pref_bring_a_backup_back_e"
+            app:title="@string/pref_restore_from_a_file" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="About" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/pref_about" app:iconSpaceReserved="false">
         <Preference
             app:iconSpaceReserved="false"
             app:key="about"
-            app:summary="Free and open-source · not affiliated with YouTube"
-            app:title="About VidStash" />
+            app:summary="@string/pref_free_and_open_source_not"
+            app:title="@string/pref_about_vidstash" />
         <Preference
             app:iconSpaceReserved="false"
             app:key="report"
-            app:summary="Opens a GitHub issue with your phone and app version filled in"
-            app:title="Report a problem or suggest a feature" />
+            app:summary="@string/pref_opens_a_github_issue_with"
+            app:title="@string/pref_report_a_problem_or_suggest" />
         <Preference
             app:iconSpaceReserved="false"
             app:key="source"
-            app:summary="github.com/mmudassir0/VidStash"
-            app:title="Source code" />
+            app:summary="@string/pref_github_com_mmudassir0_vidstash"
+            app:title="@string/pref_source_code" />
         <Preference
             app:iconSpaceReserved="false"
             app:key="privacy"
-            app:summary="No accounts, no ads, no tracking"
-            app:title="Privacy" />
+            app:summary="@string/pref_no_accounts_no_ads_no"
+            app:title="@string/pref_privacy" />
         <Preference
             app:iconSpaceReserved="false"
             app:key="licenses"
-            app:title="Open-source licences" />
+            app:title="@string/pref_open_source_licences" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="App" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/pref_app" app:iconSpaceReserved="false">
+        <ListPreference
+            app:defaultValue=""
+            app:entries="@array/language_labels"
+            app:entryValues="@array/language_values"
+            app:iconSpaceReserved="false"
+            app:key="app_language"
+            app:persistent="false"
+            app:title="@string/set_language"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="update_check"
-            app:summary="Look for a new version when the app opens"
-            app:title="Check for updates automatically" />
+            app:summary="@string/pref_look_for_a_new_version"
+            app:title="@string/pref_check_for_updates_automatically" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -1,0 +1,37 @@
+# Draft for https://gitlab.com/fdroid/fdroiddata  →  metadata/com.mudassir.vidstash.yml
+# F-Droid reviewers usually adjust the build recipe; replace NN with the release number.
+AntiFeatures:
+  NonFreeNet:
+    en-US: Downloads from YouTube. Optional SponsorBlock lookups (sponsor.ajay.app).
+Categories:
+  - Multimedia
+  - Internet
+License: GPL-3.0-only
+AuthorName: Mudassir
+WebSite: https://mmudassir0.github.io/VidStash/
+SourceCode: https://github.com/mmudassir0/VidStash
+IssueTracker: https://github.com/mmudassir0/VidStash/issues
+Changelog: https://github.com/mmudassir0/VidStash/releases
+
+AutoName: VidStash
+
+RepoType: git
+Repo: https://github.com/mmudassir0/VidStash.git
+
+Builds:
+  - versionName: 1.2.NN
+    versionCode: 1NN
+    commit: v1.2.NN
+    subdir: app
+    gradle:
+      - fdroid
+    gradleprops:
+      - buildNumber=NN
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]+$
+VercodeOperation:
+  - 100 + %c
+UpdateCheckData: '|||v1\.2\.(\d+)'
+CurrentVersion: 1.2.NN
+CurrentVersionCode: 1NN

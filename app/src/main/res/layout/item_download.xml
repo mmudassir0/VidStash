@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/surface_2"
-            android:contentDescription="Thumbnail"
+            android:contentDescription="@string/download_thumbnail"
             android:scaleType="centerCrop"
             app:shapeAppearance="@style/Shape.App.Thumb" />
 
@@ -94,6 +94,6 @@
         android:layout_width="36dp"
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="More"
+        android:contentDescription="@string/downloads_more"
         android:src="@drawable/ic_more" />
 </LinearLayout>

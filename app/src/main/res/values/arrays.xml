@@ -1,45 +1,51 @@
 <resources>
     <string-array name="quality_labels">
-        <item>2160p (4K)</item><item>1440p</item><item>1080p</item><item>720p</item>
-        <item>480p</item><item>360p</item><item>Audio only</item>
+        <item>@string/opt_2160p_4k</item><item>@string/opt_1440p</item><item>@string/opt_1080p</item><item>@string/opt_720p</item>
+        <item>@string/opt_480p</item><item>@string/opt_360p</item><item>@string/opt_audio_only</item>
     </string-array>
     <string-array name="quality_values">
         <item>2160</item><item>1440</item><item>1080</item><item>720</item>
         <item>480</item><item>360</item><item>0</item>
     </string-array>
     <string-array name="parallel_labels">
-        <item>1 at a time</item><item>2 at a time</item><item>3 at a time</item>
+        <item>@string/opt_1_at_a_time</item><item>@string/opt_2_at_a_time</item><item>@string/opt_3_at_a_time</item>
     </string-array>
     <string-array name="parallel_values">
         <item>1</item><item>2</item><item>3</item>
     </string-array>
     <string-array name="subtitle_labels">
-        <item>Off</item><item>English</item><item>Urdu</item><item>Hindi</item><item>Arabic</item>
-        <item>Spanish</item><item>French</item><item>German</item><item>Turkish</item>
+        <item>@string/opt_off</item><item>@string/opt_english</item><item>@string/opt_urdu</item><item>@string/opt_hindi</item><item>@string/opt_arabic</item>
+        <item>@string/opt_spanish</item><item>@string/opt_french</item><item>@string/opt_german</item><item>@string/opt_turkish</item>
     </string-array>
     <string-array name="subtitle_values">
         <item></item><item>en</item><item>ur</item><item>hi</item><item>ar</item>
         <item>es</item><item>fr</item><item>de</item><item>tr</item>
     </string-array>
     <string-array name="download_time_labels">
-        <item>Any time</item>
-        <item>At night only (12 AM – 7 AM)</item>
+        <item>@string/opt_any_time</item>
+        <item>@string/opt_at_night_only_12_am</item>
     </string-array>
     <string-array name="download_time_values">
         <item>any</item><item>night</item>
     </string-array>
     <string-array name="data_limit_labels">
-        <item>No limit</item><item>250 MB a day</item><item>500 MB a day</item>
-        <item>1 GB a day</item><item>2 GB a day</item><item>5 GB a day</item>
+        <item>@string/opt_no_limit</item><item>@string/opt_250_mb_a_day</item><item>@string/opt_500_mb_a_day</item>
+        <item>@string/opt_1_gb_a_day</item><item>@string/opt_2_gb_a_day</item><item>@string/opt_5_gb_a_day</item>
     </string-array>
     <string-array name="data_limit_values">
         <item>0</item><item>250</item><item>500</item><item>1000</item><item>2000</item><item>5000</item>
     </string-array>
     <string-array name="audio_format_labels">
-        <item>M4A (original quality, fast)</item>
-        <item>MP3 192 kbps (plays everywhere, slower)</item>
+        <item>@string/opt_m4a_original_quality_fast</item>
+        <item>@string/opt_mp3_192_kbps_plays_everywhere</item>
     </string-array>
     <string-array name="audio_format_values">
         <item>m4a</item><item>mp3</item>
+    </string-array>
+    <string-array name="language_labels">
+        <item>@string/lang_system</item><item>@string/lang_en</item><item>@string/lang_ur</item>
+    </string-array>
+    <string-array name="language_values">
+        <item></item><item>en</item><item>ur</item>
     </string-array>
 </resources>

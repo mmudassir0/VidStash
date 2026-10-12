@@ -13,8 +13,11 @@ your phone — there is no server in between.
 
 ## Download
 
-Get the latest APK from **[Releases](../../releases/latest)** and install it
-(Android 7.0 or newer). After that, VidStash updates itself: **Settings → App update**.
+Get the latest APK from **[Releases](../../releases/latest)** or the
+**[website](https://mmudassir0.github.io/VidStash/)** and install it (Android 7.0 or newer).
+After that, VidStash updates itself: **Settings → App update**.
+
+VidStash is available in **English and Urdu** (Settings → Language).
 
 ## Features
 
@@ -57,7 +60,12 @@ automatically; the app shows a banner while it waits.
 
 ## Building
 
-Open the project in Android Studio (JDK 17) and run, or `./gradlew assembleDebug`.
+Open the project in Android Studio (JDK 17) and run, or `./gradlew assembleGithubDebug`.
+
+There are two flavours: `github` (the APK on Releases, with the built-in updater) and
+`fdroid` (for app stores that deliver updates themselves; no updater and no install
+permission). Outside GitHub Actions, set the build number with `-PbuildNumber=N`
+(versionCode = 100 + N, versionName = 1.2.N, release tag `v1.2.N`).
 Release builds are signed in GitHub Actions with the project key; local release builds fall
 back to the debug key.
 

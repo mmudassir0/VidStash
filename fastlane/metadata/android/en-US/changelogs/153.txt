@@ -1,0 +1,3 @@
+• Welcome screen on first launch
+• Urdu translation; choose the language in Settings → Language
+• Update prompt now says where updates come from

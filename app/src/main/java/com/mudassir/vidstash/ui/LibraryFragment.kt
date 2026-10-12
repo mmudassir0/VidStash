@@ -146,9 +146,9 @@ class LibraryFragment : Fragment() {
         val used = all.sumOf { it.bytes.coerceAtLeast(0) }
         val free = Storage.freeBytes()
         b.storageText.text = listOfNotNull(
-            "${all.size} file" + if (all.size == 1) "" else "s",
-            "${formatBytes(used)} used",
-            if (free >= 0) "${formatBytes(free)} free on phone" else null
+            getString(R.string.lib_files_count, all.size),
+            getString(R.string.lib_used, formatBytes(used)),
+            if (free >= 0) getString(R.string.lib_free, formatBytes(free)) else null
         ).joinToString(" · ")
         b.storageText.isVisible = all.isNotEmpty()
 
@@ -174,8 +174,8 @@ class LibraryFragment : Fragment() {
 
         files.submitList(visible)
         files.notifyItemRangeChanged(0, visible.size)
-        b.emptyText.text = if (all.isEmpty()) "Finished downloads show up here. Tap one to play it."
-        else "No files match."
+        b.emptyText.text = if (all.isEmpty()) getString(R.string.lib_empty_files)
+        else getString(R.string.lib_no_match)
         b.emptyText.isVisible = visible.isEmpty()
         b.searchLayout.isVisible = all.isNotEmpty()
         b.sortButton.isVisible = all.isNotEmpty()
@@ -195,7 +195,7 @@ class LibraryFragment : Fragment() {
         val current = Settings(ctx).librarySort
         PopupMenu(ctx, b.sortButton).apply {
             SORTS.forEachIndexed { i, (key, label) ->
-                menu.add(0, i, i, (if (key == current) "✓  " else "     ") + label)
+                menu.add(0, i, i, (if (key == current) "✓  " else "     ") + getString(label))
             }
             setOnMenuItemClickListener {
                 Settings(ctx).librarySort = SORTS[it.itemId].first
@@ -225,8 +225,8 @@ class LibraryFragment : Fragment() {
                 id = View.generateViewId()
                 tag = key
                 text = when (key) {
-                    ALL -> "All"
-                    SINGLES -> "Single videos"
+                    ALL -> getString(R.string.lib_all)
+                    SINGLES -> getString(R.string.lib_singles)
                     else -> key
                 }
                 isCheckable = true
@@ -242,8 +242,7 @@ class LibraryFragment : Fragment() {
         val pls = Store.playlists.value.sortedBy { it.name.lowercase() }
         lists.submitList(pls)
         lists.notifyItemRangeChanged(0, pls.size)
-        b.emptyText.text = "When you download a playlist or channel with “Keep for Sync” ticked, it appears here. " +
-            "Sync fetches only the videos you don't have yet."
+        b.emptyText.text = getString(R.string.lib_empty_lists)
         b.emptyText.isVisible = pls.isEmpty()
     }
 
@@ -273,7 +272,7 @@ class LibraryFragment : Fragment() {
         if (!selecting) return
         val items = visible.filter { it.id in selected }
         val bytes = items.sumOf { it.bytes.coerceAtLeast(0) }
-        b.selectionText.text = "${items.size} selected" + if (bytes > 0) " · ${formatBytes(bytes)}" else ""
+        b.selectionText.text = getString(R.string.lib_selected, items.size) + if (bytes > 0) " · ${formatBytes(bytes)}" else ""
     }
 
     private fun confirmDelete(items: List<DownloadItem>) {
@@ -281,16 +280,16 @@ class LibraryFragment : Fragment() {
         val ctx = requireContext()
         val bytes = items.sumOf { it.bytes.coerceAtLeast(0) }
         MaterialAlertDialogBuilder(ctx)
-            .setTitle(if (items.size == 1) "Delete this file?" else "Delete ${items.size} files?")
+            .setTitle(if (items.size == 1) getString(R.string.lib_delete_one) else getString(R.string.lib_delete_n, items.size))
             .setMessage(
                 if (items.size == 1) items[0].fileName ?: items[0].title
-                else "This frees ${formatBytes(bytes)} on your phone."
+                else getString(R.string.lib_frees, formatBytes(bytes))
             )
-            .setPositiveButton("Delete") { _, _ ->
+            .setPositiveButton(R.string.common_delete) { _, _ ->
                 Files.deleteMany(ctx, items)
                 clearSelection()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.common_cancel, null)
             .show()
     }
 
@@ -305,8 +304,8 @@ class LibraryFragment : Fragment() {
             syncing -= p.url
             render()
             val msg = result.fold(
-                { n -> if (n == 0) "${p.name}: nothing new" else "${p.name}: $n new video(s) queued" },
-                { e -> "${p.name}: sync failed (${e.message})" }
+                { n -> if (n == 0) ctx.getString(R.string.lib_nothing_new_for, p.name) else ctx.getString(R.string.lib_new_queued_for, p.name, n) },
+                { e -> ctx.getString(R.string.lib_sync_failed_for, p.name, e.message ?: "") }
             )
             Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show()
         }
@@ -318,8 +317,8 @@ class LibraryFragment : Fragment() {
         lifecycleScope.launch {
             val (added, errors) = withContext(Dispatchers.IO) { Sync.syncAll(ctx) }
             _b?.syncAllButton?.isEnabled = true
-            val msg = (if (added == 0) "Nothing new" else "$added new video(s) queued") +
-                if (errors > 0) " · $errors list(s) failed" else ""
+            val msg = (if (added == 0) ctx.getString(R.string.lib_nothing_new) else ctx.getString(R.string.lib_new_queued, added)) +
+                if (errors > 0) ctx.getString(R.string.lib_lists_failed, errors) else ""
             Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show()
         }
     }
@@ -351,10 +350,10 @@ class LibraryFragment : Fragment() {
             val pos = Settings(ctx).position(item.fileUri!!)
             b.meta.text = listOfNotNull(
                 if (item.bytes > 0) formatBytes(item.bytes) else null,
-                if (item.mime?.startsWith("audio") == true) "Audio" else null,
+                if (item.mime?.startsWith("audio") == true) ctx.getString(R.string.lib_audio) else null,
                 item.folder ?: item.uploader,
                 DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(item.finishedAt)),
-                if (pos > 5_000) "▶ continue at ${formatDuration(pos / 1000)}" else null
+                if (pos > 5_000) ctx.getString(R.string.lib_continue_at, formatDuration(pos / 1000)) else null
             ).joinToString(" · ")
             b.meta.isVisible = true
             b.check.isVisible = selecting
@@ -375,11 +374,11 @@ class LibraryFragment : Fragment() {
     private fun showFileMenu(item: DownloadItem, anchor: View) {
         val ctx = requireContext()
         PopupMenu(ctx, anchor).apply {
-            menu.add(0, 1, 0, "Play")
-            menu.add(0, 2, 1, "Open with…")
-            menu.add(0, 3, 2, "Share")
-            menu.add(0, 4, 3, "Select")
-            menu.add(0, 5, 4, "Delete file")
+            menu.add(0, 1, 0, getString(R.string.action_play))
+            menu.add(0, 2, 1, getString(R.string.action_open_with))
+            menu.add(0, 3, 2, getString(R.string.action_share))
+            menu.add(0, 4, 3, getString(R.string.action_select))
+            menu.add(0, 5, 4, getString(R.string.action_delete_file))
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     1 -> Files.play(ctx, item)
@@ -406,19 +405,19 @@ class LibraryFragment : Fragment() {
             val quality = Settings.QUALITIES.firstOrNull { it.second == p.maxHeight }?.first ?: "${p.maxHeight}p"
             b.title.text = p.name
             b.meta.text = listOf(
-                if (p.isChannel) "Channel" else "Playlist",
-                "${p.seen.size} videos known",
+                if (p.isChannel) ctx.getString(R.string.lib_channel) else ctx.getString(R.string.lib_playlist),
+                ctx.getString(R.string.lib_videos_known, p.seen.size),
                 quality,
-                "synced " + DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(p.lastSync))
+                ctx.getString(R.string.lib_synced_on, DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(p.lastSync)))
             ).joinToString(" · ")
             val busy = p.url in syncing
             b.syncButton.isEnabled = !busy
-            b.syncButton.text = if (busy) "Syncing…" else "Sync"
+            b.syncButton.text = if (busy) ctx.getString(R.string.lib_syncing) else ctx.getString(R.string.lib_sync)
             b.syncButton.setOnClickListener { sync(p) }
             b.moreButton.setOnClickListener { v ->
                 PopupMenu(ctx, v).apply {
-                    menu.add(0, 1, 0, "Show downloaded files")
-                    menu.add(0, 2, 1, "Stop syncing this")
+                    menu.add(0, 1, 0, ctx.getString(R.string.lib_show_files))
+                    menu.add(0, 2, 1, ctx.getString(R.string.lib_stop_syncing))
                     setOnMenuItemClickListener {
                         when (it.itemId) {
                             1 -> showFolder(p.name)
@@ -443,11 +442,11 @@ class LibraryFragment : Fragment() {
         private const val ALL = "\u0000all"
         private const val SINGLES = "\u0000singles"
         private val SORTS = listOf(
-            "date" to "Newest first",
-            "oldest" to "Oldest first",
-            "name" to "Name (playlist order)",
-            "size" to "Largest first",
-            "length" to "Longest first"
+            "date" to R.string.sort_newest,
+            "oldest" to R.string.sort_oldest,
+            "name" to R.string.sort_name,
+            "size" to R.string.sort_largest,
+            "length" to R.string.sort_longest
         )
         private val ITEM_DIFF = object : DiffUtil.ItemCallback<DownloadItem>() {
             override fun areItemsTheSame(a: DownloadItem, b: DownloadItem) = a.id == b.id

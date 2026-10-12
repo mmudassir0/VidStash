@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="VidStash"
+            android:text="@string/get_vidstash"
             android:textColor="@color/on_bg"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -57,7 +57,7 @@
             android:background="@drawable/bg_widget_button_brand"
             android:gravity="center"
             android:minHeight="44dp"
-            android:text="Paste link"
+            android:text="@string/get_paste_link"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -71,7 +71,7 @@
             android:background="@drawable/bg_widget_button"
             android:gravity="center"
             android:minHeight="44dp"
-            android:text="Search"
+            android:text="@string/widget_search"
             android:textColor="@color/on_bg"
             android:textSize="14sp" />
 
@@ -84,7 +84,7 @@
             android:background="@drawable/bg_widget_button"
             android:gravity="center"
             android:minHeight="44dp"
-            android:text="Library"
+            android:text="@string/library_library"
             android:textColor="@color/on_bg"
             android:textSize="14sp" />
     </LinearLayout>

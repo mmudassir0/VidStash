@@ -222,7 +222,7 @@ class GetFragment : Fragment() {
                 setOnClickListener { submitText(q) }
                 // The small ✕ removes just this search.
                 isCloseIconVisible = true
-                closeIconContentDescription = "Remove from history"
+                closeIconContentDescription = getString(R.string.get_remove_history)
                 setOnCloseIconClickListener {
                     Settings(requireContext()).removeSearch(q)
                     renderRecent()
@@ -231,13 +231,13 @@ class GetFragment : Fragment() {
         }
         b.clearRecentButton.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Clear search history?")
-                .setMessage("Your recent searches will be removed from this phone.")
-                .setPositiveButton("Clear") { _, _ ->
+                .setTitle(R.string.get_clear_history_title)
+                .setMessage(R.string.get_clear_history_msg)
+                .setPositiveButton(R.string.get_clear) { _, _ ->
                     Settings(requireContext()).recentSearches = emptyList()
                     renderRecent()
                 }
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.common_cancel, null)
                 .show()
         }
     }
@@ -268,15 +268,15 @@ class GetFragment : Fragment() {
         if (YouTube.linkType(url) == YouTube.Link.NONE) return
         settings.lastClipboardLink = url
         if (b.input.text?.toString()?.contains(url) == true) return
-        Snackbar.make(b.root, "You copied a YouTube link", Snackbar.LENGTH_LONG)
-            .setAction("Open") { if (_b != null) submitText(url) }
+        Snackbar.make(b.root, R.string.get_copied_link, Snackbar.LENGTH_LONG)
+            .setAction(R.string.common_open) { if (_b != null) submitText(url) }
             .show()
     }
 
     private fun paste() {
         val cm = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val text = cm.primaryClip?.getItemAt(0)?.coerceToText(requireContext())?.toString()?.trim()
-        if (text.isNullOrBlank()) toast("Clipboard is empty") else submitText(text)
+        if (text.isNullOrBlank()) toast(getString(R.string.get_clipboard_empty)) else submitText(text)
     }
 
     // ---------- rendering ----------
@@ -292,7 +292,7 @@ class GetFragment : Fragment() {
         b.statusText.isVisible = state is GetState.Loading || state is GetState.Error
         b.statusText.text = when (state) {
             is GetState.Loading -> state.message
-            is GetState.Error -> "Error: ${state.message}"
+            is GetState.Error -> getString(R.string.get_error, state.message)
             else -> ""
         }
 
@@ -331,12 +331,12 @@ class GetFragment : Fragment() {
         h.titleText.text = d.title
         h.subtitleText.text = listOf(
             d.uploader, formatDuration(d.durationSec),
-            if (d.chapters.size >= 2) "${d.chapters.size} chapters" else ""
+            if (d.chapters.size >= 2) getString(R.string.get_chapters_count, d.chapters.size) else ""
         ).filter { it.isNotBlank() }.joinToString(" · ")
         showList(emptyList(), selectable = false, key = null, resetScroll = true)
         if (d.options.isEmpty()) {
             h.sizeText.isVisible = true
-            h.sizeText.text = "No downloadable formats found for this video."
+            h.sizeText.text = getString(R.string.get_no_formats)
             return
         }
         if (renderedList !== d) {
@@ -348,7 +348,7 @@ class GetFragment : Fragment() {
             descExpanded = false
             h.splitSwitch.setOnCheckedChangeListener(null)
             h.splitSwitch.isChecked = false
-            h.splitSwitch.text = "Save each chapter as its own file (${d.chapters.size} chapters)"
+            h.splitSwitch.text = getString(R.string.get_split_chapters, d.chapters.size)
             h.splitSwitch.setOnCheckedChangeListener { _, on ->
                 // A section and chapter files don't mix.
                 if (on) h.clipSwitch.isChecked = false
@@ -361,11 +361,11 @@ class GetFragment : Fragment() {
         h.clipRow.isVisible = d.durationSec > 1 && !h.splitSwitch.isChecked
         h.sizeText.isVisible = true
         h.downloadButton.isVisible = true
-        h.downloadButton.text = "Download"
+        h.downloadButton.text = getString(R.string.common_download)
         h.openPlaylistButton.isVisible = s.playlistUrl != null
         renderAbout(s)
         h.watchButton.isVisible = true
-        h.watchButton.text = "Watch now (no download)"
+        h.watchButton.text = getString(R.string.get_watch_now_long)
         h.watchButton.setOnClickListener { PlayerActivity.stream(requireContext(), s.url, d.title, d.thumbnail) }
         updateSizeText()
     }
@@ -377,7 +377,7 @@ class GetFragment : Fragment() {
         h.thumb.load(list.videos.firstOrNull()?.thumbnail) { crossfade(true) }
         h.titleText.text = list.name
         val total = list.videos.sumOf { maxOf(it.durationSec, 0L) }
-        h.subtitleText.text = (if (list.isChannel) "Channel · newest ${list.videos.size} videos" else "Playlist · ${list.videos.size} videos") +
+        h.subtitleText.text = (if (list.isChannel) getString(R.string.get_channel_newest, list.videos.size) else getString(R.string.get_playlist_count, list.videos.size)) +
             " · ${formatDuration(total)}"
 
         if (renderedList !== list) {
@@ -397,14 +397,14 @@ class GetFragment : Fragment() {
         h.qualityRow.isVisible = true
         h.limitRow.isVisible = list.isChannel
         h.selectRow.isVisible = true
-        h.selectedText.text = "${s.selected.size} of ${list.videos.size} selected"
+        h.selectedText.text = getString(R.string.get_n_of_m_selected, s.selected.size, list.videos.size)
         h.rememberCheck.isVisible = true
-        h.rememberCheck.text = if (list.isChannel) "Keep for Sync (later, only new uploads)" else "Keep for Sync (later, only new videos)"
+        h.rememberCheck.text = if (list.isChannel) getString(R.string.get_keep_sync_channel) else getString(R.string.get_keep_sync_playlist)
         h.sizeText.isVisible = true
         h.downloadButton.isVisible = true
-        h.downloadButton.text = "Download ${s.selected.size} video(s)"
+        h.downloadButton.text = getString(R.string.get_download_n, s.selected.size)
         h.listTitle.isVisible = true
-        h.listTitle.text = "Tap a video to include or leave it out"
+        h.listTitle.text = getString(R.string.get_tap_to_include)
         showList(list.videos, selectable = true, key = list, resetScroll = true)
         videos.selected = s.selected
         updateSizeText()
@@ -412,12 +412,12 @@ class GetFragment : Fragment() {
 
     private fun renderSearch(s: GetState.Search) {
         h.listTitle.isVisible = true
-        h.listTitle.text = if (s.page.videos.isEmpty()) "No results for “${s.page.query}”" else "Results for “${s.page.query}”"
+        h.listTitle.text = if (s.page.videos.isEmpty()) getString(R.string.get_no_results, s.page.query) else getString(R.string.get_results_for, s.page.query)
         // Loading more results keeps the scroll position; a new search starts at the top.
         showList(s.page.videos, selectable = false, key = s.page.videos, resetScroll = s.page.query != shownQuery, large = true)
         shownQuery = s.page.query
         footer.moreButton.isEnabled = !s.loadingMore
-        footer.moreButton.text = if (s.loadingMore) "Loading…" else "Load more results"
+        footer.moreButton.text = if (s.loadingMore) getString(R.string.get_loading) else getString(R.string.get_load_more)
     }
 
     private var listKey: Any? = null
@@ -443,7 +443,7 @@ class GetFragment : Fragment() {
                 h.sizeText.text = if (clip != null && opt.bytes > 0 && s.details.durationSec > 0) {
                     // Rough size of the section (the whole video is downloaded, then cut).
                     val part = opt.bytes * (clip.second - clip.first) / s.details.durationSec
-                    "Section ≈ ${formatBytes(part)} (downloads ${formatBytes(opt.bytes)} first)   •   Free: ${formatBytes(free)}"
+                    getString(R.string.get_section_size, formatBytes(part), formatBytes(opt.bytes), formatBytes(free))
                 } else sizeLine(opt.bytes, exact = true, free = free)
             }
             is GetState.Videos -> {
@@ -451,7 +451,7 @@ class GetFragment : Fragment() {
                 val info = vm.sizes.value
                 val chosen = s.list.videos.filter { it.id in s.selected }
                 if (info.running) {
-                    h.sizeText.text = "Calculating size… ${info.checked} / ${chosen.size}"
+                    h.sizeText.text = getString(R.string.get_calculating, info.checked, chosen.size)
                     h.calcSizeButton.isVisible = false
                     return
                 }
@@ -462,10 +462,10 @@ class GetFragment : Fragment() {
                     if (opt == null || opt.bytes <= 0) unknown++ else total += opt.bytes
                 }
                 h.sizeText.text = when {
-                    chosen.isEmpty() -> "Nothing selected"
-                    unknown == chosen.size -> "Size not calculated yet   •   Free on phone: ${formatBytes(free)}"
+                    chosen.isEmpty() -> getString(R.string.get_nothing_selected)
+                    unknown == chosen.size -> getString(R.string.get_size_not_calculated, formatBytes(free))
                     else -> sizeLine(total, exact = unknown == 0, free = free) +
-                        if (unknown > 0) "\n$unknown video(s) not checked or unavailable" else ""
+                        if (unknown > 0) "\n" + getString(R.string.get_not_checked, unknown) else ""
                 }
                 h.calcSizeButton.isVisible = unknown > 0 && chosen.isNotEmpty()
             }
@@ -474,9 +474,9 @@ class GetFragment : Fragment() {
     }
 
     private fun sizeLine(bytes: Long, exact: Boolean, free: Long): String {
-        val size = if (bytes > 0) (if (exact) "" else "at least ") + formatBytes(bytes) else "unknown"
-        val warn = if (bytes > 0 && free in 0 until bytes * 2) "  ⚠ not enough space" else ""
-        return "Data needed: $size   •   Free on phone: ${formatBytes(free)}$warn"
+        val size = if (bytes > 0) (if (exact) formatBytes(bytes) else getString(R.string.get_at_least, formatBytes(bytes))) else getString(R.string.get_unknown)
+        val warn = if (bytes > 0 && free in 0 until bytes * 2) getString(R.string.get_not_enough_space) else ""
+        return getString(R.string.get_data_needed, size, formatBytes(free), warn)
     }
 
     private fun download() {
@@ -490,16 +490,17 @@ class GetFragment : Fragment() {
                 val have = Store.downloaded(id)
                 when {
                     clip != null || split -> go()
-                    Store.isQueued(id) -> toast("This video is already in the download queue")
+                    Store.isQueued(id) -> toast(getString(R.string.get_already_queued))
                     have != null -> MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("Already downloaded")
+                        .setTitle(R.string.get_already_downloaded)
                         .setMessage(
-                            "You saved this on " + DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(have.finishedAt)) +
-                                (have.fileName?.let { " as “$it”" } ?: "") + "."
+                            DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(have.finishedAt)).let { day ->
+                                have.fileName?.let { getString(R.string.get_saved_on_as, day, it) } ?: getString(R.string.get_saved_on, day)
+                            }
                         )
-                        .setPositiveButton("Download again") { _, _ -> go() }
-                        .setNeutralButton("Play it") { _, _ -> Files.play(requireContext(), have) }
-                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton(R.string.get_download_again) { _, _ -> go() }
+                        .setNeutralButton(R.string.get_play_it) { _, _ -> Files.play(requireContext(), have) }
+                        .setNegativeButton(R.string.common_cancel, null)
                         .show()
                     else -> go()
                 }
@@ -518,13 +519,13 @@ class GetFragment : Fragment() {
         val default = Settings(ctx).defaultQuality
         val label = qualities.firstOrNull { it.second == default }?.first ?: "${default}p"
         PopupMenu(ctx, anchor).apply {
-            if (default > 0) menu.add(0, 1, 0, "Download ($label)")
-            menu.add(0, 2, 1, "Download audio only")
-            if (Settings(ctx).audioFormat != "mp3") menu.add(0, 6, 1, "Download as MP3")
-            menu.add(0, 7, 0, "Watch now")
-            menu.add(0, 3, 2, "Choose quality…")
-            menu.add(0, 4, 3, "Share link")
-            menu.add(0, 5, 4, "Copy link")
+            if (default > 0) menu.add(0, 1, 0, getString(R.string.menu_download_quality, label))
+            menu.add(0, 2, 1, getString(R.string.menu_download_audio))
+            if (Settings(ctx).audioFormat != "mp3") menu.add(0, 6, 1, getString(R.string.menu_download_mp3))
+            menu.add(0, 7, 0, getString(R.string.menu_watch_now))
+            menu.add(0, 3, 2, getString(R.string.menu_choose_quality))
+            menu.add(0, 4, 3, getString(R.string.menu_share_link))
+            menu.add(0, 5, 4, getString(R.string.menu_copy_link))
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     1 -> vm.quickDownload(v, default)
@@ -537,13 +538,13 @@ class GetFragment : Fragment() {
                             Intent(Intent.ACTION_SEND).setType("text/plain")
                                 .putExtra(Intent.EXTRA_SUBJECT, v.title)
                                 .putExtra(Intent.EXTRA_TEXT, v.url),
-                            "Share link"
+                            getString(R.string.menu_share_link)
                         )
                     )
                     5 -> {
                         ctx.getSystemService(ClipboardManager::class.java)
                             .setPrimaryClip(ClipData.newPlainText(v.title, v.url))
-                        toast("Link copied")
+                        toast(getString(R.string.get_link_copied))
                     }
                 }
                 true
@@ -558,9 +559,9 @@ class GetFragment : Fragment() {
     private fun renderAbout(s: GetState.Video) {
         val d = s.details
         val stats = listOfNotNull(
-            d.viewCount.takeIf { it >= 0 }?.let { "${formatCount(it)} views" },
+            d.viewCount.takeIf { it >= 0 }?.let { getString(R.string.get_views, formatCount(it)) },
             d.uploadDate?.takeIf { it.isNotBlank() },
-            d.likeCount.takeIf { it > 0 }?.let { "${formatCount(it)} likes" }
+            d.likeCount.takeIf { it > 0 }?.let { getString(R.string.get_likes, formatCount(it)) }
         ).joinToString(" · ")
         val desc = if (d.descriptionHtml) HtmlCompat.fromHtml(d.description, HtmlCompat.FROM_HTML_MODE_COMPACT).toString().trim()
         else d.description.trim()
@@ -571,11 +572,11 @@ class GetFragment : Fragment() {
         h.descText.isVisible = desc.isNotEmpty()
         h.descText.maxLines = if (descExpanded) Int.MAX_VALUE else 3
         h.moreDescButton.isVisible = desc.length > 120 || desc.count { it == '\n' } > 2
-        h.moreDescButton.text = if (descExpanded) "Less" else "More"
+        h.moreDescButton.text = if (descExpanded) getString(R.string.common_less) else getString(R.string.common_more)
         h.moreDescButton.setOnClickListener {
             descExpanded = !descExpanded
             h.descText.maxLines = if (descExpanded) Int.MAX_VALUE else 3
-            h.moreDescButton.text = if (descExpanded) "Less" else "More"
+            h.moreDescButton.text = if (descExpanded) getString(R.string.common_less) else getString(R.string.common_more)
         }
         h.commentsButton.setOnClickListener { showComments(s.url) }
     }
@@ -592,12 +593,12 @@ class GetFragment : Fragment() {
             sb.progress.isVisible = false
             val list = result.getOrElse {
                 sb.message.isVisible = true
-                sb.message.text = "Couldn't load comments: ${it.message ?: "unknown error"}"
+                sb.message.text = getString(R.string.get_comments_failed, it.message ?: getString(R.string.common_unknown_error))
                 return@launch
             }
             if (list.isEmpty()) {
                 sb.message.isVisible = true
-                sb.message.text = "No comments, or comments are turned off for this video."
+                sb.message.text = getString(R.string.get_no_comments)
             }
             list.forEach { c ->
                 val row = ItemCommentBinding.inflate(layoutInflater, sb.list, false)
@@ -643,7 +644,7 @@ class GetFragment : Fragment() {
         val (a, b2) = h.clipSlider.values.map { it.toLong() }.let { it[0] to it[1] }
         if (!h.clipStart.hasFocus()) h.clipStart.setText(formatDuration(a))
         if (!h.clipEnd.hasFocus()) h.clipEnd.setText(formatDuration(b2))
-        h.clipInfo.text = "Section length ${formatDuration(b2 - a)}. Drag the dots or type times like 1:20."
+        h.clipInfo.text = getString(R.string.get_section_length, formatDuration(b2 - a))
         updateSizeText()
     }
 
@@ -656,7 +657,7 @@ class GetFragment : Fragment() {
         h.clipSlider.values = listOf(s.toFloat(), e.toFloat())
         h.clipStart.setText(formatDuration(s))
         h.clipEnd.setText(formatDuration(e))
-        h.clipInfo.text = "Section length ${formatDuration(e - s)}. Drag the dots or type times like 1:20."
+        h.clipInfo.text = getString(R.string.get_section_length, formatDuration(e - s))
         updateSizeText()
     }
 

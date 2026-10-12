@@ -25,7 +25,7 @@ class WidgetProvider : AppWidgetProvider() {
             val manager = AppWidgetManager.getInstance(app)
             val ids = manager.getAppWidgetIds(ComponentName(app, WidgetProvider::class.java))
             if (ids.isEmpty()) return
-            val status = status()
+            val status = status(app)
             if (!force && status == lastStatus) return
             lastStatus = status
 
@@ -54,15 +54,15 @@ class WidgetProvider : AppWidgetProvider() {
             manager.updateAppWidget(ids, views)
         }
 
-        private fun status(): String {
+        private fun status(ctx: Context): String {
             val items = Store.items.value
             val running = items.count { it.status == Status.RUNNING }
             val queued = items.count { it.status == Status.QUEUED }
             val files = items.count { it.status == Status.DONE && it.fileUri != null }
             return when {
-                running > 0 -> "Downloading $running" + if (queued > 0) " · $queued waiting" else ""
-                queued > 0 -> "$queued waiting"
-                else -> "$files file" + if (files == 1) "" else "s"
+                running > 0 -> ctx.getString(R.string.dl_downloading_n, running) + if (queued > 0) " · " + ctx.getString(R.string.dl_waiting_n, queued) else ""
+                queued > 0 -> ctx.getString(R.string.dl_waiting_n, queued)
+                else -> ctx.getString(R.string.lib_files_count, files)
             }
         }
     }

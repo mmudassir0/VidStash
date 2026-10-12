@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VidStash</title>
+<meta name="description" content="Save videos and music to watch offline. Free and open-source Android app with no ads and no tracking.">
+<meta property="og:title" content="VidStash">
+<meta property="og:description" content="Save videos and music to watch offline. Free, open source, no ads, no tracking.">
+<meta property="og:image" content="https://mmudassir0.github.io/VidStash/og.png">
+<meta name="theme-color" content="#6C3CF5">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5FF; --surface: #FFFFFF; --text: #17122B; --muted: #5D5675; --line: #E4DEF7;
+  --brand: #6C3CF5; --brand-2: #5B2EE0; --brand-soft: #ECE5FF; --on-soft: #2D1179;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0F0B1E; --surface: #181230; --text: #F1EEFF; --muted: #A99BE0; --line: #2A2148;
+    --brand: #8B66FF; --brand-2: #6C3CF5; --brand-soft: #2A1D57; --on-soft: #D6CCFF; }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 Inter, system-ui, sans-serif; }
+a { color: var(--brand); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; color: var(--text); text-decoration: none; }
+.brand img { width: 34px; height: 34px; border-radius: 10px; }
+nav .links a { color: var(--muted); text-decoration: none; margin-left: 20px; font-weight: 500; }
+nav .links a:hover { color: var(--text); }
+.hero { padding: 56px 0 40px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
+h1 { font-size: clamp(38px, 6vw, 60px); line-height: 1.05; margin: 0 0 18px; letter-spacing: -0.02em; font-weight: 800; }
+h1 span { background: linear-gradient(135deg, #8B5CFF, #5B2EE0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lead { font-size: 19px; color: var(--muted); margin: 0 0 28px; max-width: 34em; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 999px; font-weight: 600; text-decoration: none; }
+.btn.primary { background: linear-gradient(135deg, #8B5CFF, #5B2EE0); color: #fff; box-shadow: 0 10px 30px -10px #6C3CF5; }
+.btn.ghost { border: 1.5px solid var(--line); color: var(--text); }
+.btn svg { width: 20px; height: 20px; }
+.note { color: var(--muted); font-size: 14px; margin-top: 14px; }
+.badge-art { aspect-ratio: 1; max-width: 360px; justify-self: center; width: 100%; border-radius: 28%;
+  background: linear-gradient(135deg, #8B5CFF, #5B2EE0); display: grid; place-items: center;
+  box-shadow: 0 40px 80px -30px #6C3CF5; }
+.badge-art svg { width: 58%; }
+section { padding: 48px 0; }
+h2 { font-size: 32px; margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { color: var(--muted); margin: 0 0 28px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 22px; }
+.card h3 { margin: 10px 0 6px; font-size: 18px; }
+.card p { margin: 0; color: var(--muted); font-size: 15px; }
+.icon { width: 42px; height: 42px; border-radius: 12px; background: var(--brand-soft); color: var(--on-soft); display: grid; place-items: center; }
+.icon svg { width: 22px; height: 22px; }
+.shots { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; }
+.shots img { height: 520px; max-height: 70vh; border-radius: 24px; border: 1px solid var(--line); scroll-snap-align: start; }
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px 16px 62px; position: relative; }
+.steps li::before { content: counter(s); position: absolute; left: 18px; top: 14px; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 700; }
+.panel { background: var(--brand-soft); color: var(--on-soft); border-radius: 20px; padding: 22px 24px; }
+.panel p { margin: 0; }
+.urdu { font-family: "Noto Nastaliq Urdu", serif; direction: rtl; text-align: right; line-height: 2.2; font-size: 18px; }
+footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
+footer a { color: var(--muted); }
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; padding-top: 24px; }
+  .badge-art { max-width: 200px; order: -1; }
+  nav .links a:not(:last-child) { display: none; }
+  .shots img { height: 420px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="#"><img src="icon.png" alt="">VidStash</a>
+    <div class="links"><a href="#features">Features</a><a href="#privacy">Privacy</a><a href="https://github.com/mmudassir0/VidStash">GitHub</a></div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <h1>Save videos.<br><span>Watch anywhere.</span></h1>
+      <p class="lead">VidStash downloads videos, playlists and music to your Android phone so you can watch and listen offline. Free and open source, with no ads, no accounts and no tracking.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/mmudassir0/VidStash/releases/latest/download/VidStash.apk">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 1 1 1.4-1.4L11 13.6V4a1 1 0 0 1 1-1zM5 19h14a1 1 0 1 1 0 2H5a1 1 0 1 1 0-2z"/></svg>
+          Download APK
+        </a>
+        <a class="btn ghost" href="https://github.com/mmudassir0/VidStash">Source code</a>
+      </div>
+      <p class="note">Android 7.0 or newer · about 11 MB · updates itself from Settings</p>
+    </div>
+    <div class="badge-art" aria-hidden="true">
+      <svg viewBox="2 2 20 20" fill="#fff"><path d="M10.2,4.8c0,-0.75 0.82,-1.2 1.45,-0.8l4.6,2.95c0.58,0.37 0.58,1.23 0,1.6l-4.6,2.95c-0.63,0.4 -1.45,-0.05 -1.45,-0.8z"/><path d="M4.5,13.2h3.6c0.4,0 0.75,0.24 0.9,0.6l0.55,1.3c0.15,0.36 0.5,0.6 0.9,0.6h3.1c0.4,0 0.75,-0.24 0.9,-0.6l0.55,-1.3c0.15,-0.36 0.5,-0.6 0.9,-0.6h3.6v4.3c0,1.38 -1.12,2.5 -2.5,2.5h-10c-1.38,0 -2.5,-1.12 -2.5,-2.5z"/></svg>
+    </div>
+  </header>
+
+  <section id="screenshots" hidden>
+    <h2>Take a look</h2>
+    <p class="sub">Dark and light themes follow your phone.</p>
+    <div class="shots"><!-- SCREENSHOTS --></div>
+  </section>
+
+  <section id="features">
+    <h2>Everything for offline</h2>
+    <p class="sub">From a single song to a whole channel.</p>
+    <div class="grid">
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm6 2.5v7l6-3.5z"/></svg></div>
+        <h3>Up to 4K</h3><p>Pick the quality you want, or just the audio as M4A or MP3 with title and cover art.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h12v2H3zm0 5h12v2H3zm0 5h8v2H3zm14-5v6.3a3 3 0 1 0 2 2.7V9h3V7h-5z"/></svg></div>
+        <h3>Playlists and channels</h3><p>Save them in one go, then sync later to get only the new uploads. Auto-sync can run every night.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 3H5a2 2 0 0 0-2 2v4h2V5h4zm10 0h-4v2h4v4h2V5a2 2 0 0 0-2-2zM5 15H3v4a2 2 0 0 0 2 2h4v-2H5zm14 4h-4v2h4a2 2 0 0 0 2-2v-4h-2z"/></svg></div>
+        <h3>Sections and chapters</h3><p>Download only the part you need, or split a long video into one file per chapter.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm-2 13V8l6 4z"/></svg></div>
+        <h3>A real player</h3><p>Background audio, picture-in-picture, speed, sleep timer, chapters and continue where you left off.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2a12.7 12.7 0 0 1 18 0l2-2A15.6 15.6 0 0 0 1 9zm8 8l3 3 3-3a4.2 4.2 0 0 0-6 0zm-4-4l2 2a7 7 0 0 1 10 0l2-2a9.9 9.9 0 0 0-14 0z"/></svg></div>
+        <h3>Your data, your rules</h3><p>Wi-Fi only, only while charging, night-only, and a daily mobile-data limit.</p></div>
+      <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg></div>
+        <h3>Tidy library</h3><p>Search, sort, folders, multi-select, backup and restore, and any save folder including an SD card.</p></div>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>Install in a minute</h2>
+    <p class="sub">VidStash isn't on the Play Store, so you install the APK directly.</p>
+    <ol class="steps">
+      <li>Tap <b>Download APK</b> above on your phone.</li>
+      <li>Open the downloaded file. If Android asks, allow installs from your browser.</li>
+      <li>Tap <b>Install</b>. From now on, VidStash tells you about new versions and updates itself from <b>Settings → App update</b>.</li>
+    </ol>
+  </section>
+
+  <section id="privacy">
+    <h2>Privacy</h2>
+    <p class="sub">No accounts, ads, analytics or tracking. Nothing about you or what you watch is sent to the developer.</p>
+    <div class="grid">
+      <div class="card"><h3>YouTube</h3><p>To find and download the videos you ask for, the way a web browser would.</p></div>
+      <div class="card"><h3>SponsorBlock</h3><p>Only if you turn on “Remove sponsor segments”.</p></div>
+      <div class="card"><h3>GitHub</h3><p>To check for and download app updates.</p></div>
+    </div>
+    <p class="note">Those are the only places the app connects to. Your downloads, history, searches and settings stay on your phone.</p>
+  </section>
+
+  <section>
+    <div class="panel">
+      <p><b>Please use it responsibly.</b> Download only videos you have the right to keep, such as your own uploads, Creative Commons videos, or content the creator allows you to save, and respect copyright where you live. VidStash is not affiliated with, endorsed by or connected to YouTube or Google.</p>
+    </div>
+  </section>
+
+  <section lang="ur" class="urdu">
+    <h2>اردو میں بھی</h2>
+    <p>VidStash مکمل طور پر اردو میں دستیاب ہے۔ ایپ کی سیٹنگز میں جا کر <b>زبان</b> سے اردو منتخب کریں۔ ویڈیوز، پلے لسٹس اور موسیقی محفوظ کریں اور انٹرنیٹ کے بغیر دیکھیں۔ مفت، اوپن سورس، نہ اشتہار، نہ ٹریکنگ۔</p>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    VidStash is free software under the <a href="https://github.com/mmudassir0/VidStash/blob/main/LICENSE">GNU GPL v3</a>.
+    · <a href="https://github.com/mmudassir0/VidStash/issues">Report a problem</a>
+    · <a href="https://github.com/mmudassir0/VidStash/releases">All releases</a>
+    <br>“YouTube” is a trademark of Google LLC.
+  </div>
+</footer>
+</body>
+</html>

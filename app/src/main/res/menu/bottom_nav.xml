@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_get" android:icon="@drawable/ic_search" android:title="Get" />
-    <item android:id="@+id/nav_downloads" android:icon="@drawable/ic_download" android:title="Downloads" />
-    <item android:id="@+id/nav_library" android:icon="@drawable/ic_library" android:title="Library" />
-    <item android:id="@+id/nav_settings" android:icon="@drawable/ic_settings" android:title="Settings" />
+    <item android:id="@+id/nav_get" android:icon="@drawable/ic_search" android:title="@string/nav_get" />
+    <item android:id="@+id/nav_downloads" android:icon="@drawable/ic_download" android:title="@string/downloads_downloads" />
+    <item android:id="@+id/nav_library" android:icon="@drawable/ic_library" android:title="@string/library_library" />
+    <item android:id="@+id/nav_settings" android:icon="@drawable/ic_settings" android:title="@string/settings_header_settings" />
 </menu>

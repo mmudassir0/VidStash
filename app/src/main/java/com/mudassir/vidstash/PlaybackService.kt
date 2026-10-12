@@ -138,7 +138,7 @@ class PlaybackService : MediaSessionService() {
                         future.set(mediaItems.map { resolve(it) }.toMutableList())
                     } catch (e: Exception) {
                         handler.post {
-                            Toast.makeText(this@PlaybackService, "Couldn't play online: ${e.message ?: "unknown error"}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@PlaybackService, getString(R.string.player_online_failed, e.message ?: getString(R.string.common_unknown_error)), Toast.LENGTH_LONG).show()
                         }
                         future.setException(e)
                     }

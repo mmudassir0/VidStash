@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Checks this app's GitHub Releases for a newer build and installs it.
- * CI tags each release "build-N" and gives the APK versionCode 100 + N.
+ * CI tags each release "v1.2.N" (older ones "build-N") and gives the APK versionCode 100 + N.
  */
 object Updater {
 

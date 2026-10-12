@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Downloads"
+            android:text="@string/downloads_downloads"
             android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
         <com.google.android.material.button.MaterialButton
@@ -26,7 +26,7 @@
             style="@style/Widget.App.Button.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pause"
+            android:text="@string/downloads_pause"
             app:icon="@drawable/ic_pause"
             app:iconSize="18dp" />
 
@@ -35,7 +35,7 @@
             android:layout_width="44dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="More"
+            android:contentDescription="@string/downloads_more"
             android:src="@drawable/ic_more" />
     </LinearLayout>
 
@@ -70,7 +70,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="YouTube changed something"
+                android:text="@string/downloads_youtube_changed_something"
                 android:textAppearance="?attr/textAppearanceTitleSmall"
                 android:textColor="@color/on_brand_container" />
 
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Downloads are failing until the app gets a fix. Fixes usually arrive within a few days and appear in Settings → App update."
+                android:text="@string/downloads_downloads_are_failing_until_the"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="@color/on_brand_container" />
 
@@ -94,7 +94,7 @@
                     style="@style/Widget.App.Button.Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hide"
+                    android:text="@string/downloads_hide"
                     android:textColor="@color/on_brand_container" />
 
                 <com.google.android.material.button.MaterialButton
@@ -102,7 +102,7 @@
                     style="@style/Widget.App.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Check for update" />
+                    android:text="@string/downloads_check_for_update" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -148,7 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:text="No downloads yet"
+                android:text="@string/downloads_no_downloads_yet"
                 android:textAppearance="?attr/textAppearanceTitleLarge" />
 
             <TextView
@@ -156,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:gravity="center"
-                android:text="Videos you download show up here with their progress."
+                android:text="@string/downloads_videos_you_download_show_up"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
