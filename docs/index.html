@@ -56,7 +56,7 @@ h2 { font-size: 32px; margin: 0 0 8px; letter-spacing: -0.01em; }
 .icon { width: 42px; height: 42px; border-radius: 12px; background: var(--brand-soft); color: var(--on-soft); display: grid; place-items: center; }
 .icon svg { width: 22px; height: 22px; }
 .shots { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; }
-.shots img { height: 520px; max-height: 70vh; border-radius: 24px; border: 1px solid var(--line); scroll-snap-align: start; }
+.shots img { width: auto; height: 520px; max-height: 70vh; border-radius: 24px; border: 1px solid var(--line); scroll-snap-align: start; }
 .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
 .steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px 16px 62px; position: relative; }
 .steps li::before { content: counter(s); position: absolute; left: 18px; top: 14px; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 700; }
@@ -98,10 +98,10 @@ footer a { color: var(--muted); }
     </div>
   </header>
 
-  <section id="screenshots" hidden>
+  <section id="screenshots">
     <h2>Take a look</h2>
     <p class="sub">Dark and light themes follow your phone.</p>
-    <div class="shots"><!-- SCREENSHOTS --></div>
+    <div class="shots"><img src="screenshots/1.jpg" alt="Search and results" loading="lazy" width="540" height="1218"><img src="screenshots/2.jpg" alt="Downloads with progress" loading="lazy" width="540" height="1218"><img src="screenshots/3.jpg" alt="Library" loading="lazy" width="540" height="1218"><img src="screenshots/4.jpg" alt="Settings and app update" loading="lazy" width="540" height="1218"><img src="screenshots/5.jpg" alt="Settings in Urdu" loading="lazy" width="540" height="1218"></div>
   </section>
 
   <section id="features">

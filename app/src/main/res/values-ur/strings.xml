@@ -299,7 +299,7 @@
     <string name="rules_charger">چارجر کا انتظار</string>
     <string name="rules_data_limit">آج کی موبائل ڈیٹا حد ختم · وائی فائی کا انتظار</string>
     <string name="set_history_cleared">تلاش کا تاریخچہ صاف ہو گیا</string>
-    <string name="set_version">ورژن %1$s · بلڈ %2$d</string>
+    <string name="set_version">ورژن %1$s</string>
     <string name="upd_no_notes">اس ورژن کے لیے کوئی نوٹس نہیں۔</string>
     <string name="upd_whats_new">نیا کیا ہے\n\n%1$s</string>
     <string name="upd_check_prompt">دیکھیں کہ نیا ورژن دستیاب ہے یا نہیں۔</string>
