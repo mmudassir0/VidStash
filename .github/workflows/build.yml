@@ -5,6 +5,10 @@ on:
     paths-ignore:
       - ".github/workflows/health.yml"
       - ".github/workflows/update-library.yml"
+      # Website and store listing only
+      - "docs/**"
+      - "fastlane/**"
+      - "store/**"
   workflow_dispatch:
 
 permissions:

@@ -137,7 +137,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         val b = card ?: return
         val ctx = context ?: return
         val info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
-        b.versionText.text = ctx.getString(R.string.set_version, info.versionName, Updater.installedBuild(ctx))
+        b.versionText.text = ctx.getString(R.string.set_version, info.versionName)
         if (!BuildConfig.SELF_UPDATE) {
             // Store builds are updated by the store.
             b.statusText.text = ctx.getString(R.string.upd_by_store)

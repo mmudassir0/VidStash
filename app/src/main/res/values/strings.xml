@@ -315,7 +315,7 @@
 
     <!-- Settings, quick sheet, player, notifications -->
     <string name="set_history_cleared">Search history cleared</string>
-    <string name="set_version">Version %1$s · build %2$d</string>
+    <string name="set_version">Version %1$s</string>
     <string name="upd_no_notes">No notes for this version.</string>
     <string name="upd_whats_new">What\'s new\n\n%1$s</string>
     <string name="upd_check_prompt">Check whether a newer version is available.</string>
