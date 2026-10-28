@@ -1,6 +1,6 @@
 > Task :app:processReleaseResources FAILED
 > Task :app:expandReleaseL8ArtProfileWildcards
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1791768758442.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1793204077897.json
 
 --
 * What went wrong:
@@ -13,5 +13,5 @@ Execution failed for task ':app:processReleaseResources'.
 
 * Try:
 --
-BUILD FAILED in 29s
+BUILD FAILED in 43s
 23 actionable tasks: 23 executed
